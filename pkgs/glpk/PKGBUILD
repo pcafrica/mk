@@ -1,0 +1,57 @@
+#!/bin/bash
+
+pkgname=glpk
+pkgver=4.65
+archive=$pkgname-$pkgver.tar.gz
+sum=d9b607a9cf3a25b754a0cd9a842ea5043f8604db
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download http://ftpmirror.gnu.org/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --prefix="$dstdir" \
+                --enable-shared \
+                --disable-static \
+                --with-gmp
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+
+  install -d -m0755 "$dstdir"/include/glpk
+  ln -sf ../glpk.h "$dstdir"/include/glpk/glpk.h
+
+  strip "$dstdir"/bin
+  strip "$dstdir"/lib
+
+  reset_rpath "$dstdir"/bin
+  reset_rpath "$dstdir"/lib
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("GNU Linear Programming Kit : solve LP, MIP and other problems")
+help([[
+GLPK library is installed in "\$mkGlpkPrefix" directory, the dynamic libraries
+are located in "\$mkGlpkLib" directory and headers files in "\$mkGlpkInc".
+
+url: https://www.gnu.org/software/glpk/
+]])
+
+setenv("mkGlpkPrefix", "$dstdir")
+setenv("mkGlpkLib", "$dstdir/lib")
+setenv("mkGlpkInc", "$dstdir/include")
+
+prepend_path("PATH", "$dstdir/bin")
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+EOF
+  fi
+}

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+pkgname=libxml2
+pkgver=2.9.7
+archive=$pkgname-$pkgver.tar.gz
+sum=ab3325e6cdda50ab2382fdfe0bdb6f7d1b9224a6
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://xmlsoft.org/sources/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-static \
+                --with-thread --with-icu --with-history
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+  pushd $pkgname-$pkgver/python
+    python setup.py install --prefix="$dstdir"
+  popd
+}

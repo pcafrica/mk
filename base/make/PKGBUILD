@@ -1,0 +1,33 @@
+#!/bin/bash
+
+pkgname=make
+pkgver=4.2.1
+archive=$pkgname-$pkgver.tar.gz
+sum=9cb7f45f6e32c977164ba790e626c359d3a24fee
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://ftpmirror.gnu.org/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    # (4.2.1) https://lists.nongnu.org/archive/html/bug-make/2017-11/msg00001.html
+    [[ -e "$srcdir"/$pkgname-$pkgver.patch ]] && \
+      patch -p1 -i "$srcdir"/$pkgname-$pkgver.patch
+
+    message "Configuring $pkgname"
+    # --without-guile
+    #   This ensures that Make won't link against Guile libraries.
+    ./configure --build=$TARGET --prefix="$dstdir" --without-guile \
+                --disable-nls
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+  ln -sf make "$dstdir/bin/gmake"
+}

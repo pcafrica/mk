@@ -1,0 +1,27 @@
+#!/bin/bash
+
+pkgname=tmux
+pkgver=2.6
+archive=$pkgname-$pkgver.tar.gz
+sum=6dbbd52c0fb356231c04f889bdd83ceff061a20a
+dstdir=$mkToolchainBase
+
+build() {
+  download https://github.com/tmux/tmux/releases/download/$pkgver/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    CPPFLAGS="$(pkg-config --cflags-only-I ncurses)" \
+    LIBEVENT_CFLAGS="$(pkg-config --cflags libevent)" \
+    LIBEVENT_LIBS="$(pkg-config --libs libevent)" \
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-silent-rules
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

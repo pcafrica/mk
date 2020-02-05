@@ -1,0 +1,23 @@
+#!/bin/bash
+
+pkgname=unrar
+pkgver=5.5.8
+archive=${pkgname}src-$pkgver.tar.gz
+sum=f4fa1c4142b497356a3df505e1459c188f646fad
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://www.rarlab.com/rar/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  install -v -m755 $pkgname/unrar "$dstdir"/bin
+}

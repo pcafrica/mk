@@ -1,0 +1,26 @@
+#!/bin/bash
+
+pkgname=mpfr
+pkgver=4.0.1
+archive=$pkgname-$pkgver.tar.gz
+sum=655e3cf416a0cc9530d9cb3c38dc8839504f0e98
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://ftpmirror.gnu.org/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --enable-thread-safe \
+                --disable-static
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+pkgname=sharutils
+pkgver=4.15.2
+archive=$pkgname-$pkgver.tar.xz
+sum=250377131bcf7a081f066ed0f9c51a0b7e0b0c04
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://ftpmirror.gnu.org/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-nls
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

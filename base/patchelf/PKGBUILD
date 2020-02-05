@@ -1,0 +1,26 @@
+#!/bin/bash
+
+pkgname=patchelf
+pkgver=0.9
+archive=$pkgver.tar.gz
+sum=c068c60a67388fbf9267142516d3a8cd6ffc4397
+
+dstdir=$mkToolchainBase
+
+build() {
+  download https://github.com/NixOS/patchelf/archive/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./bootstrap.sh
+    ./configure --prefix="$dstdir"
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

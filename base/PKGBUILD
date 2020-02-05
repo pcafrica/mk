@@ -1,0 +1,34 @@
+#!/bin/bash
+
+dstdir=$mkToolchainBase
+
+run() {
+  message "Cleaning and compressing"
+
+  # remove useless
+  rm -vrf "$dstdir"/doc
+  rm -vrf "$dstdir"/docs
+  rm -vrf "$dstdir"/share/applications
+  rm -vrf "$dstdir"/share/doc
+  rm -vrf "$dstdir"/share/gtk-doc
+  rm -vrf "$dstdir"/share/icons
+  rm -vrf "$dstdir"/share/locale
+  rm -vrf "$dstdir"/share/pixmaps
+  rm -vrf "$dstdir"/share/pkgconfig
+
+  # compress the documentation
+  compress_doc "$dstdir"/share/info
+  compress_doc "$dstdir"/share/man
+
+  # stripping
+  strip "$dstdir"/bin
+  strip "$dstdir"/lib
+  strip "$dstdir"/libexec
+  strip "$dstdir"/sbin
+
+  # rpath
+  reset_rpath "$dstdir"/bin
+  reset_rpath "$dstdir"/lib
+  reset_rpath "$dstdir"/libexec
+  reset_rpath "$dstdir"/sbin
+}

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+pkgname=curl
+pkgver=7.58.0
+archive=$pkgname-$pkgver.tar.gz
+sum=089f17884d672aca7a661a65d847135f2f0ccbbf
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://curl.haxx.se/download/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-silent-rules \
+                --disable-static --with-libz --with-libidn --with-libssh2 \
+                --enable-threaded-resolver --enable-ipv6 \
+                --with-ca-bundle="$mkToolchainBase"/etc/ssl/certs/ca-certificates.crt
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

@@ -1,0 +1,14 @@
+diff -Naur a/Makefile b/Makefile
+--- a/Makefile	2016-08-03 01:25:21.461063000 +0000
++++ b/Makefile	2016-08-03 01:25:57.938268223 +0000
+@@ -190,8 +190,8 @@
+ 		ln -sf ${TARGLIB}.so.${MAJOR}.${MINOR} ${TARGLIB}.so.${MAJOR} ; \
+ 		ln -sf ${TARGLIB}.so.${MAJOR} ${TARGLIB}.so) ; \
+ 	if [ X$(MIC) != X1 ]; then \
+-		install -D psm.h ${DESTDIR}/usr/include/psm.h ; \
+-		install -D psm_mq.h ${DESTDIR}/usr/include/psm_mq.h ; \
++		install -D psm.h ${DESTDIR}/include/psm.h ; \
++		install -D psm_mq.h ${DESTDIR}/include/psm_mq.h ; \
+ 	else \
+ 		filelist=/opt/intel/mic/psm/psm.filelist ; \
+ 		sed -e 's!%IPATHMAJOR%!$(IPATH_LIB_MAJOR)!g' \

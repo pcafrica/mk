@@ -1,0 +1,147 @@
+#!/bin/bash
+
+pkgname=openmpi
+pkgver=3.0.0
+archive=$pkgname-$pkgver.tar.bz2
+sum=fa63990db1aec88b36335a1d79abf47ac6348e23
+dstdir=$mkToolchainBase
+
+install_ofed() {
+  local dirname=$1
+  local pkgname=$2
+  local pkgver=$3
+  local archive=$pkgname-$pkgver.tar.gz
+  local sum=$4
+
+  download https://www.openfabrics.org/downloads/$dirname/$archive
+  check $archive $sum
+  extract $archive
+
+  message "Installing $pkgname"
+  pushd $pkgname-$pkgver
+    [[ -r "$srcdir"/$pkgname-$pkgver.patch ]] &&
+      patch -Np1 -i "$srcdir"/$pkgname-$pkgver.patch
+    ./configure --prefix="$dstdir" --disable-static
+    make install
+  popd
+  update_linker_cache
+}
+
+install_libibverbs() {
+  install_ofed verbs libibverbs 1.2.1 dc6e4a626704432d5dd019074241a8a1a4cc775f
+  install_ofed rdmacm librdmacm 1.1.0 d38867c3c7501471797f9bc952212d0c68cd3e50
+}
+
+install_inifipath() {
+  local pkgname=infinipath-psm
+  local pkgver=3.3
+
+  message "Installing $pkgname"
+  git clone https://github.com/01org/psm.git
+  pushd psm
+    git checkout tags/v$pkgver
+    [[ -e "$srcdir"/$pkgname-$pkgver.patch ]] &&
+      patch -Np1 -i "$srcdir"/$pkgname-$pkgver.patch
+    make arch=$ARCH
+    make arch=$ARCH DESTDIR="$dstdir" libdir="/lib" install
+  popd
+  chmod 0644 "$dstdir"/include/{psm,psm_mq}.h
+  update_linker_cache
+
+  # Interface to ib_umad module (user_mad) library
+  install_ofed management libibumad 1.3.10.2 0c8b11c87970e564b861a5e789b89059a783432e
+}
+
+package() {
+  download http://www.open-mpi.org/software/ompi/v${pkgver%.*}/downloads/$archive
+  check $archive $sum
+  extract $archive
+
+  # Some packges with their own dependencies are installed so this trick with
+  # CPPFLAGS and LDFLAGS is required.
+  if [[ ! "$mkTest" = "no" ]]; then
+    export CPPFLAGS="-isystem $dstdir/include $CPPFLAGS"
+    export LDFLAGS="-L$dstdir/lib $LDFLAGS"
+    export LD_LIBRARY_PATH="$dstdir/lib:$LD_LIBRARY_PATH"
+  fi
+
+  # checking for valgrind
+  [[ -x "$mkToolchainBase"/bin/valgrind ]] && \
+    with_valgrind="--with-valgrind --enable-memchecker"
+
+  # checking for Job Scheduler
+  if [[ -n "$TM" ]]; then
+    case "$TM" in
+      PBSPro*)
+        if [[ ! -d $TMPREFIX ]]; then
+          error "Variable TMPREFIX does not point to a valid installation prefix for $TM"
+          error "  TMPREFIX=$TMPREFIX"
+        fi
+        message "Compiling $pkgname with $TM support: $TMPREFIX"
+        with_tm="--with-tm=$TMPREFIX"
+        ;;
+      *)
+        warning "Unsupported job scheduler: $TM"
+        ;;
+    esac
+  fi
+
+  # checking for InfiniBand driver
+  if [[ -n "${INFINIBAND[*]}" ]]; then
+    message "Installing InfiniBand drivers: ${INFINIBAND[*]}"
+    install_inifipath
+    install_libibverbs
+    with_ib="--with-verbs=$dstdir --with-psm=$dstdir --enable-openib-rdmacm"
+  else
+    message "InfiniBand drivers are not requested"
+  fi
+  for driver in "${INFINIBAND[@]}"; do
+    case $driver in
+      # Chelsio T3 iWARP RNIC driver
+      cxgb3) install_ofed cxgb3 libcxgb3 1.3.1 2a0929159acdd9d69da91e2fb2b746da;;
+      # Chelsio T4/T5 iWARP RNIC driver
+      cxgb4) install_ofed cxgb4 libcxgb4 1.3.6 129b8cd955c6de29258697f98dfbb351;;
+      # OpenFabrics Alliance Intel Performance Scaled Messaging library
+      ipath)
+        install_ofed libipathverbs libipathverbs 1.3 740692ea205c49f7b2be9f81207474cf
+        rm -f "$dstdir"/etc/modprobe.d/truescale.conf
+        rm -f "$dstdir"/sbin/truescale-serdes.cmds
+        [[ -z "$(ls -A "$dstdir"/etc/modprobe.d)" ]] && rmdir "$dstdir"/etc/modprobe.d
+        ;;
+      # Mellanox ConnectX InfiniBand HCA driver
+      mlx4) install_ofed mlx4 libmlx4 1.2.1 6654ee2ebb4ddb7cc86b998288007fa19ec4ce66;;
+      # Mellanox Connect-IB InfiniBand HCA driver
+      mlx5) install_ofed mlx5 libmlx5 1.2.1 ef88e1234b8cdfda8b842271e399fa491c7d9610;;
+      # Mellanox InfiniBand HCA driver
+      mthca) install_ofed mthca libmthca 1.0.6 156d90ea343a18fd638c0097ea8d2e97af3f6e25;;
+      # NetEffect Ethernet Cluster Server libibverbs plug-in
+      nes) install_ofed nes libnes 1.1.4 f16c3e4d0c61f12d6487f0dc4b28a93f04ec0c7b;;
+      # Emulex OneConnect RDMA adapter libibverbs plug-in
+      ocrdma) install_ofed libocrdma libocrdma 1.0.8 841a0a0f44a356931fcb379c5dab7f71;;
+      *) warning "Unsupported InfiniBand driver $driver";;
+    esac
+  done
+
+  # installing OpenMPI
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-silent-rules \
+                --enable-mpi-fortran=all --disable-mpi-cxx \
+                --enable-ipv6 --without-x \
+                --without-libltdl --disable-dlopen \
+                --enable-pretty-print-stacktrace \
+                --disable-wrapper-rpath \
+                $with_valgrind $with_ib $with_tm \
+                --with-hwloc="$mkToolchainBase"
+    message "Compiling $pkgname"
+    make install
+  popd
+
+  # fix pkg-config
+  ln -sf ompi.pc "$dstdir"/lib/pkgconfig/mpi.pc
+  ln -sf ompi-c.pc "$dstdir"/lib/pkgconfig/mpi-c.pc
+  ln -sf ompi-cxx.pc "$dstdir"/lib/pkgconfig/mpi-cxx.pc
+  ln -sf ompi-fort.pc "$dstdir"/lib/pkgconfig/mpi-fort.pc
+  ln -sf ompi-f77.pc "$dstdir"/lib/pkgconfig/mpi-f77.pc
+  ln -sf ompi-f90.pc "$dstdir"/lib/pkgconfig/mpi-f90.pc
+}

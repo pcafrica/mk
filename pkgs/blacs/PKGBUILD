@@ -1,0 +1,108 @@
+#!/bin/bash
+
+pkgname=blacs
+pkgver=1.1
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download http://www.netlib.org/blacs/mpiblacs.tgz
+  check mpiblacs.tgz b9503a2fddd4136a2b7ce3f5a9cd97dd5ec0d6b6
+
+  download http://www.netlib.org/blacs/mpiblacs-patch03.tgz
+  check mpiblacs-patch03.tgz d3f136b07df2b208a11c96fa55e39030e4702b39
+
+  extract mpiblacs.tgz
+  extract mpiblacs-patch03.tgz
+
+  pushd BLACS
+    cat > Bmake.inc << EOF
+SHELL=$(which bash)
+BTOPdir=$(pwd)
+
+BLACSdir    = \$(BTOPdir)/LIB
+BLACSDBGLVL = 0
+BLACSFINIT  = \$(BLACSdir)/libblacsF77init.a
+BLACSCINIT  = \$(BLACSdir)/libblacsCinit.a
+BLACSLIB    = \$(BLACSdir)/libblacs.a
+
+MPIINCdir=$(mpicc --showme:incdirs)
+
+BTLIBS = \$(BLACSFINIT) \$(BLACSLIB) \$(BLACSFINIT) \$(MPILIB)
+INTFACE = -DAdd_
+DEFS1 = -DSYSINC \$(SYSINC) \$(INTFACE) \$(DEFBSTOP) \$(DEFCOMBTOP) \$(DEBUGLVL)
+BLACSDEFS = \$(DEFS1) \$(SENDIS) \$(BUFF) \$(TRANSCOMM) \$(WHATMPI) \$(SYSERRORS)
+
+F77            = mpif77
+F77NO_OPTFLAGS =
+F77FLAGS       = \$(F77NO_OPTFLAGS) $CFLAGS -fPIC
+F77LOADER      = \$(F77)
+F77LOADFLAGS   =
+
+CC             = mpicc
+CCFLAGS        = $CFLAGS -fPIC
+CCLOADER       = \$(CC)
+CCLOADFLAGS    =
+
+ARCH      = ar
+ARCHFLAGS = r
+RANLIB    = ranlib
+EOF
+    message "Compiling $pkgname"
+    make mpi
+  popd
+}
+
+package() {
+  install -vd "$dstdir"/{include,lib}
+  install -vm 0644 BLACS/SRC/MPI/*.h "$dstdir"/include
+  install -vm 0644 BLACS/LIB/*.a "$dstdir"/lib
+
+  # static to shared
+  pushd "$dstdir"/lib
+    for name in blacs blacsCinit blacsF77init; do
+      objs=$(ar t lib${name}.a)
+      ar x lib${name}.a
+      rm lib${name}.a
+      # some object files have .C extension (fix)
+      for f in ${objs}; do
+        case $f in
+          *.C) mv $f ${f%.C}.o ;;
+          *) ;;
+        esac
+      done
+      mpicc -shared \
+        -Wl,-soname,lib${name}.so.${pkgver%%.*} \
+        -o lib${name}.so.$pkgver \
+        $(ls *.o)
+      rm $(ls *.o)
+      ln -svf lib${name}.so.${pkgver} lib${name}.so.${pkgver%%.*}
+      ln -svf lib${name}.so.${pkgver%%.*} lib${name}.so
+    done
+
+    reset_rpath .
+    strip .
+  popd
+
+  strip "$dstdir"/lib
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("Basic Linear Algebra Communication Subprograms.")
+help([[
+BLACS libraries are installed with the prefix "\$mkBlacsPrefix", the dynamic
+libraries are located in "\$mkBlacsLib" directory and the header files in
+"\$mkBlacsInc".
+
+url: http://www.netlib.org/blacs/
+]])
+
+setenv("mkBlacsPrefix", "$dstdir")
+setenv("mkBlacsLib", "$dstdir/lib")
+setenv("mkBlacsInc", "$dstdir/include")
+
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+EOF
+  fi
+}

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+pkgname=pax-utils
+#pkgver=1.0.5
+pkgver=1.1.6
+archive=$pkgname-$pkgver.tar.xz
+sum=8cde770d675f1a846fc385d67569c8e89d3207a0
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://dev.gentoo.org/~vapier/dist/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    [[ -r "$srcdir"/$pkgname-$pkgver.patch ]] && \
+      patch -p1 -i "$srcdir"/$pkgname-$pkgver.patch
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-silent-rules \
+                --without-python
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+pkgname=gzip
+pkgver=1.9
+archive=$pkgname-$pkgver.tar.xz
+sum=0249ad4c4ca1f144714e8e21b6d0db24651fc122
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://ftpmirror.gnu.org/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-silent-rules
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

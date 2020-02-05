@@ -1,0 +1,25 @@
+#!/bin/bash
+
+pkgname=swig
+pkgver=3.0.12
+archive=$pkgname-$pkgver.tar.gz
+sum=82133dfa7bba75ff9ad98a7046be687c
+dstdir=$mkToolchainBase
+
+build() {
+  download https://sourceforge.mirrorservice.org/s/sw/swig/swig/swig-$pkgver/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-silent-rules \
+                --with-pcre --with-tcl --with-python --with-lua --disable-ccache
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

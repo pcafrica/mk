@@ -1,0 +1,32 @@
+#!/bin/bash
+
+pkgname=pkgconf
+pkgver=1.4.1
+archive=$pkgname-$pkgver.tar.gz
+sum=3755f4f8aed444348ced0514729863e56336a1c4
+
+dstdir=$mkToolchainBase
+
+build() {
+  download https://github.com/pkgconf/pkgconf/archive/$archive
+  check $archive $sum
+  extract $archive $pkgname-$pkgver
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./autogen.sh
+    ./configure --prefix="$dstdir" \
+      --with-pkg-config-dir="$mkToolchainPrefix/lib/pkgconfig:$mkToolchainBase/lib/pkgconfig" \
+      --with-system-libdir="$mkToolchainPrefix/lib:$mkToolchainBase/lib" \
+      --with-system-includedir="$mkToolchainPrefix/include:$mkToolchainBase/include"
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+  ln -sf pkgconf "$dstdir"/bin/pkg-config
+  ln -sf pkcong.1 "$dstdir"/share/man/man1/pkg-config.1
+  install -dm 755 "$dstdir"/lib/pkgconfig
+}

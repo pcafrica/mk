@@ -1,0 +1,98 @@
+#!/bin/bash
+
+pkgname=octave
+pkgver=4.2.2
+archive=$pkgname-$pkgver.tar.gz
+
+sum=d7911a9932b31c720cedc22e78e4ad0aa1d1834b
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download http://ftpmirror.gnu.org/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+  module load arpack
+  module load fftw
+  module load glpk
+  module load hdf5
+  module load openblas
+  module load qhull
+  module load qrupdate
+  module load suitesparse
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --prefix="$dstdir" \
+                --enable-docs --disable-silent-rules \
+                --disable-java --without-opengl --disable-gui \
+                --with-blas="$mkOpenblasLib/libopenblas.so" \
+                --with-lapack="$mkOpenblasLib/libopenblas.so" \
+                --with-arpack-libdir="$mkArpackLib" \
+                --with-fftw3-includedir="$mkFftwInc" \
+                --with-fftw3-libdir="$mkFftwLib" \
+                --with-fftw3f-includedir="$mkFftwInc" \
+                --with-fftw3f-libdir="$mkFftwLib" \
+                --with-glpk-includedir="$mkGlpkInc" \
+                --with-glpk-libdir="$mkGlpkLib" \
+                --with-hdf5-includedir="$mkHdf5Inc" \
+                --with-hdf5-libdir="$mkHdf5Lib" \
+                --with-qhull-includedir="$mkQhullInc" \
+                --with-qhull-libdir="$mkQhullLib" \
+                --with-qrupdate-libdir="$mkQrupdateLib" \
+                --with-amd-includedir="$mkSuitesparseInc" \
+                --with-amd-libdir="$mkSuitesparseLib" \
+                --with-camd-includedir="$mkSuitesparseInc" \
+                --with-camd-libdir="$mkSuitesparseLib" \
+                --with-colamd-includedir="$mkSuitesparseInc" \
+                --with-colamd-libdir="$mkSuitesparseLib" \
+                --with-ccolamd-includedir="$mkSuitesparseInc" \
+                --with-ccolamd-libdir="$mkSuitesparseLib" \
+                --with-cholmod-includedir="$mkSuitesparseInc" \
+                --with-cholmod-libdir="$mkSuitesparseLib" \
+                --with-cxsparse-includedir="$mkSuitesparseInc" \
+                --with-cxsparse-libdir="$mkSuitesparseLib" \
+                --with-umfpack-includedir="$mkSuitesparseInc" \
+                --with-umfpack-libdir="$mkSuitesparseLib"
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+
+  rm -rf "$dstdir"/share/{appdata,applications,icons}
+
+  strip "$dstdir/bin"
+  strip "$dstdir/lib"
+
+  reset_rpath "$dstdir/bin/octave-config"
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("A high-level language, primarily intended for numerical computations")
+help([[
+Octave is installed in "\$mkOctavePrefix" directory. Currently it does not
+include the graphical interface.
+
+url: https://www.gnu.org/software/octave/
+]])
+
+load("arpack")
+load("fftw")
+load("glpk")
+load("hdf5")
+load("openblas")
+load("qhull")
+load("qrupdate")
+load("suitesparse")
+
+setenv("mkOctavePrefix", "$dstdir")
+
+prepend_path("PATH", "$dstdir/bin")
+EOF
+  fi
+}

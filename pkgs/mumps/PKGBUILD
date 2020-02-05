@@ -1,0 +1,138 @@
+#!/bin/bash
+
+pkgname=mumps
+pkgver=5.1.2
+archive=MUMPS_$pkgver.tar.gz
+sum=0446c21a7a8bfd5ec94b09541205de3fb019746f
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+mkParallelBuild=no
+
+build() {
+  download http://mumps.enseeiht.fr/$archive
+  check $archive $sum
+  extract $archive
+
+  module load openblas
+  module load scotch
+  module load scalapack
+
+  pushd MUMPS_$pkgver
+    cat > Makefile.inc << EOF
+SCOTCHDIR  = $mkScotchPrefix
+ISCOTCH    = -I$mkScotchInc
+
+LSCOTCH    = -L\$(SCOTCHDIR)/lib -lptesmumps -lptscotch -lptscotcherr -lscotch
+
+LPORDDIR = \$(topdir)/PORD/lib/
+IPORD    = -I\$(topdir)/PORD/include/
+LPORD    = -L\$(LPORDDIR) -lpord
+
+ORDERINGSF  = -Dpord -Dptscotch
+ORDERINGSC  = \$(ORDERINGSF)
+
+LORDERINGS  = \$(LSCOTCH) \$(LPORD)
+IORDERINGSF = \$(ISCOTCH)
+IORDERINGSC = \$(ISCOTCH) \$(IPORD)
+
+PLAT =
+LIBEXT  = .a
+OUTC    = -o
+OUTF    = -o
+CC      = mpicc
+FC = mpifort
+FL = mpifort
+AR = ar vr 
+RANLIB  = echo
+
+SCALAP = $(pkg-config --libs scalapack)
+INCPAR =
+LIBPAR = \$(SCALAP)
+
+INCSEQ =
+LIBSEQ =
+
+LIBBLAS = $(pkg-config --libs blas)
+LIBOTHERS = -lpthread
+
+CDEFS   = -DAdd_
+
+OPTF   = ${FCFLAGS} -fPIC -DALLOW_NON_INIT
+OPTL   = -fPIC -O2 -DNDEBUG
+OPTC   = ${CFLAGS} -fPIC
+
+INCS = \$(INCPAR)
+LIBS = \$(LIBPAR)
+LIBSEQNEEDED =
+EOF
+    message "Compiling $pkgname"
+    cat Makefile.inc
+    make alllib
+  popd
+}
+
+package() {
+  install -d -m0755 "$dstdir"/{include,lib}
+  install -m0644 MUMPS_$pkgver/include/*.h "$dstdir"/include
+  install -m0644 MUMPS_$pkgver/lib/*.a "$dstdir"/lib
+
+  pushd "$dstdir"/lib
+    objs=$(ar t libpord.a)
+    ar x libpord.a
+    cc -shared -Wl,--no-undefined -Wl,-soname,libpord.so.${pkgver%%.*} \
+       -o libpord.so.$pkgver $objs
+    ln -sf libpord.so.$pkgver libpord.so.${pkgver%%.*}
+    ln -sf libpord.so.${pkgver%%.*} libpord.so
+    rm libpord.a
+    rm $objs
+
+    objs=$(ar t libmumps_common.a)
+    ar x libmumps_common.a
+    mpifort -shared -Wl,--no-undefined -Wl,-soname,libmumps_common.so.${pkgver%%.*} \
+            -o libmumps_common.so.$pkgver -L$mkScotchLib -L. \
+            $objs -lpthread -lm -lptesmumps -lptscotch -lscotch -lpord
+    ln -sf libmumps_common.so.$pkgver libmumps_common.so.${pkgver%%.*}
+    ln -sf libmumps_common.so.${pkgver%%.*} libmumps_common.so
+    rm libmumps_common.a
+    rm $objs
+
+    for p in c d s z; do
+      local lib=lib${p}mumps
+      objs=$(ar t $lib.a)
+      ar x $lib.a
+      mpifort -shared -Wl,--no-undefined -Wl,-soname,$lib.so.${pkgver%%.*} \
+              -o $lib.so.$pkgver -L$mkScotchLib -L. $objs \
+              -lmumps_common $(pkg-config --libs scalapack) -lptscotch -lscotch
+      ln -sf $lib.so.$pkgver $lib.so.${pkgver%%.*}
+      ln -sf $lib.so.${pkgver%%.*} $lib.so
+      rm $lib.a
+      rm $objs
+    done
+  popd
+
+  strip "$dstdir"/lib
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("Sparse solver library using Gaussian elimination")
+help([[
+MUMPS library is installed in "\$mkMumpsPrefix" directory, the dynamic
+libraries are located in "\$mkMumpsLib" directory and headers files in
+"\$mkMumpsInc".
+
+url: http://mumps.enseeiht.fr
+]])
+
+load("openblas")
+load("scalapack")
+load("scotch")
+
+setenv("mkMumpsPrefix", "$dstdir")
+setenv("mkMumpsLib", "$dstdir/lib")
+setenv("mkMumpsInc", "$dstdir/include")
+
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+EOF
+  fi
+}

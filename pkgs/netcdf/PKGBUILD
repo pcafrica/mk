@@ -1,0 +1,133 @@
+#!/bin/bash
+
+pkgname=netcdf
+pkgver=4.6.0
+archive=v$pkgver.tar.gz
+sum=644de01aa1b63c8fc96a478d2580c2e94cf09cb7
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+fortranver=4.4.4
+fortranarchive=v$fortranver.tar.gz
+fortransum=9174a7847e14a35d15188f5230979726a0fd541a
+
+cxxver=4.3.0
+cxxarchive=v$cxxver.tar.gz
+cxxsum=c3290c514cfb414b5316a03e9cee1a48440d373c
+
+pythonver=1.3.1rel
+pythonarchive=v$pythonver.tar.gz
+pythonsum=48e6b6ce9a52b8a5e44e1dc4ebc5e5c0dc511fca
+
+package() {
+  download https://github.com/Unidata/netcdf-c/archive/$archive
+  download https://github.com/Unidata/netcdf-fortran/archive/$fortranarchive
+  download https://github.com/Unidata/netcdf-cxx4/archive/$cxxarchive
+  download https://github.com/Unidata/netcdf4-python/archive/$pythonarchive
+
+  check $archive $sum
+  check $fortranarchive $fortransum
+  check $cxxarchive $cxxsum
+  check $pythonarchive $pythonsum
+
+  extract $archive
+  extract $fortranarchive
+  extract $cxxarchive
+  extract $pythonarchive
+
+  module load hdf5
+
+  # netcfd c
+  pushd $pkgname-c-$pkgver
+    message "Configuring $pkgname-c"
+    CPPFLAGS="-I$mkHdf5Inc $CPPFLAGS" \
+    LDFLAGS="-L$mkHdf5Lib $LDFLAGS" \
+    ./configure --prefix="$dstdir" \
+                --enable-shared \
+                --disable-static \
+                --enable-netcdf-4 \
+                --enable-dap-netcdf
+    message "Compiling $pkgname-c"
+    make
+    message "Installing $pkgname-c"
+    make install
+  popd
+
+  export PATH="$dstdir/bin:$PATH"
+  export LD_LIBRARY_PATH="$dstdir/lib:$LD_LIBRARY_PATH"
+
+  # netcdf fortran
+  pushd $pkgname-fortran-$fortranver
+    message "Configuring $pkgname-fortran"
+    CPPFLAGS="-I$dstdir/include -I$mkHdf5Inc $CPPFLAGS" \
+    LDFLAGS="-L$dstdir/lib -L$mkHdf5Lib $LDFLAGS" \
+    ./configure --prefix="$dstdir" \
+                --enable-shared \
+                --disable-static
+    message "Compiling $pkgname-fortran"
+    make
+    message "Installing $pkgname-fortran"
+    make install
+  popd
+
+  # netcdf cxx
+  module load scipy
+  pushd $pkgname-cxx4-$cxxver
+    message "Configuring $pkgname-cxx"
+    CPPFLAGS="-I$dstdir/include -I$mkHdf5Inc $CPPFLAGS" \
+    LDFLAGS="-L$dstdir/lib -L$mkHdf5Lib $LDFLAGS" \
+    ./configure --prefix="$dstdir" \
+                --enable-shared \
+                --disable-static
+    message "Compiling $pkgname-cxx"
+    make
+    message "Installing $pkgname-cxx"
+    make install
+  popd
+
+  # netcdf python
+  pushd $pkgname${pkgver%%.*}-python-$pythonver
+    message "Installing $pkgname-python"
+    USE_NCCONFIG=1 HDF5_DIR="$mkHdf5Prefix" \
+      python setup.py build
+    install -d -m0755 "$dstdir/lib/python3.6/site-packages"
+    PYTHONPATH="$dstdir/lib/python3.6/site-packages:$PYTHONPATH" \
+    USE_NCCONFIG=1 HDF5_DIR="$mkHdf5Prefix" \
+      python setup.py install --prefix="$dstdir"
+  popd
+
+  strip "$dstdir"/bin
+  strip "$dstdir"/lib
+
+  reset_rpath "$dstdir"/bin
+  reset_rpath "$dstdir"/lib
+
+  compress_doc "$dstdir"/share/man
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("Array-oriented data access and corresponding library")
+help([[
+The NetCDF library is installed in "\$mkNetcdfPrefix" directory, the dynamic
+libraries are located in "\$mkNetcdfLib" directory and header files in
+"\$mkNetcdfInc".
+
+url: http://www.unidata.ucar.edu/software/netcdf/
+]])
+
+load("hdf5")
+load("scipy")
+
+setenv("mkNetcdfPrefix", "$dstdir")
+setenv("mkNetcdfLib", "$dstdir/lib")
+setenv("mkNetcdfInc", "$dstdir/include")
+
+prepend_path("PATH", "$dstdir/bin")
+prepend_path("MANPATH", "$dstdir/share/man")
+prepend_path("PYTHONPATH", "$dstdir/lib/python3.6/site-packages")
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+prepend_path("PKG_CONFIG_PATH", "$dstdir/lib/pkgconfig")
+EOF
+  fi
+}

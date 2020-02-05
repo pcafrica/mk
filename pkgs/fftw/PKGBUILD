@@ -1,0 +1,92 @@
+#!/bin/bash
+
+pkgname=fftw
+pkgver=3.3.7
+archive=$pkgname-$pkgver.tar.gz
+sum=0d5915d7d39b3253c1cc05030d79ac47
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download http://www.fftw.org/$archive
+  check $archive $sum
+  extract $archive
+
+  local conflags="--prefix=$dstdir --enable-mpi --enable-threads"
+  conflags="$conflags --enable-shared --disable-static --disable-debug"
+  case $ARCH in
+    x86_64) sseflags="--enable-sse2";;
+  esac
+
+  install -vd dstdir
+  local prefix=$(pwd)/dstdir
+
+  pushd $pkgname-$pkgver
+    message "Configuring single precision $pkgname"
+    ./configure $conflags $sseflags --enable-single
+    message "Compiling single precision $pkgname"
+    make
+    make install DESTDIR=$prefix
+
+    make clean
+
+    message "Configuring double precision $pkgname"
+    ./configure $conflags $sseflags
+    message "Compiling double precision $pkgname"
+    make
+    make install DESTDIR=$prefix
+
+    make clean
+
+    message "Configuring long-double precision $pkgname"
+    ./configure $conflags --enable-long-double
+    message "Compiling long-double precision $pkgname"
+    make
+    make install DESTDIR=$prefix
+  popd
+}
+
+package() {
+  install -vd $dstdir
+  pushd dstdir/$dstdir
+    tar -cf - . | (cd $dstdir && tar -xf -)
+  popd
+
+  compress_doc $dstdir/share/man
+  compress_doc $dstdir/share/info
+
+  reset_rpath $dstdir/bin/fftw{,f,l}-wisdom
+  reset_rpath $dstdir/lib/libfftw3{,f,l}_{mpi,threads}.so.?.?.?
+
+  strip $dstdir/bin
+  strip $dstdir/lib
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("FFTW is a C subroutine library for computing the discrete Fourier transform")
+help([[
+The FFTW library is compiled using single, double and quadruple precision, it
+has also the full support for the parallel computing, both on shared and
+distributed architectures. For the configuration flags the pkg-config command
+should be used:
+  $ pkg-config --cflags fftw3
+  -I$dstdir/include
+  $ pkg-config --libs fftw3
+  -L$dstdir/lib -lfftw3
+
+url: http://www.fftw.org/
+]])
+
+setenv("mkFftwPrefix", "$dstdir")
+setenv("mkFftwLib", "$dstdir/lib")
+setenv("mkFftwInc", "$dstdir/include")
+
+prepend_path("PATH", "$dstdir/bin")
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+prepend_path("PKG_CONFIG_PATH", "$dstdir/lib/pkgconfig")
+prepend_path("MANPATH", "$dstdir/share/man")
+prepend_path("INFOPATH", "$dstdir/share/info")
+EOF
+  fi
+}

@@ -1,0 +1,65 @@
+#!/bin/bash
+
+pkgname=boost
+pkgver=1.66.0
+archive=${pkgname}_${pkgver//./_}.tar.bz2
+sum=b6b284acde2ad7ed49b44e856955d7b1ea4e9459
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download http://prdownloads.sourceforge.net/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+
+  pushd ${pkgname}_${pkgver//./_}
+    [[ -r $srcdir/$pkgname-$pkgver.patch ]] && \
+      patch -p1 -i $srcdir/$pkgname-$pkgver.patch
+
+    message "Configuring $pkgname"
+    ./bootstrap.sh --prefix="$dstdir" \
+                   --with-python=$(which python3) \
+                   --with-python-root="$mkToolchainBase" \
+                   --show-libraries
+    echo "using mpi ;" > user-config.jam
+  popd
+}
+
+
+package() {
+ pushd ${pkgname}_${pkgver//./_}
+   ./b2 --prefix="$dstdir" \
+         --user-config=user-config.jam \
+         --layout=system \
+         -d2 -j$pkgJobs \
+         cxxflags="$CXXFLAGS" \
+         link=shared \
+         threading=multi \
+         variant=release \
+         debug-symbols=off \
+         install
+  popd
+
+  strip "$dstdir"/lib
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("Free peer-reviewed portable C++ source libraries")
+help([[
+The Boost libraries are installed in "\$mkBoostPrefix" directory, the dynamic
+libraries are located in "\$mkBoostLib" directory and header files in
+"\$mkBoostInc".
+
+url: https://www.boost.org/
+]])
+
+setenv("mkBoostPrefix", "$dstdir")
+setenv("mkBoostLib", "$dstdir/lib")
+setenv("mkBoostInc", "$dstdir/include")
+
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+EOF
+  fi
+}

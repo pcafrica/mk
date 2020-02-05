@@ -1,0 +1,43 @@
+#!/bin/bash
+
+pkgname=emacs
+pkgver=25.3
+archive=$pkgname-$pkgver.tar.xz
+sum=1cb4f39e9c0a3305fd62f936c7c95ff8e2924323
+dstdir=$mkToolchainBase
+
+# Skip if ASLR is enabled
+# See: https://github.com/moby/moby/issues/22801
+if [[ -r /proc/sys/kernel/randomize_va_space && $(cat /proc/sys/kernel/randomize_va_space) = "2" ]]; then
+  skip=yes
+else
+  skip=no
+fi
+
+build() {
+  if [[ "$skip" = "yes" ]]; then
+    warning "Address space layout randomization enabled, disable it with\n  echo 0 | sudo tee /proc/sys/kernel/randomize_va_space"
+    return
+  fi
+
+  download http://ftp.gnu.org/gnu/emacs/emacs-$pkgver.tar.xz
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" \
+                --localstatedir="$dstdir"/var --disable-silent-rules \
+                --without-gnutls --with-xml2 --without-selinux --with-zlib \
+                --without-x --without-dbus --without-gconf --without-gsettings
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  if [[ "$skip" = "yes" ]]; then
+    return
+  fi
+  make -C $pkgname-$pkgver install
+}

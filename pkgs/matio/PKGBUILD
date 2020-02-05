@@ -1,0 +1,64 @@
+#!/bin/bash
+
+pkgname=matio
+pkgver=1.5.12
+archive=$pkgname-$pkgver.tar.gz
+sum=cb05a4a9a3af992890237b3f7a87f01cd8819528
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download http://prdownloads.sourceforge.net/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+  module load hdf5
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --prefix="$dstdir" \
+                --enable-shared \
+                --disable-static \
+                --with-zlib \
+                --with-hdf5="$mkHdf5Prefix"
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+
+  strip "$dstdir/bin"
+  strip "$dstdir/lib"
+
+  reset_rpath "$dstdir/bin"
+  reset_rpath "$dstdir/lib"
+
+  compress_doc "$dstdir/share/info"
+  compress_doc "$dstdir/share/man"
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("Widely used C++ template library for task parallelism.")
+help([[
+The MAT File I/O library is installed in "\$mkMatioPrefix" directory, the
+dynamic libraries are located in "\$mkMatioLib" directory and headers files in
+"\$mkMatioInc".
+
+url: https://sourceforge.net/projects/matio/
+]])
+
+setenv("mkMatioPrefix", "$dstdir")
+setenv("mkMatioLib", "$dstdir/lib")
+setenv("mkMatioInc", "$dstdir/include")
+
+prepend_path("PATH", "$dstdir/bin")
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+prepend_path("PKG_CONFIG_PATH", "$dstdir/lib/pkgconfig")
+prepend_path("MANPATH", "$dstdir/share/man")
+prepend_path("INFOPATH", "$dstdir/share/info")
+EOF
+  fi
+}

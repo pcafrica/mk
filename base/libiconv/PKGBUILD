@@ -1,0 +1,25 @@
+#!/bin/bash
+
+pkgname=libiconv
+pkgver=1.15
+archive=$pkgname-$pkgver.tar.gz
+sum=7af3149fa7c4bd1d3a36a30f02e95a0ebfd6b18f
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://ftpmirror.gnu.org/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-nls
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

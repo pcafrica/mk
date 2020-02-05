@@ -1,0 +1,62 @@
+#!/bin/bash
+
+pkgname=lis
+pkgver=2.0.8
+archive=$pkgname-$pkgver.zip
+sum=c929e79d94b83497da2e05b9024dc989a3a104d7
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download http://www.ssisc.org/lis/dl/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    # Fix permission (wrong permission from unzip)
+    chmod 755 configure config/install-sh
+    ./configure --prefix="$dstdir" \
+                --enable-mpi \
+                --enable-shared \
+                --disable-static
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+
+  rm -rf "$dstdir"/share/examples
+
+  compress_doc "$dstdir"/share/man
+
+  strip "$dstdir"/bin
+  strip "$dstdir"/lib
+
+  reset_rpath "$dstdir"/bin
+  reset_rpath "$dstdir"/lib
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("Library of Iterative Solvers for linear systems")
+help([[
+The Lis library is installed in "\$mkLisPrefix" directory, the dynamic
+libraries are located in "\$mkLisLib" directory and header files in
+"\$mkLisInc".
+
+url: http://www.ssisc.org/lis/
+]])
+
+setenv("mkLisPrefix", "$dstdir")
+setenv("mkLisLib", "$dstdir/lib")
+setenv("mkLisInc", "$dstdir/include")
+
+prepend_path("PATH", "$dstdir/bin")
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+prepend_path("MANPATH", "$dstdir/share/man")
+EOF
+  fi
+}

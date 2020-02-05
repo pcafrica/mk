@@ -1,0 +1,94 @@
+#!/bin/bash
+
+pkgname=scipy
+pkgver=1.14.2
+archive=v$pkgver.tar.gz
+sum=c00e70468703830a26ee9173ba1cf4aedf08718f
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+
+package() {
+  download https://github.com/numpy/numpy/archive/$archive
+  check $archive $sum
+  extract $archive
+
+  module load openblas
+  module load suitesparse
+  module load fftw
+
+  message "Compiling cython"
+  pip install --verbose --install-option="--prefix=$dstdir" cython
+  export PATH="$dstdir"/bin:$PATH
+  export PYTHONPATH="$dstdir"/lib/python3.6/site-packages:$PYTHONPATH
+
+  pip list
+
+  message "Compiling numpy"
+  pushd numpy-$pkgver
+    cat > site.cfg << EOF
+[DEFAULT]
+include_dirs = $mkSuitesparseInc
+
+[amd]
+amd_libs = amd
+library_dirs = $mkSuitesparseLib
+include_dirs = $mkSuitesparseInc
+
+[umfpack]
+umfpack_libs = umfpack
+library_dirs = $mkSuitesparseLib
+include_dirs = $mkSuitesparseInc
+
+[openblas]
+libraries = openblas
+library_dirs = $mkOpenblasLib
+include_dirs = $mkOpenblasInc
+
+[fftw]
+libraries = fftw3
+library_dirs = $mkFftwLib
+include_dirs = $mkFftwInc
+EOF
+    python setup.py config_fc --fcompiler=gfortran build
+    python setup.py config_fc --fcompiler=gfortran install --prefix=$dstdir --optimize=1
+  popd
+
+  message "Compiling ipython"
+  pip install --verbose --install-option="--prefix=$dstdir" ipython==6.4.0
+  message "Compiling sympy"
+  pip install --verbose --install-option="--prefix=$dstdir" sympy==1.1.1
+  message "Compiling pandas"
+  # --no-build-isolation  fix an issue with pip>=10.0.0
+  pip install --verbose --install-option="--prefix=$dstdir" pandas==0.22.0 \
+    --no-build-isolation
+  message "Compiling scipy"
+  pip install --verbose --install-option="--prefix=$dstdir" scipy==1.0.1
+  message "Compiling mpi4py"
+  pip install --verbose --install-option="--prefix=$dstdir" mpi4py==3.0.0
+
+  # module
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("Python-based ecosystem for mathematics, science, and engineering")
+help([[
+This package contains all the libraries that are part of Python-based ecosystem
+for scientific computing. It contains numpy, scipy, pandas, sympy, cython,
+mpi4py and ipython. It is enough to load the package for using it.
+
+url: http://www.scipy.org
+]])
+
+setenv("mkScipyPrefix", "$dstdir")
+
+load("fftw")
+load("openblas")
+load("suitesparse")
+
+prepend_path("PATH", "$dstdir/bin")
+prepend_path("MANPATH", "$dstdir/share/man")
+prepend_path("PYTHONPATH", "$dstdir/lib/python3.6/site-packages")
+EOF
+  fi
+}

@@ -1,0 +1,71 @@
+#!/bin/bash
+
+pkgname=qhull
+pkgver=2015.2
+archive=$pkgname-2015-src-7.2.0.tgz
+sum=8188765b9f9f004e38e9906fd2a68e81119f05fb
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download http://www.qhull.org/download/$archive
+  check $archive $sum
+  extract $archive
+
+  mkdir build
+  pushd build
+    message "Configuring $pkgname"
+    cmake -GNinja \
+          -D CMAKE_INSTALL_PREFIX="$dstdir" \
+          -D CMAKE_SKIP_INSTALL_RPATH=ON \
+          -D CMAKE_SKIP_RPATH=ON \
+          -D CMAKE_BUILD_TYPE=Release \
+          ../$pkgname-$pkgver
+    message "Compiling $pkgname"
+    ninja
+  popd
+}
+
+package() {
+  ninja -C build install
+
+  rm "$dstdir"/lib/*.a
+  rm -rf "$dstdir"/share/doc
+
+  chmod 755 "$dstdir"/lib/*.so.?.?.?
+
+  strip "$dstdir"/bin
+  strip "$dstdir"/lib
+
+  ln -sf libqhull "$dstdir"/include/qhull
+  ln -sf libqhull.h "$dstdir"/include/libqhull/qhull.h
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("A general dimension code for computing convex hulls and related structures")
+help([[
+Qhull computes the convex hull, Delaunay triangulation, Voronoi diagram,
+halfspace intersection about a point, furthest-site Delaunay triangulation, and
+furthest-site Voronoi diagram. The source code runs in 2-d, 3-d, 4-d, and
+higher dimensions. Qhull implements the Quickhull algorithm for computing the
+convex hull. It handles roundoff errors from floating point arithmetic. It
+computes volumes, surface areas, and approximations to the convex hull.
+
+Qhull library is installed with the prefix "\$mkQhullPrefix", the
+dynamic libraries are located in "\$mkQhullLib" directory and the header files
+in "\$mkQhullInc".
+
+url: http://www.qhull.org
+]])
+
+setenv("mkQhullPrefix", "$dstdir")
+setenv("mkQhullInc", "$dstdir/include")
+setenv("mkQhullLib", "$dstdir/lib")
+
+prepend_path("PATH", "$dstdir/bin")
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+prepend_path("MANPATH", "$dstdir/share/man")
+EOF
+  fi
+}

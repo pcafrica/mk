@@ -1,0 +1,54 @@
+#!/bin/bash
+
+pkgname=qrupdate
+pkgver=1.1.2
+archive=$pkgname-$pkgver.tar.gz
+sum=f7403b646ace20f4a2b080b4933a1e9152fac526
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download http://prdownloads.sourceforge.net/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    cat > Makeconf << EOF
+FC=gfortran
+FFLAGS=$CFLAGS -fimplicit-none -funroll-loops
+FPICFLAGS=-fPIC
+VERSION=${pkgver%.*}
+MAJOR=${pkgver%%.*}
+LIBDIR=lib
+DESTDIR=
+PREFIX=$dstdir
+EOF
+    cat Makeconf
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+	rm -f "$dstdir"/lib/libqrupdate.a
+  strip "$dstdir"/lib
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("Fortran library for fast updates of QR and Cholesky decompositions")
+help([[
+The qrupdate library is installed in "\$mkQrupdatePrefix" directory, the
+dynamic library are located in "\$mkQrupdateLib" directory.
+
+url: https://sourceforge.net/projects/qrupdate/
+]])
+
+setenv("mkQrupdatePrefix", "$dstdir")
+setenv("mkQrupdateLib", "$dstdir/lib")
+
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+EOF
+  fi
+}

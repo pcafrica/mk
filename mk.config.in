@@ -1,0 +1,34 @@
+# Base directory where all the packages are installed and the tools for
+# managing the modules are located.
+PREFIX=%PREFIX%
+
+# The vendor component of the triple (second component)
+VENDOR=mk
+PKGVERSION=mk
+BUGURL=https://bitbucket.org/mattiapenati/mk/issues
+
+# Compiler flags
+# Compiler flags for the native cpu architecture can be retrieved with the
+# command gcc -march=native -Q --help=target (look for march).
+CFLAGS="-O2 -DNDEBUG -pipe -mtune=generic"
+CXXFLAGS=$CFLAGS
+FCFLAGS=$CFLAGS
+
+# Job Scheduler
+# WARNING: these variable should be set only if a job scheduler is available.
+#
+# MPI implementations support different job scheduler, this can improve the
+# runtime perfomance of MPI. Variable TM contains the name of job scheduler
+# and its version, until now only PBSPro is supported:
+#   TM=PBSPro
+# If the job scheduler is already installed in your system you could specify
+# the installation prefix, for PBSPro is mandatory because it is available
+# only in binary format
+#   TMPREFIX=<job scheduler installation prefix>
+
+# InfiniBand
+# MPI implementations include support for high-speed interconnect networks.
+# You should specify the required drivers for your hardware setup separated
+# by a space between round parantheses (bash array), the current set of
+# supported driver is:
+#   INFINIBAND=(cxgb3 cxgb4 ipath mlx4 mlx5 mthca nes ocrdma)

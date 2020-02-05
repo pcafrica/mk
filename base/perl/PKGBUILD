@@ -1,0 +1,56 @@
+#!/bin/bash
+
+pkgname=perl
+pkgver=5.26.1
+archive=$pkgname-$pkgver.tar.gz
+sum=74a0822429508d593513a0dfd6f51a907bad68d0
+dstdir=$mkToolchainBase
+
+mkParallelBuild=no
+
+build() {
+  download http://www.cpan.org/src/5.0/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    # -des
+    #   Avoid the interactive configuration
+    # -Duseshrplib
+    #   Build a shared libperl needed by some perl modules.
+    ./Configure -des -Dusethreads -Duseshrplib \
+                -Doptimize="$CFLAGS" \
+                $([[ $ARCH = x86_64 ]] && echo "-Dcccdlflags='-fPIC'") \
+                -Dlddlflags="-shared $LDFLAGS" -Dldflags="$LDFLAGS" \
+                -Dprefix="$dstdir" -Dvendorprefix="$dstdir" \
+                -Dman1dir="$dstdir/share/man/man1" -Dman1ext=1perl \
+                -Dman3dir="$dstdir/share/man/man3" -Dman3ext=3perl \
+                -Dlocincpth="${mkToolchainPrefix}/include ${mkToolchainBase}/include" \
+                -Dloclibpth="${mkToolchainPrefix}/lib ${mkToolchainBase}/lib"
+
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+
+  # fix some files
+  ln -vsf perl5/$pkgver/$ARCH-$OS-thread-multi/CORE/libperl.so "$dstdir"/lib/libperl.so
+  rm -vf "$dstdir"/bin/perl; ln -sf perl$pkgver "$dstdir"/bin/perl
+
+  # fix shebang
+  sed -i "s:/usr/bin/perl:$dstdir/bin/perl:" \
+    "$dstdir"/lib/perl5/$pkgver/Math/BigInt/Trace.pm
+  sed -i "s:/usr/bin/perl:$dstdir/bin/perl:" \
+    "$dstdir"/lib/perl5/$pkgver/Math/BigFloat/Trace.pm
+
+  if [[ "$mkTest" = "no" ]]; then
+    if [[ -e "$mkToolchainPrefix"/bin/mtrace ]]; then
+      sed -i "1s:/usr/bin/perl:$mkToolchainBase/bin/perl:" \
+        "$mkToolchainPrefix"/bin/mtrace
+    fi
+  fi
+}

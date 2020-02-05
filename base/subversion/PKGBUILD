@@ -1,0 +1,76 @@
+#!/bin/bash
+
+aprver=1.6.3
+aprarchive=apr-$aprver.tar.bz2
+aprsum=12f2a349483ad6f12db49ba01fbfdbfa
+
+aprutilver=1.6.1
+aprutilarchive=apr-util-$aprutilver.tar.bz2
+aprutilsum=8ff5dc36fa39a2a3db1df196d3ed6086
+
+pkgname=subversion
+pkgver=1.9.7
+archive=$pkgname-$pkgver.tar.gz
+sum=1a5f48acf9d0faa60e8c7aea96a9b29ab1d4dcac
+dstdir=$mkToolchainBase
+mkParallelBuild=no
+
+build() {
+  # apr
+  download http://archive.apache.org/dist/apr/$aprarchive
+  check $aprarchive $aprsum
+  extract $aprarchive
+
+  pushd apr-$aprver
+    message "Installing APR"
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-static \
+                --with-installbuilddir="$dstdir"/share/apr-1/build
+    make install
+  popd
+
+  # apr-util
+  download http://archive.apache.org/dist/apr/$aprutilarchive
+  check $aprutilarchive $aprutilsum
+  extract $aprutilarchive
+
+  pushd apr-util-$aprutilver
+    message "Installing APR-util"
+    ./configure --build=$TARGET --prefix="$dstdir" --with-apr="$dstdir" \
+                --with-openssl --with-gdbm --with-berkeley-db --with-sqlite3 \
+                --with-expat="$(pkg-config --variable=prefix expat)"
+    make install
+  popd
+
+  # subversion
+  download http://www.apache.org/dist/subversion/$archive
+  check $archive $sum
+  extract $archive
+
+  expatinc="$(pkg-config --variable=includedir expat)"
+  expatlib="$(pkg-config --variable=libdir expat)"
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-static \
+                --disable-nls --enable-optimize --with-zlib --with-swig \
+                --with-expat="$expatinc:$expatlib:expact" \
+                --with-apr="$dstdir" --with-apr-util="$dstdir" \
+                --enable-bdb6
+    message "Compiling $pkgname"
+    make
+    make swig-pl swig-py
+  popd
+}
+
+package() {
+  make -C apr-$aprver install
+  make -C apr-util-$aprutilver install
+  make -C $pkgname-$pkgver install install-swig-pl install-swig-py
+
+  mv -v "$dstdir"/share/pkgconfig/* "$dstdir"/lib/pkgconfig/
+
+  site_packages=$(python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+  echo "$dstdir"/lib/svn-python > "$site_packages"/subversion.pth
+
+  update_linker_cache
+}

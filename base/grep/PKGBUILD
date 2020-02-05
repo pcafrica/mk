@@ -1,0 +1,28 @@
+#!/bin/bash
+
+pkgname=grep
+pkgver=3.1
+archive=$pkgname-$pkgver.tar.xz
+sum=d1d677e959c7d874e18e7e3839f26a0f0c1733d5
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://ftpmirror.gnu.org/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build="$TARGET" --prefix="$dstdir" --disable-nls \
+                --without-included-regex --disable-rpath
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+
+package() {
+  make -C $pkgname-$pkgver install
+}
+

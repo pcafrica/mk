@@ -1,0 +1,26 @@
+#!/bin/bash
+
+pkgname=xz
+pkgver=5.2.3
+archive=$pkgname-$pkgver.tar.xz
+sum=a2975d12e0905daec48ec87c0098602e0669d195
+
+dstdir=$mkToolchainBase
+
+build() {
+  download https://sourceforge.mirrorservice.org/l/lz/lzmautils/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-nls \
+                --disable-rpath --disable-static
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

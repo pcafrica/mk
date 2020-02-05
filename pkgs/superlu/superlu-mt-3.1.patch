@@ -1,0 +1,510 @@
+diff -Naur a/SRC/cmatgen.c b/SRC/cmatgen.c
+--- a/SRC/cmatgen.c	2015-04-24 22:19:49.000000000 +0000
++++ b/SRC/cmatgen.c	2016-04-07 22:33:02.183044208 +0000
+@@ -93,76 +93,4 @@
+     xa[n] = lasta;
+ }
+ 
+-double dlaran_(int *iseed)
+-{
+-/*  -- LAPACK auxiliary routine (version 2.0) --   
+-       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,   
+-       Courant Institute, Argonne National Lab, and Rice University   
+-       February 29, 1992   
+-
+-    Purpose   
+-    =======   
+-
+-    DLARAN returns a random real number from a uniform (0,1)   
+-    distribution.   
+-
+-    Arguments   
+-    =========   
+-
+-    ISEED   (input/output) INT array, dimension (4)   
+-            On entry, the seed of the random number generator; the array 
+-  
+-            elements must be between 0 and 4095, and ISEED(4) must be   
+-            odd.   
+-            On exit, the seed is updated.   
+-
+-    Further Details   
+-    ===============   
+-
+-    This routine uses a multiplicative congruential method with modulus   
+-    2**48 and multiplier 33952834046453 (see G.S.Fishman,   
+-    'Multiplicative congruential random number generators with modulus   
+-    2**b: an exhaustive analysis for b = 32 and a partial analysis for   
+-    b = 48', Math. Comp. 189, pp 331-344, 1990).   
+-
+-    48-bit integers are stored in 4 integer array elements with 12 bits   
+-    per element. Hence the routine is portable across machines with   
+-    integers of 32 bits or more.   
+-
+-    ===================================================================== 
+-*/
+-    
+-    /* Local variables */
+-    int it1, it2, it3, it4;
+-
+-    --iseed;
+-
+-    /* multiply the seed by the multiplier modulo 2**48 */
+-    it4 = iseed[4] * 2549;
+-    it3 = it4 / 4096;
+-    it4 -= it3 << 12;
+-    it3 = it3 + iseed[3] * 2549 + iseed[4] * 2508;
+-    it2 = it3 / 4096;
+-    it3 -= it2 << 12;
+-    it2 = it2 + iseed[2] * 2549 + iseed[3] * 2508 + iseed[4] * 322;
+-    it1 = it2 / 4096;
+-    it2 -= it1 << 12;
+-    it1 = it1 + iseed[1] * 2549 + iseed[2] * 2508 + iseed[3] * 322 + iseed[4] 
+-	    * 494;
+-    it1 %= 4096;
+-
+-   /* return updated seed */
+-
+-    iseed[1] = it1;
+-    iseed[2] = it2;
+-    iseed[3] = it3;
+-    iseed[4] = it4;
+-
+-   /* convert 48-bit integer to a real number in the interval (0,1) */
+-
+-    return ((double) it1 +
+-	    ((double) it2 + ((double) it3 + (double) it4 * 2.44140625e-4) *
+-	     2.44140625e-4) * 2.44140625e-4) * 2.44140625e-4;
+-
+-} /* dlaran_ */
+ 
+diff -Naur a/SRC/smatgen.c b/SRC/smatgen.c
+--- a/SRC/smatgen.c	2015-04-24 22:19:49.000000000 +0000
++++ b/SRC/smatgen.c	2016-04-07 22:33:05.658991362 +0000
+@@ -93,76 +93,3 @@
+     xa[n] = lasta;
+ }
+ 
+-double dlaran_(int *iseed)
+-{
+-/*  -- LAPACK auxiliary routine (version 2.0) --   
+-       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,   
+-       Courant Institute, Argonne National Lab, and Rice University   
+-       February 29, 1992   
+-
+-    Purpose   
+-    =======   
+-
+-    DLARAN returns a random real number from a uniform (0,1)   
+-    distribution.   
+-
+-    Arguments   
+-    =========   
+-
+-    ISEED   (input/output) INT array, dimension (4)   
+-            On entry, the seed of the random number generator; the array 
+-  
+-            elements must be between 0 and 4095, and ISEED(4) must be   
+-            odd.   
+-            On exit, the seed is updated.   
+-
+-    Further Details   
+-    ===============   
+-
+-    This routine uses a multiplicative congruential method with modulus   
+-    2**48 and multiplier 33952834046453 (see G.S.Fishman,   
+-    'Multiplicative congruential random number generators with modulus   
+-    2**b: an exhaustive analysis for b = 32 and a partial analysis for   
+-    b = 48', Math. Comp. 189, pp 331-344, 1990).   
+-
+-    48-bit integers are stored in 4 integer array elements with 12 bits   
+-    per element. Hence the routine is portable across machines with   
+-    integers of 32 bits or more.   
+-
+-    ===================================================================== 
+-*/
+-    
+-    /* Local variables */
+-    int it1, it2, it3, it4;
+-
+-    --iseed;
+-
+-    /* multiply the seed by the multiplier modulo 2**48 */
+-    it4 = iseed[4] * 2549;
+-    it3 = it4 / 4096;
+-    it4 -= it3 << 12;
+-    it3 = it3 + iseed[3] * 2549 + iseed[4] * 2508;
+-    it2 = it3 / 4096;
+-    it3 -= it2 << 12;
+-    it2 = it2 + iseed[2] * 2549 + iseed[3] * 2508 + iseed[4] * 322;
+-    it1 = it2 / 4096;
+-    it2 -= it1 << 12;
+-    it1 = it1 + iseed[1] * 2549 + iseed[2] * 2508 + iseed[3] * 322 + iseed[4] 
+-	    * 494;
+-    it1 %= 4096;
+-
+-   /* return updated seed */
+-
+-    iseed[1] = it1;
+-    iseed[2] = it2;
+-    iseed[3] = it3;
+-    iseed[4] = it4;
+-
+-   /* convert 48-bit integer to a real number in the interval (0,1) */
+-
+-    return ((double) it1 +
+-	    ((double) it2 + ((double) it3 + (double) it4 * 2.44140625e-4) *
+-	     2.44140625e-4) * 2.44140625e-4) * 2.44140625e-4;
+-
+-} /* dlaran_ */
+-
+diff -Naur a/SRC/sp_coletree.c.orig b/SRC/sp_coletree.c.orig
+--- a/SRC/sp_coletree.c.orig	2013-03-19 22:10:40.000000000 +0000
++++ b/SRC/sp_coletree.c.orig	1970-01-01 00:00:00.000000000 +0000
+@@ -1,266 +0,0 @@
+-
+-/*  Elimination tree computation and layout routines */
+-
+-#include <stdio.h>
+-#ifndef __STDC__
+-#include <malloc.h>
+-#endif
+-#include <stdlib.h>
+-#include "util.h"
+-
+-/* 
+- *  Implementation of disjoint set union routines.
+- *  Elements are integers in 0..n-1, and the 
+- *  names of the sets themselves are of type int.
+- *  
+- *  Calls are:
+- *  initialize_disjoint_sets (n) initial call.
+- *  s = make_set (i)             returns a set containing only i.
+- *  s = link (t, u)		 returns s = t union u, destroying t and u.
+- *  s = find (i)		 return name of set containing i.
+- *  finalize_disjoint_sets 	 final call.
+- *
+- *  This implementation uses path compression but not weighted union.
+- *  See Tarjan's book for details.
+- *  John Gilbert, CMI, 1987.
+- */
+-
+-static int	*pp;		/* parent array for sets */
+-
+-static 
+-int *mxCallocInt(int n)
+-{
+-    register int i;
+-    int *buf;
+-
+-    buf = (int *) SUPERLU_MALLOC( n * sizeof(int) );
+-    if ( !buf ) {
+-         printf("SUPERLU_MALLOC failed for buf in mxCallocInt()");
+-	 exit (1);
+-       }
+-    for (i = 0; i < n; i++) buf[i] = 0;
+-    return (buf);
+-}
+-      
+-static
+-void initialize_disjoint_sets (
+-	int n
+-	)
+-{
+-	pp = mxCallocInt(n);
+-}
+-
+-
+-static
+-int make_set (
+-	int i
+-	)
+-{
+-	pp[i] = i;
+-	return i;
+-}
+-
+-
+-static
+-int link (
+-	int s,
+-	int t
+-	)
+-{
+-	pp[s] = t;
+-	return t;
+-}
+-
+-
+-/* PATH HALVING */
+-static
+-int find (int i)
+-{
+-    register int p, gp;
+-    
+-    p = pp[i];
+-    gp = pp[p];
+-    while (gp != p) {
+-	pp[i] = gp;
+-	i = gp;
+-	p = pp[i];
+-	gp = pp[p];
+-    }
+-    return (p);
+-}
+-
+-#if 0
+-static
+-int find (
+-	int i
+-	)
+-{
+-	if (pp[i] != i) 
+-		pp[i] = find (pp[i]);
+-	return pp[i];
+-}
+-#endif
+-
+-
+-static
+-void finalize_disjoint_sets (
+-	void
+-	)
+-{
+-	SUPERLU_FREE(pp);
+-}
+-
+-
+-/*
+- *      Find the elimination tree for A'*A.
+- *      This uses something similar to Liu's algorithm. 
+- *      It runs in time O(nz(A)*log n) and does not form A'*A.
+- *
+- *      Input:
+- *        Sparse matrix A.  Numeric values are ignored, so any
+- *        explicit zeros are treated as nonzero.
+- *      Output:
+- *        Integer array of parents representing the elimination
+- *        tree of the symbolic product A'*A.  Each vertex is a
+- *        column of A, and nc means a root of the elimination forest.
+- *
+- *      John R. Gilbert, Xerox, 10 Dec 1990
+- *      Based on code by JRG dated 1987, 1988, and 1990.
+- */
+-
+-/*
+- * Nonsymmetric elimination tree
+- */
+-int
+-sp_coletree(
+-	    int *acolst, int *acolend, /* column start and end past 1 */
+-	    int *arow,                 /* row indices of A */
+-	    int nr, int nc,            /* dimension of A */
+-	    int *parent	               /* parent in elim tree */
+-	    )
+-{
+-	int	*root;			/* root of subtee of etree 	*/
+-	int     *firstcol;		/* first nonzero col in each row*/
+-	int	rset, cset;             
+-	int	row, col;
+-	int	rroot;
+-	int	p;
+-
+-	root = mxCallocInt (nc);
+-	initialize_disjoint_sets (nc);
+-
+-	/* Compute firstcol[row] = first nonzero column in row */
+-
+-	firstcol = mxCallocInt (nr);
+-	for (row = 0; row < nr; firstcol[row++] = nc);
+-	for (col = 0; col < nc; col++)
+-	    for (p = acolst[col]; p < acolend[col]; p++) {
+-		row = arow[p];
+-		firstcol[row] = MIN(firstcol[row], col);
+-	    }
+-
+-	/* Compute etree by Liu's algorithm for symmetric matrices,
+-           except use (firstcol[r],c) in place of an edge (r,c) of A.
+-	   Thus each row clique in A'*A is replaced by a star
+-	   centered at its first vertex, which has the same fill. */
+-
+-	for (col = 0; col < nc; col++) {
+-	    cset = make_set (col);
+-	    root[cset] = col;
+-	    parent[col] = nc; /* Matlab */
+-	    for (p = acolst[col]; p < acolend[col]; p++) {
+-		row = firstcol[arow[p]];
+-		if (row >= col) continue;
+-		rset = find (row);
+-		rroot = root[rset];
+-		if (rroot != col) {
+-		    parent[rroot] = col;
+-		    cset = link (cset, rset);
+-		    root[cset] = col;
+-		}
+-	    }
+-	}
+-
+-	SUPERLU_FREE (root);
+-	SUPERLU_FREE (firstcol);
+-	finalize_disjoint_sets ();
+-	return 0;
+-}
+-
+-/*
+- *  q = TreePostorder (n, p);
+- *
+- *	Postorder a tree.
+- *	Input:
+- *	  p is a vector of parent pointers for a forest whose
+- *        vertices are the integers 0 to n-1; p[root]==n.
+- *	Output:
+- *	  q is a vector indexed by 0..n-1 such that q[i] is the
+- *	  i-th vertex in a postorder numbering of the tree.
+- *
+- *        ( 2/7/95 modified by X.Li:
+- *          q is a vector indexed by 0:n-1 such that vertex i is the
+- *          q[i]-th vertex in a postorder numbering of the tree.
+- *          That is, this is the inverse of the previous q. )
+- *
+- *	In the child structure, lower-numbered children are represented
+- *	first, so that a tree which is already numbered in postorder
+- *	will not have its order changed.
+- *    
+- *  Written by John Gilbert, Xerox, 10 Dec 1990.
+- *  Based on code written by John Gilbert at CMI in 1987.
+- */
+-
+-static int	*first_kid, *next_kid;	/* Linked list of children.	*/
+-static int	*post, postnum;
+-
+-static
+-/*
+- * Depth-first search from vertex v.
+- */
+-void etdfs (
+-	int	v
+-	)
+-{
+-	int	w;
+-
+-	for (w = first_kid[v]; w != -1; w = next_kid[w]) {
+-		etdfs (w);
+-	}
+-	/* post[postnum++] = v; in Matlab */
+-	post[v] = postnum++;    /* Modified by X.Li on 2/14/95 */
+-}
+-
+-
+-/*
+- * Post order a tree
+- */
+-int *TreePostorder(
+-	int n,
+-	int *parent
+-)
+-{
+-	int	v, dad;
+-
+-	/* Allocate storage for working arrays and results	*/
+-	first_kid = 	mxCallocInt (n+1);
+-	next_kid  = 	mxCallocInt (n+1);
+-	post	  = 	mxCallocInt (n+1);
+-
+-	/* Set up structure describing children */
+-	for (v = 0; v <= n; first_kid[v++] = -1);
+-	for (v = n-1; v >= 0; v--) {
+-	    dad = parent[v];
+-	    next_kid[v] = first_kid[dad];
+-	    first_kid[dad] = v;
+-	}
+-
+-	/* Depth-first search from dummy root vertex #n */
+-	postnum = 0;
+-	etdfs (n);
+-
+-	SUPERLU_FREE (first_kid);
+-	SUPERLU_FREE (next_kid);
+-	return post;
+-}
+-
+diff -Naur a/SRC/zmatgen.c b/SRC/zmatgen.c
+--- a/SRC/zmatgen.c	2015-04-24 22:19:49.000000000 +0000
++++ b/SRC/zmatgen.c	2016-04-07 22:33:05.659991347 +0000
+@@ -93,76 +93,3 @@
+     xa[n] = lasta;
+ }
+ 
+-double dlaran_(int *iseed)
+-{
+-/*  -- LAPACK auxiliary routine (version 2.0) --   
+-       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,   
+-       Courant Institute, Argonne National Lab, and Rice University   
+-       February 29, 1992   
+-
+-    Purpose   
+-    =======   
+-
+-    DLARAN returns a random real number from a uniform (0,1)   
+-    distribution.   
+-
+-    Arguments   
+-    =========   
+-
+-    ISEED   (input/output) INT array, dimension (4)   
+-            On entry, the seed of the random number generator; the array 
+-  
+-            elements must be between 0 and 4095, and ISEED(4) must be   
+-            odd.   
+-            On exit, the seed is updated.   
+-
+-    Further Details   
+-    ===============   
+-
+-    This routine uses a multiplicative congruential method with modulus   
+-    2**48 and multiplier 33952834046453 (see G.S.Fishman,   
+-    'Multiplicative congruential random number generators with modulus   
+-    2**b: an exhaustive analysis for b = 32 and a partial analysis for   
+-    b = 48', Math. Comp. 189, pp 331-344, 1990).   
+-
+-    48-bit integers are stored in 4 integer array elements with 12 bits   
+-    per element. Hence the routine is portable across machines with   
+-    integers of 32 bits or more.   
+-
+-    ===================================================================== 
+-*/
+-    
+-    /* Local variables */
+-    int it1, it2, it3, it4;
+-
+-    --iseed;
+-
+-    /* multiply the seed by the multiplier modulo 2**48 */
+-    it4 = iseed[4] * 2549;
+-    it3 = it4 / 4096;
+-    it4 -= it3 << 12;
+-    it3 = it3 + iseed[3] * 2549 + iseed[4] * 2508;
+-    it2 = it3 / 4096;
+-    it3 -= it2 << 12;
+-    it2 = it2 + iseed[2] * 2549 + iseed[3] * 2508 + iseed[4] * 322;
+-    it1 = it2 / 4096;
+-    it2 -= it1 << 12;
+-    it1 = it1 + iseed[1] * 2549 + iseed[2] * 2508 + iseed[3] * 322 + iseed[4] 
+-	    * 494;
+-    it1 %= 4096;
+-
+-   /* return updated seed */
+-
+-    iseed[1] = it1;
+-    iseed[2] = it2;
+-    iseed[3] = it3;
+-    iseed[4] = it4;
+-
+-   /* convert 48-bit integer to a real number in the interval (0,1) */
+-
+-    return ((double) it1 +
+-	    ((double) it2 + ((double) it3 + (double) it4 * 2.44140625e-4) *
+-	     2.44140625e-4) * 2.44140625e-4) * 2.44140625e-4;
+-
+-} /* dlaran_ */
+-

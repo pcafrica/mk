@@ -1,0 +1,27 @@
+#!/bin/bash
+
+pkgname=diffutils
+pkgver=3.6
+archive=$pkgname-$pkgver.tar.xz
+sum=1287a553868b808ebfff3790a5cdc6fdf7cb2886
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://ftpmirror.gnu.org/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    [[ -r "$srcdir"/$pkgname-$pkgver.patch ]] && \
+      patch -p1 -i "$srcdir"/$pkgname-$pkgver.patch
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-silent-rules
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

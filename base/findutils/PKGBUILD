@@ -1,0 +1,28 @@
+#!/bin/bash
+
+pkgname=findutils
+pkgver=4.6.0
+archive=$pkgname-$pkgver.tar.gz
+sum=f18e8aaee3f3d4173a1f598001003be8706d28b0
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://ftpmirror.gnu.org/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    # disable locate
+    sed -i '/^SUBDIRS/s/locate//' Makefile.in
+    sed -i '/^BUILT_SOURCES/s/dblocation.texi//' doc/Makefile.in
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-nls
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

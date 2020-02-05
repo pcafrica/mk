@@ -1,0 +1,30 @@
+#!/bin/bash
+
+pkgname=cmake
+pkgver=3.11.0
+archive=$pkgname-$pkgver.tar.gz
+sum=7851f87185f80e260ea634d5985ec9215fe408c8
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://www.cmake.org/files/v${pkgver%.*}/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --prefix="$dstdir" --parallel=$pkgJobs \
+                --mandir=/share/man --docdir=/share/doc/cmake \
+                --system-curl --system-expat --no-system-jsoncpp \
+                --system-zlib --system-bzip2 --system-libarchive --no-qt-gui \
+                --sphinx-man
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+  rm -f "$dstdir"/share/man/man1/cmake-gui.1
+}

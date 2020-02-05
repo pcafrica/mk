@@ -1,0 +1,285 @@
+This file contains the list of the packages contained in the base setup of each
+toolchain. The packages are listed in the order of installation, with its own
+dependencies:
+
+  make: no dependencies
+    GNU Make is a tool which controls the generation of executables and other
+    non-source files of a program from the program's source files.
+
+  diffutils: no dependencies
+    GNU Diffutils is a package of several programs related to finding
+    differences between files.
+
+  findutils: no dependencies
+    The GNU Find Utilities are the basic directory searching utilities of the
+    GNU operating system.
+
+  sed: no dependencies
+    sed (stream editor) isn't an interactive text editor.
+
+  m4: no dependencies
+    GNU M4 is an implementation of the traditional Unix macro processor.
+
+  libtool: m4
+    GNU libtool is a generic library support script. Libtool hides the
+    complexity of using shared libraries behind a consistent, portable
+    interface.
+
+  gettext: no dependencies
+    GNU internationalization library.
+
+  libiconv: no dependencies
+    GNU charset conversion library for libc which doesn't implement it.
+
+  flex: m4, libtool
+    Flex is a tool for generating scanners.
+
+  bison: m4
+    Bison is a general-purpose parser generator that converts an annotated
+    context-free grammar into a deterministic LR or generalized LR (GLR)
+    parser employing LALR(1) parser tables.
+
+  db: libtool
+    Berkeley DB is a family of embedded key-value database libraries providing
+    scalable high-performance data management services to applications.
+
+  gdbm: libtool
+    GNU dbm is a set of database routines that use extensible hashing. It works
+    similar to the standard UNIX dbm routines.
+
+  perl: db, gdbm
+    Perl 5 is a highly capable, feature-rich programming language with over 27
+    years of development. Perl 5 runs on over 100 platforms from portables to
+    mainframes and is suitable for both rapid prototyping and large scale
+    development projects.
+
+  gmp: libtool
+    GMP is a free library for arbitrary precision arithmetic, operating on
+    signed integers, rational numbers, and floating-point numbers.
+
+  mpfr: gmp, libtool
+    The MPFR library is a C library for multiple-precision floating-point
+    computations with correct rounding.
+
+  mpc: gmp, mpfr, libtool
+    GNU MPC is a C library for the arithmetic of complex numbers with
+    arbitrarily high precision and correct rounding of the result.
+
+  gawk: mpfr, libtool
+    The awk utility interprets a special-purpose programming language that
+    makes it possible to handle simple data-reformatting jobs with just a few
+    lines of code.
+
+  autoconf: m4, gawk, perl
+    Autoconf is an extensible package of M4 macros that produce shell scripts
+    to automatically configure software source code packages.
+
+  automake: perl, autoconf
+    Automake is a tool for automatically generating Makefile.in files compliant
+    with the GNU Coding Standards.
+
+  pkgconf: automake
+    pkgconf is a program which helps to configure compiler and linker flags for
+    development frameworks. It is similar to pkg-config, but was written from
+    scratch in the summer of 2011 to replace pkg-config.
+
+  ncurses: pkgconf, libtool
+    The Ncurses (new curses) library is a free software emulation of curses in
+    System V Release 4.0, and more.
+
+  readline: ncurses
+    The GNU Readline library provides a set of functions for use by
+    applications that allow users to edit command lines as they are typed in.
+
+  (recompile gawk because of circular dependency gawk <> readline)
+
+  bash: ncurses, readline
+    The Bash package contains the Bourne-Again SHell.
+
+  zlib: no dependencies
+    The zlib compression library provides in-memory compression and
+    decompression functions, including integrity checks of the uncompressed
+    data.
+
+  gzip: no dependencies
+    GNU Gzip is a popular data compression program originally written by
+    Jean-loup Gailly for the GNU project. Mark Adler wrote the decompression
+    part.
+
+  bzip2: no dependencies
+    bzip2 is a freely available, patent free, high-quality data compressor.
+
+  xz: no dependencies
+    XZ Utils is free general-purpose data compression software with high
+    compression ratio. XZ Utils were written for POSIX-like systems, but also
+    work on some not-so-POSIX systems. XZ Utils are the successor to LZMA
+    Utils.
+
+  tar: no dependencies
+    GNU Tar provides the ability to create tar archives, as well as various
+    other kinds of manipulation.
+
+  texinfo: ncurses, perl
+    Texinfo is the official documentation format of the GNU project.
+
+  pcre: bzip2, ncurses, readline, zlib
+    The PCRE library is a set of functions that implement regular expression
+    pattern matching using the same syntax and semantics as Perl 5.
+
+  grep: pcre, texinfo
+    Grep searches one or more input files for lines containing a match to a
+    specified pattern.
+
+  (recompile libtool because of circular dependency libtool <> grep)
+
+  libffi: libtool
+    The libffi library provides a portable, high level programming interface to
+    various calling conventions. This allows a programmer to call any function
+    specified by a call interface description at run time.
+
+  expat: libtool
+    The Expat package contains a stream oriented C library for parsing XML.
+
+  sqlite: libtool, readline
+    SQLite is an in-process library that implements a self-contained,
+    serverless, zero-configuration, transactional SQL database engine.
+
+  openssl: perl
+    The OpenSSL Project is a collaborative effort to develop a robust,
+    commercial-grade, full-featured, and Open Source toolkit implementing the
+    Secure Sockets Layer (SSL v2/v3) and Transport Layer Security (TLS)
+    protocols as well as a full-strength general purpose cryptography library.
+
+  libssh2: openssl, zlib
+    libssh2 is a client-side C library implementing the SSH2 protocol.
+
+  openssh: openssl
+    Free version of the SSH connectivity tools. Used by OpenMPI.
+
+  mpdecimal: no dependencies
+    mpdecimal is a package for correctly-rounded arbitrary precision decimal
+    floating point arithmetic.
+
+  python: bzip2, db, expat, gdbm, libffi, mpdecimal, openssl, sqlite, zlib
+    Python is a general purpose scripting language.
+
+  lua: readline
+    Lua is a powerful, fast, lightweight, embeddable scripting language.
+
+  tcl: zlib
+    Tcl (Tool Command Language) is a very powerful but easy to learn dynamic
+    programming language, suitable for a very wide range of uses, including web
+    and desktop applications, networking, administration, testing and many more.
+
+  swig: lua, pcre, python,tcl
+    SWIG is a software development tool that connects programs written in C and
+    C++ with a variety of high-level programming languages.
+
+  sphinx: python
+    Sphinx is a tool that makes it easy to create intelligent and beautiful
+    documentation.
+
+  icu:
+    ICU is a mature, widely used set of C/C++ and Java libraries providing
+    Unicode and Globalization support for software applications. ICU is widely
+    portable and gives applications the same results on all platforms and
+    between C/C++ and Java software.
+
+  libxml2: icu, python
+    Libxml2 is the XML C parser and toolkit developed for the Gnome project.
+
+  libidn: texinfo
+    GNU Libidn is a fully documented implementation of the Stringprep, Punycode
+    and IDNA specifications. Libidn's purpose is to encode and decode
+    internationalized domain names.
+
+  curl: libidn, libssh2, libtool, openssl, zlib
+    curl is an open source command line tool and library for transferring data
+    with URL syntax.
+
+  libarchive: bzip2, libxml2, openssl, xz, zlib
+    Multi-format archive and compression library.
+
+  ninja: no dependencies
+    Ninja is a small build system with a focus on speed. It differs from other
+    build systems in two major respects: it is designed to have its input files
+    generated by a higher-level build system, and it is designed to run builds
+    as fast as possible.
+
+  cmake: curl, expat, libarchive, ncurses, sphinx, zlib
+    The CMake package contains a modern toolset used for generating Makefiles.
+
+  subversion: db, expat, gdbm, openssl, perl, python, sqlite, zlib
+    Subversion is a version control system that is designed to be a compelling
+    replacement for CVS in the open source community.
+
+  git: curl, expat, openssl, pcre, perl, python, subversion
+    Git is a free and open source distributed version control system designed
+    to handle everything from small to very large projects with speed and
+    efficiency.
+
+  mercurial: python
+    Mercurial is a free, distributed source control management tool. It
+    efficiently handles projects of any size and offers an easy and intuitive
+    interface.
+
+  sharutils: texinfo
+    Makes so-called shell archives out of many files.
+
+  vim: git, lua, python, sharutils, tcl
+    Vim is an advanced text editor that seeks to provide the power of the
+    de-facto Unix editor 'Vi', with a more complete feature set.
+
+  emacs: libxml2, ncurses, perl
+    GNU Emacs is an extensible, customizable text editor—and more.
+
+  libevent: openssl, python
+    The libevent API provides a mechanism to execute a callback function when a
+    specific event occurs on a file descriptor or after a timeout has been
+    reached. Furthermore, libevent also support callbacks due to signals or
+    regular timeouts.
+
+  tmux: libevent, ncurses
+    tmux is a terminal multiplexer.
+
+  htop: ncurses
+    htop is an interactive process viewer for Linux.
+
+  gdb: expat, ncurses, python, texinfo, zlib
+    The GNU Debugger.
+
+  libnl: no dependencies
+    Library for applications dealing with netlink sockets.
+    ATTENTION: do not upgrade to version 3.2.28
+
+  hwloc: icu, libtool, libxml2, xz, zlib
+    Portable Hardware Locality is a portable abstraction of hierarchical
+    architectures.
+
+  openmpi: hwloc, libnl, libtool, valgrind
+    The Open MPI Project is an open source Message Passing Interface
+    implementation that is developed and maintained by a consortium of
+    academic, research, and industry partners.
+    It contains the support for job schedulers and Inifiband hardware.
+
+  valgrind: gdb, openmpi, perl
+    Valgrind is an instrumentation framework for building dynamic analysis
+    tools. There are Valgrind tools that can automatically detect many memory
+    management and threading bugs, and profile your programs in detail. You can
+    also use Valgrind to build new tools.
+
+  (recompile openmpi because of circular dependency opempi <> valgrind)
+
+  patchelf: autoconf
+    A small utility to modify the dynamic linker and RPATH of ELF executables.
+
+  chrpath: no dependencies
+    Command line tool to adjust the RPATH or RUNPATH of ELF binaries.
+
+  pax-utils: python
+    ELF related utils for ELF 32/64 binaries that can check files for security
+    relevant properties.
+
+  unrar:
+    The UnRar package contains a RAR extraction utility used for extracting
+    files from RAR archives.

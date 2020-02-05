@@ -1,0 +1,108 @@
+#!/bin/bash
+
+pkgname=hdf5
+pkgver=1.8.20
+_pkgver=${pkgver%.*}
+archive=$pkgname-$pkgver.tar.bz2
+sum=21d689a04eb20ad6ea9e422b6e10f7f288d8b516
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+szipver=2.1.1
+sziparchive=szip-$szipver.tar.gz
+szipsum=434931cfe47e9b0730ea85fa5e25477bafd9704a
+
+h5pyver=2.7.1
+h5pyarchive=$h5pyver.tar.gz
+h5pysum=bacde8f374bb879aeae5da463eee650cd423dce0
+
+package() {
+  download https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-${_pkgver}/hdf5-${pkgver}/src/$archive
+  download https://support.hdfgroup.org/ftp/lib-external/szip/$szipver/src/$sziparchive
+  download https://github.com/h5py/h5py/archive/$h5pyarchive
+
+  check $archive $sum
+  check $sziparchive $szipsum
+  check $h5pyarchive $h5pysum
+
+  extract $archive
+  extract $sziparchive
+  extract $h5pyarchive
+
+  # szip
+  pushd szip-$szipver
+    message "Configuring szip"
+    ./configure --prefix="$dstdir" \
+                --enable-shared \
+                --disable-static
+    message "Building szip"
+    make
+    message "Installing szip"
+    make install
+  popd
+
+  # hdf5
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    CC=mpicc \
+    FC=mpifort \
+    ./configure --disable-silent-rules \
+                --prefix="$dstdir" \
+                --enable-shared \
+                --disable-sharedlib-rpath \
+                --disable-static \
+                --enable-fortran \
+                --enable-parallel=yes \
+                --enable-production=yes \
+                --with-zlib \
+                --with-szlib="$dstdir/lib"
+    message "Compiling $pkgname"
+    make
+    message "Installing $pkgname"
+    make install
+  popd
+
+  # h5py
+  module load scipy
+  pushd h5py-$h5pyver
+    message "Configuring h5py"
+    python setup.py configure --mpi --hdf5="$dstdir"
+    message "Building h5py"
+    python setup.py build
+    message "Installing h5py"
+    install -d -m0755 "$dstdir/lib/python3.6/site-packages"
+    PYTHONPATH="$dstdir/lib/python3.6/site-packages:$PYTHONPATH" \
+    python setup.py install --prefix="$dstdir"
+  popd
+
+  # cleaning
+  rm -rf "$dstdir"/share
+  reset_rpath "$dstdir"/bin
+  reset_rpath "$dstdir"/lib
+  strip "$dstdir"/bin
+  strip "$dstdir"/lib
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("HDF5 is a data model, library, and file format for storing and managing data")
+help([[
+The HDF5 library is installed in "\$mkHdf5Prefix" directory, the dynamic
+libraries are located in "\$mkHdf5Lib" directory and header files in
+"\$mkHdf5Inc".
+
+url: https://www.hdfgroup.org/HDF5/
+]])
+
+load("scipy")
+
+setenv("mkHdf5Prefix", "$dstdir")
+setenv("mkHdf5Lib", "$dstdir/lib")
+setenv("mkHdf5Inc", "$dstdir/include")
+
+prepend_path("PATH", "$dstdir/bin")
+prepend_path("PYTHONPATH", "$dstdir/lib/python3.6/site-packages")
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+EOF
+  fi
+}

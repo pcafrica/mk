@@ -1,0 +1,30 @@
+#!/bin/bash
+
+pkgname=libtool
+pkgver=2.4.6
+archive=$pkgname-$pkgver.tar.gz
+sum=25b6931265230a06f0fc2146df64c04e5ae6ec33
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://ftpmirror.gnu.org/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    # lt_cv_sys_lib_search_path_spec
+    # lt_cv_sys_lib_dlsearch_path_spec
+    #   Paths where the linker and dynamic linker search by default.
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-shared \
+      lt_cv_sys_lib_search_path_spec="$mkToolchainPrefix/lib $mkToolchainBase/lib" \
+      lt_cv_sys_lib_dlsearch_path_spec="$mkToolchainPrefix/lib $mkToolchainBase/lib"
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

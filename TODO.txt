@@ -1,0 +1,21 @@
+Bootstrap
+=========
+   * updating the bootstrap, using busybox-1.28.0 and lua-5.3.4
+
+Base
+====
+   * add ninja to base
+   * add gettext to base (used by subversion)
+   * move from makefile to bash script for compiling base
+   * fix pax-utils, lddtree does not work properly with shared libraries, it does
+     not detect the proper dynamic loader
+
+Other
+=====
+ * pastix package (openblas + scotch)
+
+ * getfem package
+ * fenics package (missing PASTIX, QT, VTK)
+
+ * clang toolchain
+ * texlive package

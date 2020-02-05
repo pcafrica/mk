@@ -1,0 +1,26 @@
+#!/bin/bash
+
+pkgname=hwloc
+pkgver=1.11.9
+archive=$pkgname-$pkgver.tar.bz2
+sum=f403351c2ab08e4a1bef24f466a6e992feb8b0b8
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://www.open-mpi.org/software/hwloc/v${pkgver%.*}/downloads/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-silent-rules \
+                --without-x
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

@@ -1,0 +1,211 @@
+#!/bin/bash
+
+pkgname=trilinos
+pkgver=12.10.1
+archive=$pkgname-$pkgver-Source.tar.bz2
+sum=0625b6994b42e8ab3ae608afbf1032ce97f9493c
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download http://trilinos.csbsju.edu/download/files/$archive
+  check $archive $sum
+  extract $archive
+
+  module load blacs
+  module load boost
+  module load eigen
+  module load glpk
+  module load hdf5
+  module load hypre
+  module load matio
+  module load metis
+  module load mumps
+  module load netcdf
+  module load openblas
+  module load scalapack
+  module load scipy
+  module load scotch
+  module load suitesparse
+  module load tbb
+
+  pushd $pkgname-$pkgver-Source
+    [[ -r "$srcdir"/$pkgname-$pkgver.patch ]] && \
+      patch -p1 -i "$srcdir"/$pkgname-$pkgver.patch
+  popd
+
+  mkdir build
+  pushd build
+    message "Configuring $pkgname"
+    # NOX_ENABLE_PETSC=OFF
+    #  See: https://github.com/trilinos/Trilinos/issues/1773
+    cmake -D CMAKE_INSTALL_PREFIX="$dstdir" \
+          -D CMAKE_SKIP_INSTALL_RPATH=ON \
+          -D CMAKE_SKIP_RPATH=ON \
+          -D BUILD_SHARED_LIBS=ON \
+          -D Trilinos_ENABLE_ALL_PACKAGES=OFF \
+          -D Trilinos_ENABLE_ALL_OPTIONAL_PACKAGES=OFF \
+          -D Trilinos_ENABLE_TESTS=OFF \
+          -D Trilinos_ENABLE_EXAMPLES=OFF \
+          -D Trilinos_ENABLE_Amesos=ON \
+          -D Trilinos_ENABLE_Amesos2=ON \
+          -D Trilinos_ENABLE_Anasazi=ON \
+          -D Trilinos_ENABLE_AztecOO=ON \
+          -D Trilinos_ENABLE_Belos=ON \
+          -D Trilinos_ENABLE_Epetra=ON \
+          -D Trilinos_ENABLE_EpetraExt=ON \
+          -D Trilinos_ENABLE_Ifpack=ON \
+          -D Trilinos_ENABLE_Ifpack2=ON \
+          -D Trilinos_ENABLE_Isorropia=ON \
+          -D Trilinos_ENABLE_ML=ON \
+          -D Trilinos_ENABLE_MueLu=ON \
+          -D Trilinos_ENABLE_NOX=ON \
+          -D Trilinos_ENABLE_Rythmos=ON \
+          -D Trilinos_ENABLE_Sacado=ON \
+          -D Trilinos_ENABLE_ShyLU=ON \
+          -D Trilinos_ENABLE_Stokhos=ON \
+          -D Trilinos_ENABLE_Stratimikos=ON \
+          -D Trilinos_ENABLE_Teko=ON \
+          -D Trilinos_ENABLE_Teuchos=ON \
+          -D Trilinos_ENABLE_Thyra=ON \
+          -D Trilinos_ENABLE_Tpetra=ON \
+          -D Trilinos_ENABLE_Zoltan=ON \
+          -D TPL_ENABLE_AMD=ON \
+            -D AMD_INCLUDE_DIRS="$mkSuitesparseInc" \
+            -D AMD_LIBRARY_DIRS="$mkSuitesparseLib" \
+          -D TPL_ENABLE_BLAS=ON \
+            -D BLAS_INCLUDE_DIRS="$mkOpenblasInc" \
+            -D BLAS_LIBRARY_DIRS="$mkOpenblasLib" \
+            -D BLAS_LIBRARY_NAMES=openblas \
+          -D TPL_ENABLE_BLACS=ON \
+            -D BLACS_INCLUDE_DIRS="$mkBlacsInc" \
+            -D BLACS_LIBRARY_DIRS="$mkBlacsLib" \
+          -D TPL_ENABLE_Boost=ON \
+            -D Boost_INCLUDE_DIRS="$mkBoostInc" \
+          -D TPL_ENABLE_BoostLib=ON \
+            -D BoostLib_INCLUDE_DIRS="$mkBoostInc" \
+            -D BoostLib_LIBRARY_DIRS="$mkBoostLib" \
+          -D TPL_ENABLE_BoostAlbLib=ON \
+            -D BoostAlbLib_INCLUDE_DIRS="$mkBoostInc" \
+            -D BoostAlbLib_LIBRARY_DIRS="$mkBoostLib" \
+          -D TPL_ENABLE_Cholmod=ON \
+            -D Cholmod_INCLUDE_DIRS="$mkSuitesparseInc" \
+            -D Cholmod_LIBRARY_DIRS="$mkSuitesparseLib" \
+          -D TPL_ENABLE_Eigen=ON \
+            -D Eigen_INCLUDE_DIRS="$mkEigenInc" \
+          -D TPL_ENABLE_GLPK=ON \
+            -D GLPK_INCLUDE_DIRS="$mkGlpkInc" \
+            -D GLPK_LIBRARY_DIRS="$mkGlpkLib" \
+          -D TPL_ENABLE_HDF5=ON \
+            -D HDF5_INCLUDE_DIRS="$mkHdf5Inc" \
+            -D HDF5_LIBRARY_DIRS="$mkHdf5Lib" \
+          -D TPL_ENABLE_HWLOC=ON \
+          -D TPL_ENABLE_HYPRE=ON \
+            -D HYPRE_INCLUDE_DIRS="$mkHypreInc" \
+            -D HYPRE_LIBRARY_DIRS="$mkHypreLib" \
+          -D TPL_ENABLE_LAPACK=ON \
+            -D LAPACK_INCLUDE_DIRS="$mkOpenblasInc" \
+            -D LAPACK_LIBRARY_DIRS="$mkOpenblasLib" \
+            -D LAPACK_LIBRARY_NAMES=openblas \
+          -D TPL_ENABLE_Matio=ON \
+            -D Matio_INCLUDE_DIRS="$mkMatioInc" \
+            -D Matio_LIBRARY_DIRS="$mkMatioLib" \
+          -D TPL_ENABLE_METIS=ON \
+            -D METIS_INCLUDE_DIRS="$mkMetisInc" \
+            -D METIS_LIBRARY_DIRS="$mkMetisLib" \
+          -D TPL_ENABLE_MPI=ON \
+          -D TPL_ENABLE_MUMPS=ON \
+            -D MUMPS_INCLUDE_DIRS="$mkMumpsInc" \
+            -D MUMPS_LIBRARY_DIRS="$mkMumpsLib;$mkScotchLib" \
+            -D MUMPS_LIBRARY_NAMES="smumps;dmumps;cmumps;zmumps;mumps_common;pord;ptscotcherr" \
+          -D TPL_ENABLE_Netcdf=ON \
+            -D Netcdf_INCLUDE_DIRS="$mkNetcdfInc" \
+            -D Netcdf_LIBRARY_DIRS="$mkNetcdfLib" \
+          -D TPL_ENABLE_ParMETIS=ON \
+            -D ParMETIS_INCLUDE_DIRS="$mkMetisInc" \
+            -D ParMETIS_LIBRARY_DIRS="$mkMetisLib" \
+          -D TPL_ENABLE_Pthread=ON \
+          -D TPL_ENABLE_SCALAPACK=ON \
+            -D SCALAPACK_LIBRARY_DIRS="$mkScalapackLib" \
+          -D TPL_ENABLE_Scotch=ON \
+            -D Scotch_INCLUDE_DIRS="$mkScotchInc" \
+            -D Scotch_LIBRARY_DIRS="$mkScotchLib" \
+          -D TPL_ENABLE_TBB=ON \
+            -D TBB_INCLUDE_DIRS="$mkTbbInc" \
+            -D TBB_LIBRARY_DIRS="$mkTbbLib" \
+          -D TPL_ENABLE_UMFPACK=ON \
+            -D UMFPACK_INCLUDE_DIRS="$mkSuitesparseInc" \
+            -D UMFPACK_LIBRARY_DIRS="$mkSuitesparseLib" \
+          -D TPL_ENABLE_X11=OFF \
+          -D TPL_ENABLE_Zlib=ON \
+          ../$pkgname-$pkgver-Source
+          # FIXME KLU2 is not compatible with CGAL (definition of EMPTY macro)
+          # module load cgal
+          # -D TPL_ENABLE_CGAL=ON \
+          #   -D CGAL_INCLUDE_DIRS="$mkCgalInc" \
+          #   -D CGAL_LIBRARY_DIRS="$mkCgalLib" \
+          # FIXME segmentation fault
+          # -D TPL_ENABLE_BinUtils=ON \
+          #   -D BinUtils_LIBRARY_NAMES="bfd;iberty;z;dl" \
+          # FIXME Trilinos use an old SuperLU version
+          # module load superlu
+          # -D TPL_ENABLE_SuperLU=ON \
+          #   -D SuperLU_INCLUDE_DIRS="$mkSuperluInc" \
+          #   -D SuperLU_LIBRARY_DIRS="$mkSuperluLib" \
+          # -D TPL_ENABLE_SuperLUDist=ON \
+          #   -D SuperLUDist_INCLUDE_DIRS="$mkSuperluInc" \
+          #   -D SuperLUDist_LIBRARY_DIRS="$mkSuperluLib" \
+          # -D TPL_ENABLE_SuperLUMT=ON \
+          #   -D SuperLUMT_INCLUDE_DIRS="$mkSuperluInc" \
+          #   -D SuperLUMT_LIBRARY_DIRS="$mkSuperluLib" \
+    message "Compiling $pkgname"
+    make VERBOSE=1
+  popd
+}
+
+package() {
+  make -C build install
+
+  strip "$dstdir/bin"
+  strip "$dstdir/lib"
+  reset_rpath "$dstdir/bin"
+  reset_rpath "$dstdir/lib"
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("Algorithms for the solution of large-scale, multi-physics engineering and scientific problems")
+help([[
+The Trilinos framework is installed in "\$mkTrilinosPrefix" directory, the
+dynamic libraries are located in "\$mkTrilinosLib" directory and headers files
+in "\$mkTrilinosInc".
+
+url: https://trilinos.org/
+]])
+
+load("blacs")
+load("boost")
+load("eigen")
+load("glpk")
+load("hdf5")
+load("hypre")
+load("matio")
+load("metis")
+load("mumps")
+load("netcdf")
+load("openblas")
+load("scalapack")
+load("scipy")
+load("scotch")
+load("suitesparse")
+load("tbb")
+
+setenv("mkTrilinosPrefix", "$dstdir")
+setenv("mkTrilinosLib", "$dstdir/lib")
+setenv("mkTrilinosInc", "$dstdir/include")
+
+prepend_path("PATH", "$dstdir/bin")
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+EOF
+  fi
+}

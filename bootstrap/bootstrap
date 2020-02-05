@@ -1,0 +1,449 @@
+#!/bin/bash
+
+# Copyright (c) 2015, Mattia Penati <mattia.penati@gmail.com>
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+#  1. Redistributions of source code must retain the above copyright notice,
+#     this list of conditions and the following disclaimer.
+#
+#  2. Redistributions in binary form must reproduce the above copyright notice,
+#     this list of conditions and the following disclaimer in the documentation
+#     and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+# source the configuration
+# =============================================================================
+DIR=$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)
+. $DIR/bootstrap.conf
+
+# check for the dependencies: curl, tar, gzip, bzip2
+# =============================================================================
+for cmd in wget tar gzip bzip2; do
+  hash $cmd &> /dev/null
+  if [[ $? -ne 0 ]]; then
+    echo "Unable to meet the requirement '$cmd'" 1>&2
+    exit 1
+  fi
+done
+
+error() {
+  echo "$@" 1>&2
+}
+
+prompt() {
+  while true; do
+    read -p "$@ [y/n] " yn
+    case $yn in
+      [Yy]*) return 0;;
+      [Nn]*) return 1;;
+      *) echo "Please answer yes or no.";;
+    esac
+  done
+}
+
+download() {
+  local url=$1
+  local output=$2
+  [[ -z "$output" ]] && output=$(basename $url)
+  case "$1" in
+    http*|ftp*)
+      wget --no-check-certificate $url -O $output;;
+    *)      error "Unknown protocol for '$1'"; exit 1;;
+  esac
+}
+
+mktmpdir() {
+  echo "$(mktemp -d)"
+}
+
+extract() {
+  case "$1" in
+    *.tgz|*.tar.gz)  tar -xzf $1;;
+    *.tar.bz2)       tar -xjf $1;;
+    *.tar.xz)        tar -xJf $1;;
+    *)               error "Unsupported archive '$1'"; exit 1;;
+  esac
+}
+
+usage() {
+  echo "Bootstrap or update the module system."
+  echo ""
+  echo "Usage:"
+  echo "  bootstrap [options] <prefix>"
+  echo "  bootstrap -h | --help"
+  echo "  bootstrap -v | --version"
+  echo ""
+  echo "Options:"
+  echo "  -h | --help     Show this help message"
+  echo "  -v | --version  Show version"
+  echo "  --update        Update the system instead of to install a new one."
+  echo "                  The configuration files are keeped untouched."
+  echo ""
+}
+
+version() {
+  echo "bootstrap script for mk (version $mk_version)"
+}
+
+# optional flags (default values)
+PREFIX=
+UPDATE=no
+USER=$(id -un)
+GROUP=$(id -gn)
+
+# checking the system
+# =============================================================================
+ALPINE_LINUX=no
+if [[ -e /etc/alpine-release ]]; then
+  ALPINE_LINUX=yes
+fi
+
+COMPILE_MUSL_LIBC=yes
+# alpine linux can already create static executable without strange issues
+if [[ $ALPINE_LINUX = "yes" ]]; then
+  COMPILE_MUSL_LIBC=no
+fi
+
+# parse command line arguments
+# =============================================================================
+if [[ -z "$@" ]]; then
+  usage; exit 0
+fi
+while true; do
+  case "$1" in
+    -h|--help)    usage; exit 0;;
+    -v|--version) version; exit 0;;
+    --update)     UPDATE=yes;;
+    -*)           error "Invalid option '$1'"; exit 1;;
+    *)            break;;
+  esac
+  shift
+done
+PREFIX=$1
+shift
+if [[ -z "$PREFIX" ]]; then
+  error "Missing prefix"
+  exit 1
+fi
+if [[ -n "$@" ]]; then
+  error "Unknown arguments '$@'"
+  exit 1
+fi
+
+# setting the traps
+# =============================================================================
+die() {
+  local signal=$1; shift
+  local tmpdir=$2; shift
+  rm -rf $tmpdir &> /dev/null || true
+  error "Aborting... ($signal)"
+
+  trap - "$signal"
+  kill "-$signal" "$$"
+}
+error_exit() {
+  local tmpdir=$1; shift
+  rm -rf "$tmpdir"
+
+  trap - EXIT
+  exit 1
+}
+for signal in EXIT TERM HUP QUIT; do
+  trap "die $signal $TMPDIR" "$signal"
+done
+trap "error_exit $TMPDIR" ERR
+
+# check the prefix directory
+# =============================================================================
+if [[ -d $PREFIX ]]; then
+  # update process
+  if [[ $UPDATE = "yes" ]]; then
+    # check if a previous installation exists
+    for dir in bin etc lmod sbin; do
+      if [[ ! -d $PREFIX/$dir ]]; then
+        error "The directory does not contain any valid installation."
+        exit 1
+      fi
+    done
+  # directory is not empty
+  elif [[ -n "$(ls -A $PREFIX)" ]]; then
+    if prompt "Directory '$PREFIX' is not empty. Do you want to remove its content?"; then
+      rm -rf $PREFIX/*
+    else
+      echo "Aborting..."; exit 1
+    fi
+  fi
+  # fix the permissions
+  chown -v $USER:$GROUP $PREFIX
+  chmod -v 0755 $PREFIX
+else
+  # exists but is not a directory
+  if [[ -e $PREFIX ]]; then
+    if [[ $UPDATE = "yes" ]]; then
+      echo "You cannot update a non existing installation!"
+      UPDATE=no
+    fi
+    if prompt "File '$PREFIX' already exists. Do you want to remove it?'"; then
+      rm -v $PREFIX
+    fi
+  fi
+  install -vd -m 0755 $PREFIX
+fi
+
+# create filesystem hierarchy
+# =============================================================================
+if [[ $UPDATE = "yes" ]]; then
+  rm -rf "$PREFIX"/{bin,lmod,sbin,share}
+fi
+install -vd -m 0755 $PREFIX/{bin,etc,lmod,modules,pkgs}
+
+# prepare the temporary directory
+# =============================================================================
+TMPDIR=$(mktmpdir)
+install -d "$TMPDIR/src"
+pushd "$TMPDIR/src"
+
+# setting the default compiler
+# =============================================================================
+if [[ -z ${CC+x} ]]; then
+  CC=gcc
+fi
+ARCH=$(uname -m)
+
+# check if the -static flag is accepted
+# =============================================================================
+echo "int main() { return 0; }" | $CC -o hello -x c - &> /dev/null
+if [[ $COMPILE_MUSL_LIBC = "yes" && ( $? -ne 0 || $ARCH == "x86_64" ) ]]; then
+  # install the muslc for static linking
+  # =====================================================================
+  pkgname=musl
+  pkgver=$musl_version
+  download http://www.musl-libc.org/releases/$pkgname-$pkgver.tar.gz
+  extract $pkgname-$pkgver.tar.gz
+  pushd $pkgname-$pkgver
+    # Power64 patch
+    CFLAGS="-O2" ./configure --prefix="$TMPDIR" --disable-shared; make install
+  popd
+
+  pkgname=kernel-headers
+  pkgver=$kernel_version
+  download https://github.com/sabotage-linux/$pkgname/archive/v$pkgver.tar.gz
+  extract v$pkgver.tar.gz
+  pushd $pkgname-$pkgver
+    make ARCH=$ARCH prefix="$TMPDIR" install
+  popd
+
+  CC="$TMPDIR/bin/musl-gcc"
+fi
+rm -f hello
+
+
+# install the administration tools: chrpath, bash, busybox and file
+# =============================================================================
+pkgname=chrpath
+pkgver=$chrpath_version
+download https://alioth.debian.org/frs/download.php/latestfile/813/$pkgname-$pkgver.tar.gz
+extract $pkgname-$pkgver.tar.gz
+pushd $pkgname-$pkgver
+  CC="$CC" \
+  CFLAGS="-Os" LDFLAGS="-static" \
+  ./configure
+  make
+  strip --strip-unneeded chrpath
+  install -vm 0755 chrpath "$PREFIX/bin/chrpath"
+popd
+
+pkgname=netbsd-curses
+pkgver=$curses_version
+download http://ftp.barfooze.de/pub/sabotage/tarballs/$pkgname-$pkgver.tar.xz 
+extract $pkgname-$pkgver.tar.xz
+pushd $pkgname-$pkgver
+  echo "PREFIX=$TMPDIR" > config.mak
+  make CC=$CC CFLAGS="-Os" LDFLAGS="-static" all-static install-static
+popd
+install -vm 0755 "$TMPDIR/bin/tput" "$PREFIX/bin/tput"
+
+pkgname=bash
+pkgver=$bash_version
+download http://ftpmirror.gnu.org/$pkgname/$pkgname-$pkgver.tar.gz
+extract $pkgname-$pkgver.tar.gz
+pushd $pkgname-$pkgver
+  for patch in {1..19}; do
+    patchfile=$pkgname${pkgver//.}-$(printf "%03d" $patch)
+    download http://ftpmirror.gnu.org/$pkgname/$pkgname-$pkgver-patches/$patchfile
+    patch -p0 -i $patchfile
+  done
+  _cflags=( \
+    -DDEFAULT_PATH_VALUE=\'\"${PREFIX}/bin:/usr/bin:/bin\"\' \
+    -DSYS_BASHRC=\'\"${PREFIX}/etc/bash.bashrc\"\' \
+    -DSYS_BASH_LOGOUT=\'\"${PREFIX}/etc/bash.bash_logout\"\'
+  )
+  CC="$CC -L$TMPDIR/lib" \
+  CFLAGS="-Os -static ${_cflags[@]}" \
+  LDFLAGS="-static -L$TMPDIR/lib" \
+  LIBS="-lterminfo" \
+  ./configure --prefix="$PREFIX" --without-bash-malloc \
+    --disable-nls --enable-readline --with-curses --enable-static-link
+  # This avoid the usage of the dynamic linker in alpine linux
+  if [[ $ALPINE_LINUX = "yes" ]]; then
+    sed -e "s:-rdynamic::g" -i Makefile
+    sed -e "s:-rdynamic::g" -i builtins/Makefile
+  fi
+  make
+  strip --strip-unneeded bash
+  install -vm 0755 bash "$PREFIX/bin/bash"
+popd
+
+pkgname=bash-completion
+pkgver=$bash_completion_version
+download https://github.com/scop/bash-completion/releases/download/$pkgver/$pkgname-$pkgver.tar.xz
+extract $pkgname-$pkgver.tar.xz
+pushd $pkgname-$pkgver
+  ./configure --prefix="$PREFIX"
+  make install
+popd
+
+pkgname=busybox
+pkgver=$busybox_version
+download http://busybox.net/downloads/$pkgname-$pkgver.tar.bz2
+extract $pkgname-$pkgver.tar.bz2
+pushd $pkgname-$pkgver
+  # see http://www.openwall.com/lists/musl/2012/10/08/2
+  [[ -r $DIR/$pkgname-$pkgver.patch ]] && patch -p1 -i $DIR/$pkgname-$pkgver.patch
+  cp -v $DIR/$pkgname-$pkgver.config .config
+  make V=1 CC="$CC" LDFLAGS="-static"
+  install -vm 0755 busybox "$PREFIX/bin/busybox"
+popd
+
+for bin in basename sha1sum md5sum realpath patch expr tr; do
+  ln -sv busybox "$PREFIX/bin/$bin"
+done
+
+pkgname=file
+pkgver=$file_version
+download ftp://ftp.astron.com/pub/file/$pkgname-$pkgver.tar.gz
+extract $pkgname-$pkgver.tar.gz
+pushd $pkgname-$pkgver
+  CC="$CC" \
+  CFLAGS="-Os" \
+  LDFLAGS="-static" \
+  ./configure --prefix="$PREFIX" --disable-shared --enable-static
+  AM_LDFLAGS="-all-static" make
+  strip --strip-unneeded src/file
+  install -vm 0755 src/file "$PREFIX/bin/file"
+  install -vm 0755 -d "$PREFIX/share/misc"
+  install -vm 0644 magic/magic.mgc "$PREFIX/share/misc/magic.mgc"
+popd
+
+
+# compose the lua source (static)
+# =============================================================================
+mkdir -vp lua/{src,include}
+
+pkgname=lua
+pkgver=$lua_version
+download http://www.lua.org/ftp/$pkgname-$pkgver.tar.gz
+extract $pkgname-$pkgver.tar.gz
+cp $pkgname-$pkgver/src/*.c lua/src
+cp $pkgname-$pkgver/src/*.h lua/include
+
+download https://raw.githubusercontent.com/antirez/linenoise/master/linenoise.c \
+         lua/src/linenoise.c
+download https://raw.githubusercontent.com/antirez/linenoise/master/linenoise.h \
+         lua/include/linenoise.h
+download https://raw.githubusercontent.com/hoelzro/lua-linenoise/master/linenoise.c \
+         lua/src/linenoise-lua.c
+
+download https://raw.githubusercontent.com/keplerproject/luafilesystem/master/src/lfs.c \
+         lua/src/lfs.c
+download https://raw.githubusercontent.com/keplerproject/luafilesystem/master/src/lfs.h \
+         lua/include/lfs.h
+
+download https://raw.githubusercontent.com/stevedonovan/luabuild/master/modules/luaposix/lua52compat.h \
+         lua/include/lua52compat.h
+download https://raw.githubusercontent.com/stevedonovan/luabuild/master/modules/luaposix/lposix.c \
+         lua/src/lposix.c
+
+sed -e "s:/usr/local:$PREFIX:g" -i lua/include/luaconf.h
+sed '13,17d' -i lua/include/lua52compat.h
+cat > lua/include/config.h << EOF
+#define VERSION "5.1.20"
+#define HAVE_STATVFS 1
+#define HAVE_SYS_STATVFS_H 1
+EOF
+
+CFLAGS="-O2 -Wall -DLUA_USE_POSIX -DLUA_COMPAT_5_2 -DLUA_USE_LINENOISE"
+CPPFLAGS="-I$(pwd)/lua/include"
+LDFLAGS="-Wl,-s -Wl,-E -static -lc -lm"
+if [[ $ALPINE_LINUX = yes ]]; then
+  LDFLAGS="-static"
+fi
+pushd lua/src
+  [[ -r $DIR/$pkgname-$pkgver.patch ]] && \
+    patch -p1 -i $DIR/$pkgname-$pkgver.patch
+  for file in $(ls -A); do
+    $CC $CPPFLAGS $CFLAGS -c $file
+  done
+  $CC $(ls *.o | grep -v ^luac.o) $LDFLAGS -o lua
+  $CC $(ls *.o | grep -v ^lua.o) $LDFLAGS -o luac
+  install -m 0755 lua "$PREFIX/bin/lua"
+  install -m 0755 luac "$PREFIX/bin/luac"
+popd
+
+# Lmod
+# =============================================================================
+pkgname=Lmod
+pkgver=$lmod_version
+download https://github.com/TACC/Lmod/archive/$pkgver.tar.gz
+extract $pkgver.tar.gz
+pushd $pkgname-$pkgver
+  [[ -r $DIR/$pkgname-$pkgver.patch ]] && patch -p1 -i $DIR/$pkgname-$pkgver.patch
+  PATH=$PREFIX/bin:$PATH \
+  ./configure --prefix="$PREFIX" --without-tcl \
+              --with-lua_include="$TMPDIR"/src/lua/include \
+              --with-module-root-path="$PREFIX"/modules \
+              LUAC_PATH="$PREFIX"/bin/luac \
+              pager="$PREFIX"/bin/less \
+              luaprog="$PREFIX"/bin/lua
+  make install
+popd
+
+# cleaning up
+# =============================================================================
+popd
+rm -rf "$PREFIX"/share/{cmake,man,pkgconfig}
+rm -rf "$PREFIX"/{lib,include}
+rm -rf "$TMPDIR"
+
+# configuration scripts
+# =============================================================================
+for src in $(find "$DIR" -name \*.in | sed "s#$DIR/##"); do
+  echo "Installing $PREFIX/etc/${src%.*}"
+  sed -e "s:%PREFIX%:$PREFIX:g" "$DIR"/$src > "$PREFIX"/etc/${src%.*}
+done
+if [[ $UPDATE = "no" ]]; then
+  sed -e "s:%PREFIX%:$PREFIX:g" "$DIR"/../mk.config.in > "$PREFIX"/etc/mk.config
+fi
+install -dm 0755 "$PREFIX/sbin"
+for exe in mkpkg mkcheck; do
+  install -m 0755 "$DIR/../$exe" "$PREFIX/sbin/$exe"
+  sed -e "1s;^;#!$PREFIX/bin/bash\n;" -i "$PREFIX/sbin/$exe"
+done
+
+# exit without problems
+trap - EXIT
+exit 0

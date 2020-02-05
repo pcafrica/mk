@@ -1,0 +1,25 @@
+#!/bin/bash
+
+pkgname=libevent
+pkgver=2.1.8
+archive=$pkgname-$pkgver-stable.tar.gz
+sum=f3eeaed018542963b7d2416ef1135ecc
+url=https://github.com/$pkgname/$pkgname/releases/download/release-$pkgver-stable/
+dstdir=$mkToolchainBase
+
+build() {
+  download $url/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver-stable
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-static
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver-stable install
+}

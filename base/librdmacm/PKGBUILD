@@ -1,0 +1,26 @@
+#!/bin/bash
+
+pkgname=librdmacm
+pkgver=1.1.0
+archive=$pkgname-${pkgver}.tar.gz
+sum=d38867c3c7501471797f9bc952212d0c68cd3e50
+
+dstdir=$mkToolchainBase
+
+build() {
+  download https://www.openfabrics.org/downloads/rdmacm/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" \
+                --disable-silent-rules --disable-static
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

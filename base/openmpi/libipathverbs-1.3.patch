@@ -1,0 +1,34 @@
+diff -Naur a/Makefile.am b/Makefile.am
+--- a/Makefile.am	2014-07-23 20:52:55.000000000 +0000
++++ b/Makefile.am	2016-08-02 22:07:21.159461000 +0000
+@@ -65,15 +65,6 @@
+ 
+ 
+ sbin_SCRIPTS = truescale-serdes.cmds
+-if HAS_DRACUT
+-EXTRA_DIST += dracut_check dracut_install dracut_kmod
+-dracutdir = $(DESTDIR)$(shell rpm -ql dracut | grep dracut-functions$$ | sed 's/dracut-functions//')modules.d/90qib
+-
+-install-data-local: dracut_check dracut_install dracut_kmod
+-	$(INSTALL) -D -m 755 dracut_check $(dracutdir)/check
+-	$(INSTALL) -D -m 755 dracut_install $(dracutdir)/install
+-	$(INSTALL) -D -m 755 dracut_kmod $(dracutdir)/installkernel
+-endif
+ 
+ dist-hook: libipathverbs.spec
+ 	cp libipathverbs.spec $(distdir)
+diff -Naur a/Makefile.in b/Makefile.in
+--- a/Makefile.in	2014-07-23 21:20:14.000000000 +0000
++++ b/Makefile.in	2016-08-02 22:07:28.475835808 +0000
+@@ -900,11 +900,6 @@
+ 	uninstall-sbinSCRIPTS
+ 
+ 
+-@HAS_DRACUT_TRUE@install-data-local: dracut_check dracut_install dracut_kmod
+-@HAS_DRACUT_TRUE@	$(INSTALL) -D -m 755 dracut_check $(dracutdir)/check
+-@HAS_DRACUT_TRUE@	$(INSTALL) -D -m 755 dracut_install $(dracutdir)/install
+-@HAS_DRACUT_TRUE@	$(INSTALL) -D -m 755 dracut_kmod $(dracutdir)/installkernel
+-
+ dist-hook: libipathverbs.spec
+ 	cp libipathverbs.spec $(distdir)
+ 

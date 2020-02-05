@@ -1,0 +1,31 @@
+#!/bin/bash
+
+pkgname=libffi
+pkgver=3.2.1
+archive=v$pkgver.tar.gz
+sum=9066486bcab807f7ddaaf2596348c1db
+
+dstdir=$mkToolchainBase
+
+build() {
+  download https://github.com/libffi/libffi/archive/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    ./autogen.sh
+    # install the headers file in the proper position
+    sed -e '/^includesdir/ s/$(libdir).*$/$(includedir)/' \
+        -i include/Makefile.in
+    sed -e '/^includedir/ s/=.*$/=@includedir@/' \
+        -i libffi.pc.in
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-static
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

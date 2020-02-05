@@ -1,0 +1,53 @@
+#!/bin/bash
+
+pkgname=autoconf
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://ftpmirror.gnu.org/$pkgname/$pkgname-2.13.tar.gz
+  download http://ftpmirror.gnu.org/$pkgname/$pkgname-2.54.tar.gz
+  download http://ftpmirror.gnu.org/$pkgname/$pkgname-2.69.tar.gz
+
+  check $pkgname-2.13.tar.gz e4826c8bd85325067818f19b2b2ad2b625da66fc
+  check $pkgname-2.54.tar.gz 0afcc66454b35507d5dac8a38f6649af009a4ccb
+  check $pkgname-2.69.tar.gz 562471cbcb0dd0fa42a76665acf0dbb68479b78a
+
+  extract $pkgname-2.13.tar.gz
+  extract $pkgname-2.54.tar.gz
+  extract $pkgname-2.69.tar.gz
+
+  for pkgver in 2.13 2.54 2.69; do
+    pushd $pkgname-$pkgver
+      message "Configuring $pkgname-$pkgver"
+      ./configure --build=$TARGET --prefix="$dstdir" \
+                  --mandir="$dstdir"/share/man \
+                  --infodir="$dstdir"/share/info \
+                  --program-suffix="-$pkgver"
+      message "Compiling $pkgname-$pkgver"
+      make
+    popd
+  done
+}
+
+package() {
+  # installing
+  for pkgver in 2.13 2.54 2.69; do
+    make -C $pkgname-$pkgver install
+
+    mv -vf "$dstdir"/share/autoconf{,-$pkgver}
+    mv -vf "$dstdir"/share/info/autoconf{,-$pkgver}.info
+    mv -vf "$dstdir"/share/info/standards{,-$pkgver}.info
+  done
+
+  # link to the last version
+  ln -vsf autoconf-2.69 "$dstdir"/share/autoconf
+  ln -vsf autoconf-$pkgver.info "$dstdir"/share/info/autoconf.info
+  ln -vsf standards-$pkgver.info "$dstdir"/share/info/standards.info
+  for exe in autoconf autoheader autom4te autoreconf autoscan autoupdate ifnames; do
+    ln -vsf $exe-2.69 "$dstdir"/bin/$exe
+  done
+  for doc in autoconf autoheader autom4te autoreconf autoscan autoupdate config.guess config.sub ifnames; do
+    ln -vsf $doc-$pkgver.1 "$dstdir"/share/man/man1/$doc.1
+  done
+}

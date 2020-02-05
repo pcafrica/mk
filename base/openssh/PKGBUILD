@@ -1,0 +1,31 @@
+#!/bin/bash
+
+pkgname=openssh
+pkgver=7.7p1
+archive=$pkgname-$pkgver.tar.gz
+sum=446fe9ed171f289f0d62197dffdbfdaaf21c49f2
+
+dstdir=$mkToolchainBase
+
+build() {
+  download https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    if [[ -e "$srcdir"/$pkgname-$pkgver.patch ]]; then
+      message "Applying patch to $pkgname"
+      patch -p1 -i "$srcdir"/$pkgname-$pkgver.patch
+    fi
+    message "Configuring $pkgname"
+    ./configure --prefix="$dstdir" \
+                --with-default-path="$dstdir/bin:$mkToolchainPrefix/bin"
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  install -m 755 $pkgname-$pkgver/ssh "$dstdir/bin"
+  install -m 644 $pkgname-$pkgver/ssh.1.out "$dstdir/share/man/man1"
+}

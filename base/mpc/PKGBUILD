@@ -1,0 +1,25 @@
+#!/bin/bash
+
+pkgname=mpc
+pkgver=1.1.0
+archive=$pkgname-$pkgver.tar.gz
+sum=b019d9e1d27ec5fb99497159d43a3164995de2d0
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://ftpmirror.gnu.org/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-static
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

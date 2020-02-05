@@ -1,0 +1,31 @@
+#!/bin/bash
+
+pkgname=bzip2
+pkgver=1.0.6
+archive=$pkgname-$pkgver.tar.gz
+sum=00b516f4704d4a7cb50a1d97e6e8e15b
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://www.bzip.org/$pkgver/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    if [[ -e "$srcdir"/$pkgname-$pkgver.patch ]]; then
+      message "Applying patch to $pkgname"
+      patch -p1 -i "$srcdir"/$pkgname-$pkgver.patch
+    fi
+    message "Compiling $pkgname"
+    make -f Makefile-libbz2_so
+    make clean
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install PREFIX="$dstdir"
+  ln -sf libbz2.so.1.0 "$dstdir"/lib/libbz2.so
+  rm -f "$dstdir"/lib/libbz2.a
+}

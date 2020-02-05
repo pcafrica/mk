@@ -1,0 +1,180 @@
+#!/bin/bash
+
+pkgname=superlu
+pkgver=5
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+sluver=5.2.1
+sluarchive=${pkgname}_${sluver}.tar.gz
+slusum=10ce07b87d002c86cce2f71b84cb144de3112fb4
+
+slumtver=3.1
+slumtarchive=${pkgname}_mt_${slumtver}.tar.gz
+slumtsum=29cb847d17b1b2826f9558cbfa86397898171b3c
+
+sludistver=5.3.0
+sludistarchive=${pkgname}_dist_${sludistver}.tar.gz
+sludistsum=287cc1754cd97933d083f30f0ddb05c5a1b7344b
+
+build() {
+  download http://crd-legacy.lbl.gov/~xiaoye/SuperLU/$sluarchive
+  download http://crd-legacy.lbl.gov/~xiaoye/SuperLU/$slumtarchive
+  download http://crd-legacy.lbl.gov/~xiaoye/SuperLU/$sludistarchive
+
+  check $sluarchive $slusum
+  check $slumtarchive $slumtsum
+  check $sludistarchive $sludistsum
+
+  extract $sluarchive
+  extract $slumtarchive
+  extract $sludistarchive
+
+  module load openblas
+  module load metis
+
+  pushd SuperLU_$sluver
+    cat > make.inc << EOF
+SuperLUroot = $(pwd)
+SUPERLULIB  = \$(SuperLUroot)/lib/libsuperlu.a
+TMGLIB      = libtmglib.a
+BLASDEF     = -DUSE_VENDOR_BLAS
+BLASLIB     = -L${mkOpenblasLib} -lopenblas
+LIBS        = \$(SUPERLULIB) \$(BLASLIB)
+ARCH        = ar
+ARCHFLAGS   = cr
+RANLIB      = ranlib
+CC          = cc
+CFLAGS      = -DPRNTlevel=0 $CFLAGS -fPIC -DAdd_
+NOOPTS      = -fPIC
+FORTRAN     = gfortran
+LOADER      = \$(CC)
+LOADOPTS    =
+EOF
+    message "Compiling $pkgname"
+    make superlulib
+  popd
+
+  pushd SuperLU_MT_$slumtver
+    cat > make.inc << EOF
+TMGLIB     = libtmglib.a
+SUPERLULIB = libsuperlu_mt.a
+BLASDEF    = -DUSE_VENDOR_BLAS
+BLASLIB    = -L${mkOpenblasLib} -lopenblas
+MATHLIB    = -lm
+MPLIB      = -lpthread
+ARCH       = ar
+ARCHFLAGS  = cr
+RANLIB     = ranlib
+PREDEFS    = -D__PTHREAD
+CC         = cc
+CFLAGS     = \$(PREDEFS) $CFLAGS -fPIC
+NOOPTS     = -O0 -fPIC
+FORTRAN    = gfortran
+FFLAGS     = $CFLAGS -fPIC
+LOADER     = \$(CC)
+LOADOPTS   = -pthread
+CDEFS      = -DAdd_
+EOF
+    [[ -r $srcdir/$pkgname-mt-$slumtver.patch ]] && \
+      patch -p1 -i $srcdir/$pkgname-mt-$slumtver.patch
+    message "Compiling ${pkgname}-mt"
+    make superlulib
+  popd
+
+  pushd SuperLU_DIST_$sludistver
+    cat > make.inc << EOF
+DSuperLUroot = $(pwd)
+DSUPERLULIB  = \$(DSuperLUroot)/lib/libsuperlu_dist.a
+BLASDEF      = -DUSE_VENDOR_BLAS
+BLASLIB      = -L${mkOpenblasLib} -lopenblas
+METISLIB     = -L${mkMetisLib} -lmetis
+PARMETISLIB  = -L${mkMetisLib} -lparmetis
+I_PARMETIS   = -I${mkMetisInc}
+LIBS         = \$(DSUPERLULIB) \$(BLASLIB) \$(PARMETISLIB) \$(METISLIB) \$(FLIBS)
+ARCH         = ar
+ARCHFLAGS    = cr
+RANLIB       = ranlib
+CC           = mpicc
+CFLAGS       = $CFLAGS -std=c99 -fPIC \$(I_PARMETIS) -DDEBUGlevel=0 -DPRNTlevel=0 -DPROFlevel=0
+NOOPTS       = -O0 -std=c99 -fPIC
+FORTRAN      = mpifort
+F90FLAGS     = $CFLAGS -std=c99 -fPIC
+LOADER       = \$(CC)
+LOADOPTS     =
+CDEFS        = -DAdd_
+EOF
+    [[ -r $srcdir/$pkgname-dist-$sludistver.patch ]] && \
+      patch -p1 -i $srcdir/$pkgname-dist-$sludistver.patch
+    message "Compiling ${pkgname}-dist"
+    mkdir -v lib
+    make superlulib
+  popd
+}
+
+package() {
+  install -d -m0755 "$dstdir"/{include,lib}
+
+  # header files
+  install -m0644 SuperLU_$sluver/SRC/*.h "$dstdir"/include
+  install -m0644 SuperLU_MT_$slumtver/SRC/*.h "$dstdir"/include
+  install -m0644 SuperLU_DIST_$sludistver/SRC/*.h "$dstdir"/include
+
+  # libraries
+  install -m0644 SuperLU_$sluver/lib/libsuperlu.a "$dstdir"/lib
+  install -m0644 SuperLU_MT_$slumtver/lib/libsuperlu_mt.a "$dstdir"/lib
+  install -m0644 SuperLU_DIST_$sludistver/lib/libsuperlu_dist.a "$dstdir"/lib
+
+  # static to shared
+  pushd "$dstdir"/lib
+    ar x libsuperlu.a
+    cc -shared -Wl,--no-undefined -Wl,-soname,libsuperlu.so.${sluver%%.*} \
+       -L$mkOpenblasLib -o libsuperlu.so.${sluver} $(ls *.o) -lm -lopenblas
+    ln -sf libsuperlu.so.$sluver libsuperlu.so.${sluver%%.*}
+    ln -sf libsuperlu.so.${sluver%%.*} libsuperlu.so
+    rm libsuperlu.a *.o
+
+    ar x libsuperlu_mt.a
+    cc -shared -Wl,--no-undefined -Wl,-soname,libsuperlu_mt.so.${slumtver%%.*} \
+       -L$mkOpenblasLib -o libsuperlu_mt.so.${slumtver} $(ls *.o) \
+       -lm -lopenblas -pthread
+    ln -sf libsuperlu_mt.so.$slumtver libsuperlu_mt.so.${slumtver%%.*}
+    ln -sf libsuperlu_mt.so.${slumtver%%.*} libsuperlu_mt.so
+    rm libsuperlu_mt.a *.o
+
+    ar x libsuperlu_dist.a
+    mpicc -shared -Wl,--no-undefined -Wl,-soname,libsuperlu_mt.so.${sludistver%%.*} \
+          -L$mkOpenblasLib -L$mkMetisLib -o libsuperlu_dist.so.${sludistver} \
+          $(ls *.o) -lm -lopenblas -lmetis -lparmetis
+    ln -sf libsuperlu_dist.so.$sludistver libsuperlu_dist.so.${sludistver%%.*}
+    ln -sf libsuperlu_dist.so.${sludistver%%.*} libsuperlu_dist.so
+    rm libsuperlu_dist.a *.o
+  popd
+
+  strip "$dstdir"/lib
+
+  # module
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("Solve large, sparse nonsymmetric systems of equations")
+help([[
+This package contains all the SuperLU library (serial, multithreaded and
+distributed one). They are installed in "\$mkSuperluPrefix" directory, the
+dynamic libraries are located in "\$mkSuperluLib" directory and headers files
+in "\$mkSuperluInc".
+
+url: http://crd-legacy.lbl.gov/~xiaoye/SuperLU/
+]])
+
+load("openblas")
+load("metis")
+
+setenv("mkSuperluPrefix", "$dstdir")
+setenv("mkSuperluLib", "$dstdir/lib")
+setenv("mkSuperluInc", "$dstdir/include")
+
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+EOF
+  fi
+}

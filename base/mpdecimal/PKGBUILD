@@ -1,0 +1,25 @@
+#!/bin/bash
+
+pkgname=mpdecimal
+pkgver=2.4.2
+archive=$pkgname-$pkgver.tar.gz
+sum=b926360a96fba40f9363abe111e24d776c661adb
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://www.bytereef.org/software/mpdecimal/releases/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir"
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

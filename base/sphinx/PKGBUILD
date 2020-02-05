@@ -1,0 +1,9 @@
+#!/bin/bash
+
+pkgver=1.7.0
+dstdir=$mkToolchainBase
+
+package() {
+  pip install --install-option="--prefix=$dstdir" -I "sphinx==$pkgver"
+}
+

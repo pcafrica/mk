@@ -1,0 +1,700 @@
+#!/bin/bash
+
+# Build dependencies:
+#   bison    used by gold in binutils
+#   m4       used by bison and old versions of M4 are buggy
+#   texinfo  used to build the documentation
+#
+#   c/c++    used to compile the gcc the first time
+#   file     used during binutils configuration
+#   gawk     used by glibc
+#   openssl  used for downloading
+
+# All the packages are build using these common flags:
+#   --disable-nls
+#     Disables internationalization.
+#   --disable-multilib
+#     This option disables the building of a multilib capabilities (only 64bit)
+
+run() {
+  pkgname=gcc-glibc
+  pkgver=$1
+
+  # getting the versions
+  case $pkgver in
+    5)
+      gccver=5.5.0
+      gccsum=0d985aaf6d63598916933a690cb902d47d385bea
+      islver=0.14.1
+      islsum=b653327b20e807d1df3a7e2f546ea924f1e030c0
+      ;;
+    6)
+      gccver=6.4.0
+      gccsum=f237974b2d3af0f60936ce6a2f35b912a91e0239
+      islver=0.18
+      islsum=bbffc5a2b05e4f0c97e882f96c448504491dc4ed
+      ;;
+    7)
+      gccver=7.3.0
+      gccsum=9689b9cae7b2886fdaa08449a26701f095c04e48
+      islver=0.18
+      islsum=bbffc5a2b05e4f0c97e882f96c448504491dc4ed
+      ;;
+    8)
+      gccver=8.1.0
+      gccsum=b34031ba9ff3e248b2c62de0825e49a1e0e01998
+      islver=0.19
+      islsum=dba7264419ba995a0f6b4fde135993677f7c85fd
+      ;;
+    *)
+      if [[ -z "$pkgver" ]]; then
+        error "Specify a valid version (5|6|7|8) for gcc"
+      else
+        error "Unsupported version '$pkgver'"
+      fi
+      exit 1
+      ;;
+  esac
+
+  m4ver=1.4.18
+  m4dir=m4-$m4ver
+  m4archive=m4-$m4ver.tar.xz
+  m4url=http://ftpmirror.gnu.org/m4/$m4archive
+  m4sum=228604686ca23f42e48b98930babeb5d217f1899
+
+  bisonver=3.0.4
+  bisondir=bison-$bisonver
+  bisonarchive=bison-$bisonver.tar.xz
+  bisonurl=http://ftpmirror.gnu.org/bison/$bisonarchive
+  bisonsum=8270497aad88c7dd4f2c317298c50513fb0c3c8e
+
+  texinfover=6.5
+  texinfodir=texinfo-$texinfover
+  texinfoarchive=texinfo-$texinfover.tar.xz
+  texinfourl=http://ftpmirror.gnu.org/texinfo/$texinfoarchive
+  texinfosum=72a06b48862911c638787cc3307871b990a59726
+
+  binutilsver=2.30
+  binutilsdir=binutils-$binutilsver
+  binutilsarchive=binutils-$binutilsver.tar.bz2
+  binutilsurl=http://ftpmirror.gnu.org/binutils/$binutilsarchive
+  binutilssum=33d807f7fa680b00439eb5560acd0c2ef645e5f9
+
+  gmpver=6.1.2
+  gmpdir=gmp-$gmpver
+  gmparchive=gmp-${gmpver}.tar.bz2
+  gmpurl=http://ftpmirror.gnu.org/gmp/$gmparchive
+  gmpsum=366ded6a44cd108ba6b3f5b9a252eab3f3a95cdf
+
+  mpfrver=4.0.1
+  mpfrdir=mpfr-$mpfrver
+  mpfrarchive=mpfr-$mpfrver.tar.bz2
+  mpfrurl=http://ftpmirror.gnu.org/mpfr/$mpfrarchive
+  mpfrsum=fcbbafb37c683898e585b926608d540ed037609e
+
+  mpcver=1.1.0
+  mpcdir=mpc-$mpcver
+  mpcarchive=mpc-$mpcver.tar.gz
+  mpcurl=http://ftpmirror.gnu.org/mpc/$mpcarchive
+  mpcsum=b019d9e1d27ec5fb99497159d43a3164995de2d0
+
+  isldir=isl-$islver
+  islarchive=isl-$islver.tar.bz2
+  islurl=http://isl.gforge.inria.fr/$islarchive
+
+  libelfver=0.8.13
+  libelfdir=libelf-$libelfver
+  libelfarchive=libelf-$libelfver.tar.gz
+#  libelfurl=http://www.mr511.de/software/$libelfarchive
+  libelfurl=https://fossies.org/linux/misc/old/$libelfarchive
+  libelfsum=c1d6ac5f182d19dd685c4dfd74eedbfe3992425d
+
+  gccdir=gcc-$gccver
+  gccarchive=gcc-$gccver.tar.xz
+  gccurl=http://ftpmirror.gnu.org/gcc/gcc-$gccver/$gccarchive
+
+  linuxver=$(uname -r)
+  case $linuxver in
+    2.6.32*)
+      warning "Too old linux version, it is no longer supported (last update March 2016)"
+      linux=2.6.32
+      linuxver=2.6.32.71
+      linuxurl=https://www.kernel.org/pub/linux/kernel/v2.6/longterm/v2.6.32
+      linuxsum=bbce5984437bb5efa3a3e3aae368d3bc8bcbbbbe
+      ;;
+    3.10* | 3.11*)
+      linux=3.10
+      linuxver=3.10.105
+      linuxurl=https://www.kernel.org/pub/linux/kernel/v3.x
+      linuxsum=de6e10e6c141c74b212d8042720decfe5ca40b9b
+      ;;
+    3.12* | 3.13*)
+      linux=3.12
+      linuxver=3.12.73
+      linuxurl=https://www.kernel.org/pub/linux/kernel/v3.x
+      linuxsum=5cbaf84a4de6e9d42ce902767a10c14f49167fa2
+      ;;
+    3.16*)
+      linux=3.16
+      linuxver=3.16.43
+      linuxurl=https://www.kernel.org/pub/linux/kernel/v3.x
+      linuxsum=bb21f8f3ef26f5b49b83e517d7519e510927c658
+      ;;
+    4.1*)
+      linux=4.1
+      linuxver=4.1.39
+      linuxurl=https://www.kernel.org/pub/linux/kernel/v4.x
+      linuxsum=26874692c37dcc14b6de990523009a1f5638afb3
+      ;;
+    4.4* | 4.8*)
+      linux=4.4
+      linuxver=4.4.64
+      linuxurl=https://www.kernel.org/pub/linux/kernel/v4.x
+      linuxsum=4554451ee0b50e55674795f5d760fdbc72df7bf3
+      ;;
+    4.9*)
+      linux=4.9
+      linuxver=4.9.25
+      linuxurl=https://www.kernel.org/pub/linux/kernel/v4.x
+      linuxsum=af03c7630a24c2350e211142bd7d795558ddcc02
+      ;;
+    *)
+      error "Unsupported version of kernel '$linuxver'"
+      exit 1
+  esac
+  linuxdir=linux-$linuxver
+  linuxarchive=linux-$linuxver.tar.xz
+  linuxurl=$linuxurl/$linuxarchive
+
+  glibcver=2.27
+  glibcdir=glibc-$glibcver
+  glibcarchive=glibc-$glibcver.tar.xz
+  glibcurl=http://ftpmirror.gnu.org/glibc/$glibcarchive
+  glibcsum=1f7a9c43026484943ef7cf6885f2176a2bc1e093
+
+  # cleaning and creating the directories hierarchy
+  dstdir=$PREFIX/pkgs/toolchains/$pkgname/$pkgver
+  module=$PREFIX/modules/toolchains/$pkgname/$pkgver.lua
+
+  rm -vrf $dstdir
+  rm -vf $module
+  install -dm 0755 $(dirname $module)
+  install -dm 0755 $dstdir/{base,modules,pkgs,prefix}
+
+  prefix=$dstdir/prefix
+  base=$dstdir/base
+
+  # setting the environment variables
+  export PATH=$prefix/bin:$tmpdir/tools/bin:$PATH
+
+  # download and check the source files
+  download $m4url
+  check $m4archive $m4sum
+
+  download $bisonurl
+  check $bisonarchive $bisonsum
+
+  download $texinfourl
+  check $texinfoarchive $texinfosum
+
+  download $binutilsurl
+  check $binutilsarchive $binutilssum
+
+  download $gmpurl
+  check $gmparchive $gmpsum
+
+  download $mpfrurl
+  check $mpfrarchive $mpfrsum
+
+  download $mpcurl
+  check $mpcarchive $mpcsum
+
+  download $islurl
+  check $islarchive $islsum
+
+  download $libelfurl
+  check $libelfarchive $libelfsum
+
+  download $gccurl
+  check $gccarchive $gccsum
+
+  download $linuxurl
+  check $linuxarchive $linuxsum
+
+  download $glibcurl
+  check $glibcarchive $glibcsum
+
+  # extract source files
+  extract $m4archive
+  extract $bisonarchive
+  extract $texinfoarchive
+  extract $binutilsarchive
+  extract $gmparchive
+  extract $mpfrarchive
+  extract $mpcarchive
+  extract $islarchive
+  extract $libelfarchive
+  extract $gccarchive
+  extract $linuxarchive
+  extract $glibcarchive
+
+  # patching the source
+  pushd $binutilsdir
+    # (2.25) https://sourceware.org/bugzilla/show_bug.cgi?id=16992
+    [[ -r $srcdir/binutils-$binutilsver.patch ]] && \
+      patch -p1 -i $srcdir/binutils-$binutilsver.patch
+  popd
+  pushd $gccdir
+    # (5.4) https://www.mail-archive.com/gcc-patches@gcc.gnu.org/msg159613.html
+    # (6.4.0) https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81712
+    # (6.4.0) https://github.com/voidlinux/void-packages/issues/7284
+    [[ -r $srcdir/gcc-$gccver.patch ]] && \
+      patch -p1 -i $srcdir/gcc-$gccver.patch
+  popd
+  make -C $linuxdir mrproper
+  [[ -d $gmpdir ]] && ln -vs ../$gmpdir $gccdir/gmp
+  [[ -d $mpfrdir ]] && ln -vs ../$mpfrdir $gccdir/mpfr
+  [[ -d $mpcdir ]] && ln -vs ../$mpcdir $gccdir/mpc
+  [[ -d $isldir ]] && ln -vs ../$isldir $gccdir/isl
+  [[ -d $libelfdir ]] && ln -vs ../$libelfdir $gccdir/libelf
+  case $ARCH in
+    x86_64)  sed -i "/m64=/s/lib64/lib/" \
+               $gccdir/gcc/config/i386/t-linux64
+             sed -i "s:lib64:lib:g;s:/lib:$prefix/lib:g" \
+               $gccdir/gcc/config/i386/linux64.h
+             echo "#define STANDARD_STARTFILE_PREFIX_1 \"$prefix/lib\"" \
+               >> $gccdir/gcc/config/i386/linux64.h
+             echo "#define STANDARD_STARTFILE_PREFIX_2 \"$base/lib\"" \
+               >> $gccdir/gcc/config/i386/linux64.h
+             ;;
+    ppc64)  sed -i "/m64=/s/lib64/lib/" \
+              $gccdir/gcc/config/rs6000/t-linux64
+            sed -i "s:lib64:lib:g;s:/lib:$prefix/lib:g" \
+              $gccdir/gcc/config/rs6000/linux64.h
+            echo "#define STANDARD_STARTFILE_PREFIX_1 \"$prefix/lib\"" \
+              >> $gccdir/gcc/config/rs6000/linux64.h
+            echo "#define STANDARD_STARTFILE_PREFIX_2 \"$base/lib\"" \
+              >> $gccdir/gcc/config/rs6000/linux64.h
+            ;;
+  esac
+  # glibc-2.27 must be fixed to bu compiled in alpine linux
+  # https://sourceware.org/bugzilla/show_bug.cgi?id=21604
+  if [[ -e /etc/alpine-release ]]; then
+    pushd $glibcdir
+      [[ -r $srcdir/glibc-$glibcver-alpine.patch ]] && \
+        patch -p1 -i $srcdir/glibc-$glibcver-alpine.patch
+    popd
+  fi
+
+  # fix CFLAGS and CXXFLAGS environment variables
+  # `-DNDEBUG` disables the assertions, but it generates some warnings in GCC
+  # and Glibc, such warnings are treated as errors.
+  export CFLAGS=`echo "$CFLAGS" | sed "s/-DNDEBUG //g"`
+  export CXXFLAGS=`echo "$CXXFLAGS" | sed "s/-DNDEBUG //g"`
+
+  # compile the build dependecies
+  message "Installing M4"
+  pushd $m4dir
+    ./configure --prefix="$tmpdir/tools"; make install
+  popd
+
+  message "Installing Bison"
+  pushd $bisondir
+    ./configure --prefix="$tmpdir/tools"; make install
+  popd
+
+  message "Installing Texinfo"
+  pushd $texinfodir
+    ./configure --prefix="$tmpdir/tools"; make install
+  popd
+
+  # check build dependencies installation
+  case "$(command -v m4)" in
+    "$tmpdir/tools"*) ;;
+    *) error "M4 is not installed properly"; exit 1
+  esac
+  case "$(command -v yacc)" in
+    "$tmpdir/tools"*) ;;
+    *) error "Bison is not installed properly"; exit 1
+  esac
+  case "$(command -v makeinfo)" in
+    "$tmpdir/tools"*) ;;
+    *) error "Texinfo is not installed properly"; exit 1
+  esac
+
+  # compile the cross compiler
+  message "Compiling the cross compiler [Binutils]"
+  mkdir binutils-build
+  pushd binutils-build
+    # AR=$(which ar)
+    #   RedHat does not install the $BUILD-* binutils.
+    # --build=$BUILD --host=$BUILD --target=$TARGET
+    #   Enable the cross compiling with correct parameters
+    # --prefix="$tmpdir/tools"
+    #   Install binutils programs in '$tmpdir/tools' directory
+    # --with-lib-path="$prefix/lib"
+    #   Specifies which library path the linker should be configured to use.
+    # --enable-ld --disable-gold
+    #   Enable the standard linker and disable gold.
+    AR=$(which ar) \
+    ../$binutilsdir/configure --build=$BUILD --host=$BUILD --target=$TARGET \
+                              --prefix="$tmpdir/tools" \
+                              --with-lib-path="$prefix/lib" \
+                              --disable-nls --disable-multilib \
+                              --enable-ld --disable-gold
+    make
+    make install
+  popd
+  rm -rf binutils-build
+
+  message "Compiling the cross compiler [GCC]"
+  mkdir gcc-build
+  pushd gcc-build
+    # --build=$BUILD --host=$BUILD --target=$TARGET
+    #   Enable the cross compiling with correct parameters
+    # --prefix="$tmpdir/tools"
+    #   Install GCC programs in '$tmpdir/tools' directory
+    # --with-native-system-header-dir="$prefix/include"
+    #   Ensures that GCC will find system headers correctly.
+    # --with-newlib --without-headers
+    #   Prevents the compiling of any code that requires libc support.
+    # --enable-languages=c,c++
+    #   This option ensures that only the C and C++ compilers are built.
+    # --disable-threads --disable-decimal-float --disable-libatomic
+    # --disable-libcilkrts --disable-libgomp --disable-libitm
+    # --disable-libmudflap --disable-libquadmath --disable-libsanitizer
+    # --disable-libssp --disable-libvtv --disable-libstdc__-v3
+    # --disable-libmpx [from GCC6 MPX support is enabled by default]
+    #   Disable support for unused libraries for the bootstrap.
+    ../$gccdir/configure --build=$BUILD --host=$BUILD --target=$TARGET \
+                         --prefix="$tmpdir/tools" \
+                         --with-native-system-header-dir="$prefix/include" \
+                         --disable-nls --disable-multilib --disable-shared \
+                         --with-newlib --without-headers \
+                         --enable-languages=c,c++ --disable-bootstrap \
+                         --disable-threads --disable-decimal-float \
+                         --disable-libatomic --disable-libcilkrts \
+                         --disable-libgomp --disable-libitm \
+                         --disable-libmudflap --disable-libquadmath \
+                         --disable-libsanitizer --disable-libssp \
+                         --disable-libvtv --disable-libstdc__-v3 \
+                         --disable-libmpx
+    make
+    make install
+  popd
+  rm -rf gcc-build
+
+  # install linux header files and compile the C standard library
+  message "Installing the Linux headers"
+  pushd $linuxdir
+    case $ARCH in
+      ppc64) _ARCH=powerpc;;
+      *)     _ARCH=$ARCH;;
+    esac
+    make ARCH="$_ARCH" INSTALL_HDR_PATH="$prefix" headers_install
+  popd
+  rm -rf $linuxdir
+
+  message "Compiling the native Glibc standard library"
+  mkdir glibc-build
+  pushd glibc-build
+    # this prevent to use lib64 directory
+    echo "slibdir=$prefix/lib" >> configparms
+    echo "rtlddir=$prefix/lib" >> configparms
+    # --build=$BUILD --host=$TARGET --with-binutils="$tmpdir/tools/bin"
+    #   Enables the cross compilation, using the just installed Binutils.
+    # --prefix="$prefix" --libdir="$prefix/lib" --libexecdir="$prefix/lib"
+    #   Install GLibc in '$prefix' directory
+    # --with-pkgversion="$PKGVERSION" --with-bugurl="$BUGURL"
+    #   Customize the information.
+    # --with-headers="$prefix/include" --enable-kernel=$linux
+    #   Compiles the GLibc using the headers just installed.
+    # --disable-werror
+    #   Disable fail on warning.
+    # --enable-add-ons
+    #   Compiles the extensions.
+    # --disable-profile
+    #   This builds the libraries without profiling information.
+    # --enable-obsolete-rpc
+    #   This installs NIS and RPC related headers that are not installed by
+    #   default. They are required to build other libraries.
+    # --with-tls --with-__thread
+    #   Enable the TLS.
+    # --enable-bind-now
+    #   Disable the lazy binding at linking.
+    # libc_cv_ssp=no libc_cv_forced_unwind=yes
+    #   https://sourceware.org/ml/libc-alpha/2012-09/msg00093.html
+    #   Seems to be required to bootstrap a cross compiler.
+    ../$glibcdir/configure --build=$BUILD --host=$TARGET --with-binutils="$tmpdir/tools/bin" \
+                           --prefix="$prefix" --libdir="$prefix/lib" --libexecdir="$prefix/lib" \
+                           --with-pkgversion="$PKGVERSION" --with-bugurl="$BUGURL" \
+                           --with-headers="$prefix/include" --enable-kernel=$linux \
+                           --disable-werror --disable-nls \
+                           --enable-add-ons --disable-profile --enable-obsolete-rpc \
+                           --with-tls --with-__thread --enable-bind-now \
+                           libc_cv_ssp=no libc_cv_ssp_strong=no libc_cv_forced_unwind=yes
+    make
+    make install
+  popd
+  rm -rf glibc-build
+  rm -rf $glibcdir
+
+  # fix ldd script
+  case $ARCH in
+    x86_64) sed -e "s:RTLDLIST=.*:RTLDLIST=\"$prefix/lib/ld-linux-x86-64.so.2\":" \
+                -i "$prefix"/bin/ldd;;
+    ppc64)  sed -e "/RTLDLIST=/s/lib64/lib/" \
+                -i "$prefix"/bin/ldd;;
+  esac
+
+  # compile the C++ standard library
+  message "Compile the temporary C++ standard library"
+  mkdir gcc-build
+  pushd gcc-build
+    # CC="$TARGET-gcc -isystem $prefix/include -B$prefix/lib"
+    # CXX="$TARGET-g++ -isystem $prefix/include -B$prefix/lib"
+    #   Use the just installed compilers with the new libraries.
+    # --build=$BUILD --host=$TARGET
+    #   This combination enables the cross compilation.
+    # --prefix=$prefix --with-gxx-include-dir=$tmpdir/tools/$TARGET/include/c++/$gccver
+    #   Install stdc++-v3 in $prefix directory and the headers in '$tmpdir/tools'.
+    # --disable-libstdcxx-pch
+    #   This switch prevents the installation of precompiled include files.
+    CC="$TARGET-gcc -isystem $prefix/include -B$prefix/lib" \
+    CXX="$TARGET-g++ -isystem $prefix/include -B$prefix/lib" \
+    ../$gccdir/libstdc++-v3/configure \
+      --build=$BUILD --host=$TARGET \
+      --prefix"=$prefix" \
+      --with-gxx-include-dir="$tmpdir/tools/$TARGET/include/c++/$gccver" \
+      --disable-nls --disable-multilib --disable-libstdcxx-pch
+    make
+    make install
+  popd
+  rm -rf gcc-build
+
+  # compile the native compiler
+  message "Compile the native compiler [Binutils]"
+  mkdir binutils-build
+  pushd binutils-build
+    # CC="$TARGET-gcc -isystem $prefix/include -B$prefix/lib"
+    # CXX="$TARGET-g++ -isystem $prefix/include -B$prefix/lib"
+    # AS="$TARGET-as" AR="$TARGET-ar"
+    #   Use the just installed compilers with the new libraries.
+    # --build=$TARGET
+    #   Built for the given target.
+    # --prefix="$prefix" --with-lib-path="$prefix/lib:$base/lib"
+    #   Install binutils programs in '$prefix' directory.
+    # --with-pkgversion="$PKGVERSION" --with-bugurl="$BUGURL"
+    #   Customize the information.
+    # --enable-ld --disable-gold
+    #   Enable the standard linker and disable gold.
+    CC="$TARGET-gcc -isystem $prefix/include -B$prefix/lib" \
+    CXX="$TARGET-g++ -isystem $prefix/include -B$prefix/lib" \
+    AS="$TARGET-as" AR="$TARGET-ar" \
+    ../$binutilsdir/configure --build=$TARGET \
+                              --prefix="$prefix" --with-lib-path="$prefix/lib:$base/lib" \
+                              --with-pkgversion="$PKGVERSION" --with-bugurl="$BUGURL" \
+                              --disable-nls --disable-multilib \
+                              --enable-ld --disable-gold
+    make
+    make install
+  popd
+  rm -rf binutils-build
+
+  ln -s ../../lib/crt1.o $prefix/$TARGET/lib/crt1.o
+  ln -s ../../lib/crti.o $prefix/$TARGET/lib/crti.o
+  ln -s ../../lib/crtn.o $prefix/$TARGET/lib/crtn.o
+
+  message "Compile the native compiler [GCC]"
+  mkdir gcc-build
+  pushd gcc-build
+    # CC="$TARGET-gcc -idirafter $prefix/include -B$prefix/lib"
+    # CXX="$TARGET-g++ -idirafter $prefix/include -B$prefix/lib"
+    #   Use the just installed compilers with the new libraries.
+    #   Flag -idirafter is used to fix the bug:
+    #     https://gcc.gnu.org/bugzilla/show_bug.cgi?id=70129
+    # --build=$TARGET
+    #   Built for the given target.
+    # --prefix="$prefix" --with-local-prefix="$base"
+    # --with-native-system-header-dir="$prefix/include"
+    #   Install GCC programs in '$prefix' directory, using '$base' as local
+    #   directory.
+    # --with-pkgversion="$PKGVERSION" --with-bugurl="$BUGURL"
+    #   Customize the information.
+    # --enable-threads=posix --enable-__cxa_atexit --enable-lto --enable-libgomp
+    #   Addons enabled.
+    # --disable-libstdcxx-pch
+    #   This switch prevents the installation of precompiled include files.
+    # --enable-bootstrap
+    #   Enable a complete bootstrap for the compiler.
+    # --enable-languages=c,c++,fortran
+    #   This option ensures that only the C, C++ and Fortran compilers are built.
+    CC="$TARGET-gcc -idirafter $prefix/include -B$prefix/lib" \
+    CXX="$TARGET-g++ -idirafter $prefix/include -B$prefix/lib" \
+    ../$gccdir/configure --build=$TARGET \
+                         --prefix="$prefix" --with-local-prefix="$base" \
+                         --with-native-system-header-dir="$prefix/include" \
+                         --with-pkgversion="$PKGVERSION" --with-bugurl="$BUGURL" \
+                         --disable-nls --disable-multilib \
+                         --enable-shared \
+                         --enable-threads=posix --enable-__cxa_atexit \
+                         --enable-lto --enable-libgomp \
+                         --disable-libstdcxx-pch \
+                         --enable-bootstrap \
+                         --enable-languages=c,c++,fortran
+    # LIBRARY_PATH=$prefix/lib
+    #   The path of the libraries used during the bootstrap for the link step.
+    LIBRARY_PATH=$prefix/lib make
+    make install
+  popd
+  rm -rf gcc-build
+  rm -rf $gccdir
+  rm -rf $libelfdir $isldir $mpcdir $mpfrdir $gmpdir
+
+  # this last step is required to install properly gold linker, with the
+  # previous version ld.gold is bugged
+  message "Compile the native compiler [Binutils]"
+  mkdir binutils-build
+  pushd binutils-build
+    # --build=$TARGET
+    #   Built for the given target.
+    # --prefix="$prefix" --with-lib-path="$prefix/lib:$base/lib"
+    #   Install binutils programs in '$prefix' directory.
+    # --with-pkgversion="$PKGVERSION" --with-bugurl="$BUGURL"
+    #   Customize the information.
+    # --enable-ld --enable-gold --enable-plugins
+    #   Enables both the standard and Google linker, and also the plugins.
+    # --disable-werror
+    #   It does not convert warning to error.
+    ../$binutilsdir/configure --build=$TARGET \
+                              --prefix="$prefix" --with-lib-path="$prefix/lib:$base/lib" \
+                              --with-pkgversion="$PKGVERSION" --with-bugurl="$BUGURL" \
+                              --disable-nls --disable-multilib \
+                              --enable-ld --enable-gold --enable-plugins \
+                              --disable-werror
+    make
+    make install
+  popd
+  rm -rf binutils-build
+  rm -rf $binutilsdir
+
+  rm "$prefix"/bin/ld; ln -s ld.gold "$prefix"/bin/ld
+
+  # finishing the installation
+  rm "$prefix"/bin/$TARGET-gcc; ln -s $TARGET-gcc-$gccver "$prefix"/bin/$TARGET-gcc
+  ln -s $TARGET-gcc $prefix/bin/$TARGET-cc
+  rm "$prefix"/bin/gcc; ln -s $TARGET-gcc "$prefix"/bin/gcc
+  ln -s $TARGET-cc $prefix/bin/cc
+
+  rm "$prefix"/bin/$TARGET-c++; ln -s $TARGET-g++ "$prefix"/bin/$TARGET-c++
+  rm "$prefix"/bin/g++; ln -s $TARGET-c++ "$prefix"/bin/g++
+  rm "$prefix"/bin/c++; ln -s $TARGET-c++ "$prefix"/bin/c++
+
+  rm "$prefix"/bin/gfortran; ln -s $TARGET-gfortran "$prefix"/bin/gfortran
+  ln -s gfortran "$prefix"/bin/f95
+
+  for exe in ar nm ranlib; do
+    rm "$prefix"/bin/gcc-$exe; ln -s $TARGET-gcc-$exe "$prefix"/bin/gcc-$exe
+  done
+
+  cat > $prefix/bin/c89 <<"EOF"
+#!/bin/sh
+fl="-std=c89"
+for opt; do
+  case "$opt" in
+    -ansi|-std=c89|-std=iso9899:1990) fl="";;
+    -std=*) echo "`basename $0` called with non ANSI/ISO C option $opt" >&2; exit 1;;
+  esac
+done
+exec cc $fl ${1+"$@"}
+EOF
+
+  cat > $prefix/bin/c99 <<"EOF"
+#!/bin/sh
+fl="-std=c99"
+for opt; do
+  case "$opt" in
+    -std=c99|-std=iso9899:1999) fl="";;
+    -std=*) echo "`basename $0` called with non ISO C99 option $opt" >&2; exit 1;;
+  esac
+done
+exec cc $fl ${1+"$@"}
+EOF
+
+  chmod 755 $prefix/bin/c{8,9}9
+
+  install -dm 0755 $prefix/share/gdb/auto-load
+  mv $prefix/lib/libstdc++.so.6.*-gdb.py $prefix/share/gdb/auto-load
+
+  install -dm755 $prefix/lib/bfd-plugins
+  ln -sf ../../libexec/gcc/$TARGET/$gccver/liblto_plugin.so $prefix/lib/bfd-plugins
+
+  echo "$base/lib" > $prefix/etc/ld.so.conf
+  $prefix/sbin/ldconfig
+
+  # create the module file
+  cat > $module << EOF
+-- -*- lua -*-
+whatis("Loads the toolchain based on GCC $pkgver and GLibC library.")
+help([[
+This module loads the toolchain based on GCC $pkgver and GLibC library. Moreover
+it contains all the base packages for the development, for the details about the
+installed software see the main documentation.
+]])
+
+-- commands and libraries
+prepend_path("PATH", "$prefix/bin")
+prepend_path("PATH", "$base/bin")
+
+-- documentation
+prepend_path("MANPATH", "$prefix/share/man")
+prepend_path("MANPATH", "$base/share/man")
+prepend_path("INFOPATH", "$prefix/share/info")
+prepend_path("INFOPATH", "$base/share/info")
+
+-- configuration
+prepend_path("ACLOCAL_PATH", "$base/share/aclocal")
+
+-- module
+family("toolchain")
+
+prepend_path("MODULEPATH", "$dstdir/modules")
+
+setenv("mkToolchain", "$pkgname/$pkgver")
+setenv("mkToolchainPrefix", "$prefix")
+setenv("mkToolchainBase", "$base")
+setenv("mkToolchainModules", "$dstdir/modules")
+setenv("mkToolchainPkgs", "$dstdir/pkgs")
+
+-- compilers
+setenv("CC", "$prefix/bin/gcc")
+setenv("CXX", "$prefix/bin/g++")
+setenv("FC", "$prefix/bin/gfortran")
+EOF
+
+  # cleaning
+  message "Cleaning up"
+  rm -f $prefix/$TARGET/lib/crt{1,i,n}.o
+  rm -rf $prefix/share/locale
+
+  strip $prefix
+  compress_doc $prefix/share/{man,info}
+
+  case $pkgver in
+    5) for lib in asan cc1 cilkrts gfortran gomp-plugin-host_nonshm lsan tsan ubsan; do
+         reset_rpath "$prefix"/lib/lib$lib.so.?.?.?
+       done
+       reset_rpath "$prefix"/lib/gcc/$TARGET/$gccver/plugin/libcc1plugin.so.?.?.?
+       ;;
+    *) for lib in asan cc1 cilkrts gfortran lsan tsan ubsan; do
+         reset_rpath "$prefix"/lib/lib$lib.so.?.?.?
+       done
+       reset_rpath "$prefix"/lib/gcc/$TARGET/$gccver/plugin/libcc1plugin.so
+       ;;
+  esac
+
+  # Install locale
+  mkdir -p "$prefix"/lib/locale
+  "$prefix"/bin/localedef -i en_US -f ISO-8859-1 en_US
+  "$prefix"/bin/localedef -i en_US -f UTF-8 en_US.UTF-8
+}

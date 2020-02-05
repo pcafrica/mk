@@ -1,0 +1,163 @@
+#!/bin/bash
+
+pkgname=petsc
+pkgver=3.8.3
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+petscver=$pkgver
+petscarchive=$pkgname-$petscver.tar.gz
+petscsum=babcb1bd3222113e28ce1f01bff5535fd0db84c6
+
+slepcver=3.8.2
+slepcarchive=slepc-$slepcver.tar.gz
+slepcsum=7f54f456f84dafb4623b54c1289a830c22680869
+
+petsc4pyver=3.8.1
+slepc4pyver=3.8.0
+
+package() {
+  download http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/$petscarchive
+  download http://slepc.upv.es/download/distrib/$slepcarchive
+
+  check $petscarchive $petscsum
+  check $slepcarchive $slepcsum
+
+  extract $petscarchive
+  extract $slepcarchive
+
+  module load arpack
+  module load boost
+  module load fftw
+  module load hdf5
+  module load hypre
+  module load metis
+  module load mumps
+  module load netcdf
+  module load openblas
+  module load p4est
+  module load scalapack
+  module load scotch
+  module load scipy
+  module load suitesparse
+  # module load superlu
+
+  # petsc
+  pushd $pkgname-$petscver
+    message "Configuring PETSc"
+    python2 \
+    ./configure --prefix="$dstdir" \
+                --with-petsc-arch=arch-linux-opt \
+                --with-fortran=1 \
+                --with-pic=1 \
+                --with-debugging=0 \
+                --with-x=0 \
+                --with-blas-lapack=1 \
+                  --with-blas-lib="$mkOpenblasLib/libopenblas.so" \
+                  --with-lapack-lib="$mkOpenblasLib/libopenblas.so" \
+                --with-boost=1 --with-boost-dir="$mkBoostPrefix" \
+                --with-fftw=1 --with-fftw-dir="$mkFftwPrefix" \
+                --with-hdf5=1 --with-hdf5-dir="$mkHdf5Prefix" \
+                --with-hypre=1 --with-hypre-dir="$mkHyprePrefix" \
+                --with-metis=1 --with-metis-dir="$mkMetisPrefix" \
+                --with-mumps=1 --with-mumps-dir="$mkMumpsPrefix" \
+                --with-netcdf=1 --with-netcdf-dir="$mkNetcdfPrefix" \
+                --with-p4est=1 --with-p4est-dir="$mkP4estPrefix" \
+                --with-parmetis=1 --with-parmetis-dir="$mkMetisPrefix" \
+                --with-ptscotch=1 --with-ptscotch-dir="$mkScotchPrefix" \
+                --with-scalapack=1 --with-scalapack-dir="$mkScalapackPrefix" \
+                --with-suitesparse=1 --with-suitesparse-dir="$mkSuitesparsePrefix"
+                # FIXME PETSc search for an old superlu version
+                # --with-superlu=1 \
+                #   --with-superlu-include="$mkSuperluInc" \
+                #   --with-superlu-lib="$mkSuperluLib/libsuperlu.so" \
+                # --with-superlu_dist=1 \
+                #   --with-superlu_dist-include="$mkSuperluInc" \
+                #   --with-superlu_dist-lib="$mkSuperluLib/libsuperlu_dist.so"
+                # FIXME PETSc search for a not existing header
+                # --with-superlu_mt=1 \
+                #   --with-superlu_mt-include="$mkSuperluInc" \
+                #   --with-superlu_mt-lib="$mkSuperluLib/libsuperlu_mt.so" \
+
+    message "Compiling PETSc"
+    command make MAKE_NP=$pkgJobs PETSC_DIR=$PWD PETSC_ARCH=arch-linux-opt all
+    message "Installing PETSc"
+    command make PETSC_DIR=$PWD PETSC_ARCH=arch-linux-opt install
+  popd
+
+  # slepc
+  pushd slepc-$slepcver
+    message "Configuring SLEPc"
+    python2 \
+    ./configure --prefix="$dstdir" \
+                --with-arpack=1 \
+                --with-arpack-dir="$mkArpackPrefix" \
+                --with-arpack-flags="-L$mkArpackLib,-larpack,-lparpack"
+    message "Compiling SLEPc"
+    command make MAKE_NP=$pkgJobs SLEPC_DIR=$PWD PETSC_DIR="$dstdir"
+    message "Installing SLEPc"
+    command make SLEPC_DIR=$PWD PETSC_DIR="$dstdir" install
+  popd
+
+  # python bindings
+  message "Installing Python bindings"
+  PETSC_DIR="$dstdir" \
+    pip install --verbose --install-option="--prefix=$dstdir" petsc4py==$petsc4pyver
+  PYTHONPATH=$dstdir/lib/python3.6/site-packages:$PYTHONPATH \
+  PETSC_DIR="$dstdir" SLEPC_DIR="$dstdir" \
+    pip install --verbose --install-option="--prefix=$dstdir" slepc4py==$slepc4pyver
+
+  # cleaning
+  find "$dstdir"/include -name \*html -exec rm {} \;
+  rm -rf "$dstdir"/share
+
+  strip "$dstdir"/bin
+  strip "$dstdir"/lib
+
+  reset_rpath "$dstdir"/bin
+  reset_rpath "$dstdir"/lib
+
+  # module
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("Portable, extensible toolkit for scientific computation")
+help([[
+This package contains both PETSc and SLEPc libraries, with their own Python
+binding. They are installed in "\$mkPetscPrefix" directory. The configuration
+flags can be retrieved using the pkg-config utility:
+  $ pkg-config --libs PETSc
+  ...
+  $ pkg-config --cflags PETSc
+  ...
+In the same way for SLEPc.
+
+url: https://www.mcs.anl.gov/petsc/
+]])
+
+load("arpack")
+load("boost")
+load("fftw")
+load("hdf5")
+load("hypre")
+load("metis")
+load("mumps")
+load("netcdf")
+load("openblas")
+load("p4est")
+load("scalapack")
+load("scotch")
+load("scipy")
+load("suitesparse")
+
+setenv("mkPetscPrefix", "$dstdir")
+setenv("PETSC_DIR", "$dstdir")
+setenv("SLEPC_DIR", "$dstdir")
+
+prepend_path("PATH", "$dstdir/bin")
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+prepend_path("PKG_CONFIG_PATH", "$dstdir/lib/pkgconfig")
+prepend_path("PYTHONPATH", "$dstdir/lib/python3.6/site-packages")
+EOF
+  fi
+}

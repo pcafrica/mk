@@ -1,0 +1,62 @@
+#!/bin/bash
+
+pkgname=hypre
+pkgver=2.13.0
+archive=v$pkgver.tar.gz
+sum=9e3a30251420b4a1a9f199e2005eb7f69a07fca6
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download https://github.com/LLNL/hypre/archive/$archive
+  check $archive $sum
+  extract $archive
+
+  module load openblas
+  module load superlu
+
+  pushd $pkgname-$pkgver/src
+    message "Configuring $pkgname"
+    LIBS="-lsuperlu" \
+    LDFLAGS="-L$mkSuperluLib" \
+    ./configure --prefix="$dstdir" \
+                --enable-shared \
+                --with-blas=yes \
+                  --with-blas-lib=$mkOpenblasLib/libopenblas.so \
+                --with-lapack=yes \
+                  --with-lapack-lib=$mkOpenblasLib/libopenblas.so \
+                --with-superlu=no
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver/src install
+
+  strip "$dstdir"/lib
+  reset_rpath "$dstdir"/lib
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("A library for solving large, sparse linear systems of equations")
+help([[
+The HYPRE library is installed in "\$mkHyprePrefix" directory, the dynamic
+libraries are located in "\$mkHypreLib" directory and headers files in
+"\$mkHypreInc".
+
+url: https://github.com/LLNL/hypre
+]])
+
+load("openblas")
+load("superlu")
+
+setenv("mkHyprePrefix", "$dstdir")
+setenv("mkHypreLib", "$dstdir/lib")
+setenv("mkHypreInc", "$dstdir/include")
+
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+EOF
+  fi
+}

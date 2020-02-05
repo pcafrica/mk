@@ -1,0 +1,76 @@
+#!/bin/bash
+
+pkgname=R
+pkgver=3.4.4
+archive=$pkgname-$pkgver.tar.gz
+sum=537d481888f20d385b3039f2f2b0c49b7b0fb5de
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+url=https://cran.r-project.org/src/base/R-3
+mirror=http://cran.mirror.garr.it/mirrors/CRAN
+
+build() {
+  download $url/$archive
+  check $archive $sum
+  extract $archive
+
+  module load openblas
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --prefix="$dstdir" \
+                --libdir="$dstdir/lib" \
+                --with-ICU \
+                --disable-nls \
+                --disable-java \
+                --with-x=no \
+                --with-blas="$mkOpenblasLib/libopenblas.so" \
+                --with-lapack="$mkOpenblasLib/libopenblas.so"
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+
+  # install packages
+  message "Installing packages"
+  RMPI_TYPE=OPENMPI \
+  "$dstdir/bin/R" -e "install.packages(\"Rmpi\", repos=\"$mirror\")"
+
+  PKGS="classInt gpclib gstat MASS maps mapdata mvnormtest mvtnorm sp spatstat"
+  PKGS="$PKGS spgwr VGAM vioplot tm snowballC twitteR biclust maptools"
+  PKGS="$PKGS RSQLite SDMTools sp spacetime RandomFields frailtypack"
+  PKGS="$PKGS fdatest readr readxl haven purrr lubridate broom cmaes fda"
+  PKGS="$PKGS data.table reshape2 dplyr pryr stringr msm msmtools flexsurv"
+  PKGS="$PKGS survival bigmemory biglm car afex lme4 nlme fastcluster"
+  PKGS="$PKGS clusterCrit randomForest ROCR foreach doParallel Rcpp"
+  PKGS="$PKGS RcppArmadillo devtools profvis testthat knitr roxygen2 rmarkdown"
+  for pkg in $PKGS; do
+    "$dstdir/bin/R" -e 'if (!require("'$pkg'")) install.packages("'$pkg'", repos="'$mirror'")'
+  done
+
+  strip "$dstdir/bin"
+  strip "$dstdir/lib"
+
+  compress_doc "$dstdir/share/man"
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("A free software environment for statistical computing and graphics")
+help([[
+R is installed in "\$mkRPrefix" directory.
+
+url: https://www.r-project.org
+]])
+
+load("openblas")
+
+setenv("mkRPrefix", "$dstdir")
+
+prepend_path("PATH", "$dstdir/bin")
+EOF
+  fi
+}

@@ -1,0 +1,103 @@
+#!/bin/bash
+
+pkgname=openblas
+pkgver=0.2.20
+archive=v$pkgver.tar.gz
+sum=a186074145a24823e82c65672dad1cd1ca6fe89c
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download https://github.com/xianyi/OpenBLAS/archive/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd OpenBLAS-$pkgver
+    make clean
+    message "Compiling $pkgname"
+    # (ppc64) does not support DYNAMIC_ARCH
+    # https://github.com/xianyi/OpenBLAS/issues/48
+    case $ARCH in
+      ppc64) DYNAMIC_ARCH=0;;
+      *)     DYNAMIC_ARCH=1;;
+    esac
+    make USE_THREAD=1 USE_OPENMP=0 DYNAMIC_ARCH=$DYNAMIC_ARCH libs netlib shared
+    cc -I. -o openblas_corename $srcdir/openblas_corename.c cpuid.S
+    cc -I. -o openblas_numcores $srcdir/openblas_numcores.c cpuid.S
+  popd
+}
+
+package() {
+  install -vd -m 0755 $dstdir/{bin,include,lib}
+  make -C OpenBLAS-$pkgver install PREFIX=$dstdir
+  install -v -m 0755 OpenBLAS-$pkgver/openblas_corename $dstdir/bin
+  install -v -m 0755 OpenBLAS-$pkgver/openblas_numcores $dstdir/bin
+
+  strip $dstdir/bin
+  strip $dstdir/lib
+
+  # removing the static libraries
+  rm -vrf $dstdir/lib/*.a
+
+  install -vd -m 0755 $dstdir/lib/pkgconfig
+  cat > $dstdir/lib/pkgconfig/openblas.pc << EOF
+prefix=$dstdir
+libdir=\${prefix}/lib
+includedir=\${prefix}/include
+
+Name: openblas
+Description: Optimized BLAS library based on GotoBLAS2
+Version: $pkgver
+URL: http://www.openblas.net/
+
+Requires:
+Libs: -L\${libdir} -lopenblas
+CFlags: -I\${includedir}
+EOF
+  ln -sf openblas.pc $dstdir/lib/pkgconfig/blas.pc
+  ln -sf openblas.pc $dstdir/lib/pkgconfig/lapack.pc
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("OpenBLAS is an optimized BLAS library based on GotoBLAS2.")
+help([[
+This module provides an optimized implementation of the BLAS and LAPACK
+libraries, it is both multithreaded and optimized for multiple platforms.
+For using OpenBLAS library you should use the linker flags:
+  -L\$mkOpenblasLib -lopenblas
+By default the library run in single-thread mode, but you can set the number of
+threads for the multi-thread mode using the proper environment variable:
+  export OPENBLAS_NUM_THREADS=4
+or using the proper function to control the number of threads at runtime
+  void openblas_set_num_threads(int num_threads);
+Loading this module two utility commands are provided:
+  openblas_corename - Return the name of the current architecture
+  openblas_numcores - Return the number of physical cores of cpu
+These command can be used to set the optimal value of the OPENBLAS_NUM_THREADS
+variable for your architecture:
+  export OPENBLAS_NUM_THREADS=\$(openblas_numcores)
+
+url: http://www.openblas.net/
+]])
+
+setenv("mkOpenblasPrefix", "$dstdir")
+setenv("mkOpenblasLib", "$dstdir/lib")
+setenv("mkOpenblasInc", "$dstdir/include")
+
+prepend_path("PATH", "$dstdir/bin")
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+prepend_path("PKG_CONFIG_PATH", "$dstdir/lib/pkgconfig")
+
+if (mode() == "load") then
+  local corename = capture("$dstdir/bin/openblas_corename")
+  local numcores = capture("$dstdir/bin/openblas_numcores")
+
+  setenv("mkOpenblasCorename", corename)
+  setenv("mkOpenblasNumcores", numcores)
+
+  setenv("OPENBLAS_NUM_THREADS", 1)
+end
+EOF
+  fi
+}

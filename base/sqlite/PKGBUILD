@@ -1,0 +1,25 @@
+#!/bin/bash
+
+pkgname=sqlite
+pkgver=3220000
+archive=$pkgname-autoconf-$pkgver.tar.gz
+sum=2fb24ec12001926d5209d2da90d252b9825366ac
+
+dstdir=$mkToolchainBase
+
+build() {
+  download https://www.sqlite.org/2018/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-autoconf-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-static
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-autoconf-$pkgver install
+}

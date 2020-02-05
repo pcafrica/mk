@@ -1,0 +1,48 @@
+diff -Naur a/cmake/TPLs/FindTPLBinUtils.cmake b/cmake/TPLs/FindTPLBinUtils.cmake
+--- a/cmake/TPLs/FindTPLBinUtils.cmake	2016-04-27 19:41:32.000000000 +0000
++++ b/cmake/TPLs/FindTPLBinUtils.cmake	2016-08-04 13:45:18.300668000 +0000
+@@ -93,6 +93,7 @@
+ #include <execinfo.h>
+ #include <cxxabi.h>
+ #include <link.h>
++#define PACKAGE Trilinos
+ #include <bfd.h>
+ 
+ 
+diff -Naur a/cmake/TPLs/FindTPLCCOLAMD.cmake b/cmake/TPLs/FindTPLCCOLAMD.cmake
+--- a/cmake/TPLs/FindTPLCCOLAMD.cmake	2016-04-27 19:41:32.000000000 +0000
++++ b/cmake/TPLs/FindTPLCCOLAMD.cmake	2016-08-04 13:45:18.303585000 +0000
+@@ -55,6 +55,6 @@
+ 
+ 
+ TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES( CCOLAMD
+-  REQUIRED_HEADERS ccolamd.h UFconfig.h
++  REQUIRED_HEADERS ccolamd.h
+   REQUIRED_LIBS_NAMES ccolamd
+   )
+diff -Naur a/cmake/TPLs/FindTPLCholmod.cmake b/cmake/TPLs/FindTPLCholmod.cmake
+--- a/cmake/TPLs/FindTPLCholmod.cmake	2016-04-27 19:41:32.000000000 +0000
++++ b/cmake/TPLs/FindTPLCholmod.cmake	2016-08-04 13:45:18.306360000 +0000
+@@ -56,7 +56,7 @@
+ 
+ TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES( Cholmod
+   REQUIRED_HEADERS cholmod.h cholmod_core.h
+-  REQUIRED_LIBS_NAMES libcholmod.a libamd.a libcolamd.a libsuitesparseconfig.a
++  REQUIRED_LIBS_NAMES cholmod amd colamd suitesparseconfig
+   )
+ 
+ 
+diff -Naur a/packages/stk/stk_doc_tests/CMakeLists.txt b/packages/stk/stk_doc_tests/CMakeLists.txt
+--- a/packages/stk/stk_doc_tests/CMakeLists.txt	2016-04-27 19:41:35.000000000 +0000
++++ b/packages/stk/stk_doc_tests/CMakeLists.txt	2016-08-04 13:45:18.310024000 +0000
+@@ -1,3 +1,4 @@
++TRIBITS_SUBPACKAGE(Doc_tests)
+ 
+ TRIBITS_ADD_TEST_DIRECTORIES(stk_mesh)
+ 
+@@ -7,3 +8,5 @@
+ 
+ TRIBITS_ADD_TEST_DIRECTORIES(stk_io)
+ TRIBITS_ADD_TEST_DIRECTORIES(stk_util)
++
++TRIBITS_SUBPACKAGE_POSTPROCESS()

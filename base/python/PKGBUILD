@@ -1,0 +1,62 @@
+#!/bin/bash
+
+pkgname=python
+pkgver=3.6.4
+archive=Python-$pkgver.tar.xz
+sum=36a90695cda9298a0663e667c12909246c358851
+
+dstdir=$mkToolchainBase
+
+build() {
+  download https://www.python.org/ftp/python/$pkgver/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd Python-$pkgver
+    # Python 2.7.13 - issue #29188 - https://bugs.python.org/issue29188
+    [[ -r "$srcdir"/$pkgname-$pkgver.patch ]] && \
+      patch -p1 -i "$srcdir"/$pkgname-$pkgver.patch
+
+    # ensure to use system libraries
+    rm -rf Modules/{expat,zlib,_ctypes/{darwin,libffi}*}
+    # fixing the system paths
+    sed -i "s:/usr/include:$mkToolchainBase/include:g" setup.py
+    sed -i "s:/usr/lib:$mkToolchainBase/lib:g" setup.py
+    message "Configuring $pkgname"
+    # --with-dbmliborder=bdb:gdbm
+    #   Use this switch if you want to build Python DBM Module against Berkeley
+    #   DB instead of GDBM
+    # --enable-optimizations
+    #   A release build with all optimizations active
+    ./configure --build=$TARGET --prefix="$dstdir" --enable-shared \
+                --with-threads --enable-ipv6 --enable-unicode=ucs4 \
+                --with-system-expat --with-system-ffi --without-ensurepip \
+                --with-dbmliborder=bdb:gdbm:ndbm \
+                --enable-optimizations
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C Python-$pkgver install
+  ln -sv python3 "$dstdir"/bin/python
+
+  # linker cache is not updated
+  export LD_LIBRARY_PATH="$dstdir"/lib
+  export PATH="$dstdir/bin:$PATH"
+
+  # installing pip (will also install setuptools and wheel)
+  download https://bootstrap.pypa.io/get-pip.py get-pip.py
+  python get-pip.py
+
+  rm -vf "$dstdir"/bin/pip
+  rm -vf "$dstdir"/bin/pip${pkgver%%.*}
+  ln -svf pip${pkgver%.*} "$dstdir"/bin/pip${pkgver%%.*}
+  ln -svf pip${pkgver%%.*} "$dstdir"/bin/pip
+
+  rm -vf "$dstdir"/bin/easy_install
+  ln -svf easy_install-${pkgver%.*} "$dstdir"/bin/easy_install
+
+  pip install six
+}

@@ -1,0 +1,54 @@
+#!/bin/bash
+
+pkgname=tbb
+pkgver=2018
+_pkgver=2018_U2
+archive=${_pkgver}.tar.gz
+sum=1d3e011649dbe9259156b6cb0fe15f375abd8f9c
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+url=https://github.com/01org/tbb/archive/
+
+build() {
+  download $url/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd tbb-${_pkgver}
+    message "Compiling $pkgname"
+    make stdver=c++11 tbb_build_prefix=BUILDPREFIX
+  popd
+}
+
+package() {
+  install -vd $dstdir/{include,lib}
+
+  install -v tbb-${_pkgver}/build/BUILDPREFIX_release/*.so.2 $dstdir/lib
+  strip $dstdir/lib
+  for name in tbb tbbmalloc tbbmalloc_proxy; do
+    ln -sfv lib$name.so.2 $dstdir/lib/lib$name.so
+  done
+
+  pushd tbb-${_pkgver}/include
+    tar -cf - tbb | (cd $dstdir/include && tar -xf -)
+  popd
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("Widely used C++ template library for task parallelism.")
+help([[
+The TBB library is installed in "\$mkTbbPrefix" directory, the dynamic libraries
+are located in "\$mkTbbLib" directory and headers files in "\$mkTbbInc".
+
+url: https://www.threadingbuildingblocks.org/
+]])
+
+setenv("mkTbbPrefix", "$dstdir")
+setenv("mkTbbLib", "$dstdir/lib")
+setenv("mkTbbInc", "$dstdir/include")
+
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+EOF
+  fi
+}

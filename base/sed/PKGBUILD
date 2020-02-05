@@ -1,0 +1,25 @@
+#!/bin/bash
+
+pkgname=sed
+pkgver=4.4
+archive=$pkgname-$pkgver.tar.xz
+sum=a196cd036efd52a8e349cfe88ab4baa555fb29d5
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://ftpmirror.gnu.org/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-nls
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

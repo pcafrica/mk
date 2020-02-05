@@ -1,0 +1,27 @@
+#!/bin/bash
+
+pkgname=libssh2
+pkgver=1.8.0
+archive=$pkgname-$pkgver.tar.gz
+sum=baf2d1fb338eee531ba9b6b121c64235e089e0f5
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://www.libssh2.org/download/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-silent-rules \
+                --disable-static --disable-rpath --disable-examples-build \
+                --with-libz --with-openssl
+    message "Building $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

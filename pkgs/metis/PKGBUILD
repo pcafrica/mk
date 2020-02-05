@@ -1,0 +1,78 @@
+#!/bin/bash
+
+pkgname=metis
+pkgver=5
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+metisver=5.1.0
+metisarchive=metis-$metisver.tar.gz
+metisurl=http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/$metisarchive
+metissum=4722c647024271540f2adcf83456ebdeb1b7d6a6
+
+parmetisver=4.0.3
+parmetisarchive=parmetis-$parmetisver.tar.gz
+parmetisurl=http://glaros.dtc.umn.edu/gkhome/fetch/sw/parmetis/$parmetisarchive
+parmetissum=e0df69b037dd43569d4e40076401498ee5aba264
+
+build() {
+  download $metisurl
+  download $parmetisurl
+
+  check $metisarchive $metissum
+  check $parmetisarchive $parmetissum
+
+  extract $metisarchive
+  extract $parmetisarchive
+
+  # fix metis version
+  pushd parmetis-$parmetisver
+    [[ -r $srcdir/parmetis-$parmetisver.patch ]] && \
+      patch -p1 -i $srcdir/parmetis-$parmetisver.patch
+    rm -rf metis
+    ln -sf ../metis-$metisver metis
+  popd
+
+  pushd parmetis-$parmetisver/build
+    message "Configuring $pkgname"
+    cmake -D CMAKE_INSTALL_PREFIX="$dstdir" \
+          -D CMAKE_SKIP_INSTALL_RPATH=ON \
+          -D CMAKE_SKIP_RPATH=ON \
+          -D CMAKE_BUILD_TYPE=Release \
+          -D SHARED=ON \
+          ..
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C parmetis-$parmetisver/build install
+
+  # cleaning
+  strip $dstdir/bin
+  strip $dstdir/lib
+
+  # module
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("Serial and parallel graph partitioning and fill-reducing ordering.")
+help([[
+This package includes both the serial and parallel versions of METIS library,
+also known as METIS and ParMETIS respectively. They are install the in the
+directory "\$mkMetisPrefix", the dynamic libraries are located in
+"\$mkMetisLib" directory and headers files in "\$mkMetisInc".
+
+url: http://glaros.dtc.umn.edu/gkhome/views/metis
+]])
+
+setenv("mkMetisPrefix", "$dstdir")
+setenv("mkMetisLib", "$dstdir/lib")
+setenv("mkMetisInc", "$dstdir/include")
+
+prepend_path("PATH", "$dstdir/bin")
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+EOF
+  fi
+}

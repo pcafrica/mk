@@ -1,0 +1,27 @@
+#!/bin/bash
+
+pkgname=gawk
+pkgver=4.2.0
+archive=$pkgname-$pkgver.tar.gz
+sum=52ceefd5aa93b17df4d92174ca1df3c9ca1517fc
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://ftpmirror.gnu.org/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --enable-threads=posix \
+                --without-libsigsegv --disable-nls
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+  rm "$dstdir"/bin/gawk; ln -s gawk-$pkgver "$dstdir"/bin/gawk
+}

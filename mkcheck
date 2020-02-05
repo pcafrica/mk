@@ -1,0 +1,271 @@
+# Copyright (c) 2015, Mattia Penati <mattia.penati@gmail.com>
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+#  1. Redistributions of source code must retain the above copyright notice,
+#     this list of conditions and the following disclaimer.
+#
+#  2. Redistributions in binary form must reproduce the above copyright notice,
+#     this list of conditions and the following disclaimer in the documentation
+#     and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+# the following environment variables can change the behaviour of the command
+#
+# mkUseColor = [auto|yes|no] (default: auto)
+#   If set to 'no' than the command does not use the colors for the output.
+# mkDebug = [yes|no] (default: no)
+#   If set to 'yes' then bash print all the commands.
+
+# checking if the environment is setup correctly (variable mkPrefix)
+if test -z "$mkPrefix"; then
+  echo "The environment is not set properly, 'mkPrefix' variable is not set" >&2
+  exit 1
+fi
+if test ! -d $mkPrefix; then
+  echo "Variable 'mkPrefix' is not pointing to an existing directory" >&2
+  echo "  mkPrefix='$mkPrefix'" >&2
+  exit 1
+fi
+if test ! -r $mkPrefix/etc/mk.config; then
+  echo "Unable to read the configuration file '$mkPrefix/etc/mk.config'" >&2
+  exit 1
+fi
+
+# Check the environment variables used by mkpkg command
+[[ -z "$mkUseColor" ]] && mkUseColor=auto
+[[ -z "$mkDebug" ]] && mkDebug=no
+
+if [[ $mkUseColor = "auto" ]]; then
+  mkUseColor=$([[ $(tput colors 2> /dev/null) -ge 8 ]] && echo yes || echo no)
+fi
+
+if [[ ! "$mkUseColor" = "no" && ! "$mkUseColor" = "yes" ]]; then
+  echo "Invalid value '$mkUseColor' for variable 'mkUseColor'" >&2
+  exit 1
+fi
+
+if [[ ! "$mkDebug" = "no" && ! "$mkDebug" = "yes" ]]; then
+  echo "Invalid value '$mkDebug' for variable 'mkDebug'" >&2
+  exit 1
+fi
+
+# defined the variables and the function used for the output
+# =============================================================================
+
+# colors
+unset RESET BOLD BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE
+if [[ "$mkUseColor" != "no" && $(tput colors 2> /dev/null) -ge 8 ]]; then
+  if tput setaf 0 &>/dev/null; then
+    RESET="$(tput sgr0)"
+    BOLD="$(tput bold)"
+    BLACK="$(tput setaf 0)"
+    RED="$(tput setaf 1)"
+    GREEN="$(tput setaf 2)"
+    YELLOW="$(tput setaf 3)"
+    BLUE="$(tput setaf 4)"
+    MAGENTA="$(tput setaf 5)"
+    CYAN="$(tput setaf 6)"
+    WHITE="$(tput setaf 7)"
+  else
+    RESET="\e[0m"
+    BOLD="\e[1m"
+    BLACK="\e[30m"
+    RED="\e[31m"
+    GREEN="\e[32m"
+    YELLOW="\e[33m"
+    BLUE="\e[34m"
+    MAGENTA="\e[35m"
+    CYAN="\e[36m"
+    WHITE="\e[37m"
+  fi
+fi
+readonly RESET BOLD BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE
+
+# error <msg>
+# Print an error message to the standard error stream
+error() {
+  echo -e "${BOLD}${RED}>> Error${RESET}${BOLD} $1${RESET}" >&2
+}
+
+# warning <msg>
+# Print a warning message to the standard error stream
+warning() {
+  echo -e "${BOLD}${YELLOW}>> Warning${RESET}${BOLD} $1${RESET}" >&2
+}
+
+# message <msg>
+# Print a message to the standard output stream
+message() {
+  echo -e "${BOLD}>> $1${RESET}"
+}
+
+# plain <msg>
+# Print a plain text to the standard output stream
+plain() {
+  echo -e "   ${RESET}$1${RESET}"
+}
+
+# parse the command line arguments
+# =============================================================================
+
+# usage
+# Print the command help.
+usage() {
+  # redirect to the correct file
+  echo "Check the installation of a package."
+  echo ""
+  echo "Usage:"
+  echo "  mkcheck <dir>"
+  echo "  mkcheck -h | --help"
+  echo ""
+  echo "Options:"
+  echo "  -h | --help        Show this help message"
+  echo ""
+  return 0
+}
+
+# default options
+pkgPrefix=
+
+# parse the command line arguments
+while true; do
+  case "$1" in
+    -h|--help)        usage; exit 0;;
+    -*)               error "Unknown option '$1'"; exit 1;;
+    *)                break;;
+  esac
+  shift
+done
+pkgPrefix="$1"; shift
+
+# there are some unkown arguments
+if [[ -n "$@" ]]; then
+  error "Unknown arguments '$@'"
+  exit 1
+fi
+
+# check the given directory
+# =============================================================================
+if [[ -z "$pkgPrefix" ]]; then
+  pkgPrefix=$(pwd)
+fi
+
+# Run through all files
+check_rpath() {
+  rpath=$("$mkPrefix"/bin/patchelf --print-rpath "$1")
+  if [[ -n "$rpath" && ! "$rpath" = "\$ORIGIN" ]]; then
+    message "Not empty RPATH for '$1'"
+    plain "$rpath"
+  fi
+}
+
+check_interpreter() {
+  if [[ -n "$mkToolchain" ]]; then
+    interpreter=$("$mkPrefix"/bin/patchelf --print-interpreter "$1")
+    if [[ ! $interpreter = $mkToolchainPrefix/* ]]; then
+      message "Invalid dynamic loader for '$1'"
+      plain "$interpreter"
+    fi
+  fi
+}
+
+check_shebang() {
+  shebang=$(head -n1 "$1")
+  prefix=${shebang:0:2}
+  shebang=${shebang:2}
+  if [[ "$prefix" = "#!" ]]; then
+    shebang="$(echo -e "$shebang" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+    if [[ ! $shebang = "$mkPrefix"/* && ! $shebang = "/bin/bash" && ! $shebang = "/bin/sh" ]]; then
+      message "Invalid interpreter for '$1'"
+      plain "$shebang"
+    fi
+  fi
+}
+
+find "$pkgPrefix" -type f -print0 | while IFS= read -r -d '' file; do
+  type=none
+  if [[ -n "$(file -b "$file" | grep "executable" | grep "ELF" | grep "dynamically")" ]]; then
+    type=executable
+  elif [[ -n "$(file -b "$file" | grep "shared object" | grep "ELF")" ]]; then
+    type=library
+  elif [[ -n "$(file -b "$file" | grep "text executable")" ]]; then
+    type=script
+  fi
+
+  case $type in
+    library)     check_rpath $file;;
+    executable)  check_rpath $file
+                 check_interpreter $file;;
+    script)      check_shebang $file;;
+    none)
+      ;;
+  esac
+done
+
+# libraries
+if [[ -d "$pkgPrefix"/lib64 ]]; then
+  message "Invalid libraries directory"
+  plain "$pkgPrefix/lib64"
+fi
+
+# checking the documentations location
+manDir=$(find "$pkgPrefix" -type d -name man)
+manDir=$(readlink -f "$manDir")
+if [[ -n "$manDir" ]]; then
+  if [[ ! "$manDir" = $(readlink -f "$pkgPrefix/share/man") ]]; then
+    message "Man pages are not in the correct location"
+    plain "$manDir"
+  fi
+  for man in $(ls "$manDir"); do
+    for page in $(ls "$manDir"/$man); do
+      if [[ ! $page = *.gz ]]; then
+        message "Uncompressed man page"
+        plain "$manDir/$man/$page"
+      fi
+    done
+  done
+fi
+
+infoDir=$(find "$pkgPrefix" -type d -name info)
+infoDir=$(readlink -f "$infoDir")
+if [[ -n "$infoDir" ]]; then
+  if [[ ! "$infoDir" = $(readlink -f "$pkgPrefix/share/info") ]]; then
+    message "Info pages are not in the correct location"
+    plain "$infoDir"
+  fi
+  for page in $(ls "$infoDir"); do
+    if [[ ! $page = "dir" && ! $page = *.gz ]]; then
+      message "Uncompressed info page"
+      plain "$infoDir/$page"
+    fi
+  done
+fi
+
+docDir=$(find "$pkgPrefix" -type d -name doc)
+if [[ -n "$docDir" ]]; then
+  message "Useless documentations directory"
+  plain "$docDir"
+fi
+
+# checking localization
+localeDir=$(find "$pkgPrefix" -type d -name locale)
+if [[ -n "$localeDir" ]]; then
+  message "Found a possible localization directory"
+  plain "$localeDir"
+fi
+
+exit 0

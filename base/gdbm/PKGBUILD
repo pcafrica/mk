@@ -1,0 +1,26 @@
+#!/bin/bash
+
+pkgname=gdbm
+pkgver=1.14
+archive=$pkgname-$pkgver.tar.gz
+sum=1a97314f631e1d538488ba629fa781dec7409901
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://ftpmirror.gnu.org/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --enable-libgdbm-compat \
+                --disable-silent-rules --disable-nls --disable-static
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

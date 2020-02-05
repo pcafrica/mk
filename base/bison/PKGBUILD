@@ -1,0 +1,26 @@
+#!/bin/bash
+
+pkgname=bison
+pkgver=3.0.4
+archive=$pkgname-$pkgver.tar.gz
+sum=ec1f2706a7cfedda06d29dc394b03e092a1e1b74
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://ftpmirror.gnu.org/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-nls \
+                --disable-silent-rules
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

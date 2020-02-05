@@ -1,0 +1,17 @@
+#
+# %PREFIX%/etc/bash.bashrc
+#
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+shopt -s direxpand
+shopt -s checkwinsize
+
+load() {
+  [[ -r "$1" ]] && source "$1"
+}
+load %PREFIX%/etc/profile.d/bash_completion.sh
+load %PREFIX%/etc/profile.d/mk.sh
+
+unset script load

@@ -1,0 +1,59 @@
+#!/bin/bash
+
+pkgname=arpack
+pkgver=3.5.0
+archive=$pkgver.tar.gz
+sum=acbbe14b03b323f84236553872396345204dea1e
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download https://github.com/opencollab/arpack-ng/archive/$archive
+  check $archive $sum
+  extract $archive
+
+  module load openblas
+
+  pushd $pkgname-ng-$pkgver
+    message "Configuring $pkgname"
+    ./bootstrap
+    F77=gfortran \
+    CC=cc \
+    MPIF77=mpifort \
+    ./configure --prefix="$dstdir" \
+                --enable-shared \
+                --disable-static \
+                --enable-mpi \
+                --with-blas="$mkOpenblasLib"/libopenblas.so \
+                --with-lapack="$mkOpenblasLib"/libopenblas.so
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-ng-$pkgver install
+  strip "$dstdir"/lib
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("Fortran77 subroutines designed to solve large scale eigenvalue problems")
+help([[
+This module is based on arpack-ng a new project that is replacing arpack almost
+everywhere. The library is installed in "\$mkArpackPrefix" directory, the
+dynamic libraries are located in "\$mkArpackLib" directory. The flags for the
+linker can be obtained using pkg-config with the command:
+  $ pkg-config --libs arpack
+
+url: https://github.com/opencollab/arpack-ng
+]])
+
+setenv("mkArpackPrefix", "$dstdir")
+setenv("mkArpackLib", "$dstdir/lib")
+
+prepend_path("PKG_CONFIG_PATH", "$dstdir/lib/pkgconfig")
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+EOF
+  fi
+}

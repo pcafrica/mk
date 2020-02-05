@@ -1,0 +1,23 @@
+#!/bin/bash
+
+pkgname=ninja
+pkgver=1.8.2
+archive=v$pkgver.tar.gz
+sum=17219deb34dd816363e37470f77ff7231509143a
+
+dstdir=$mkToolchainBase
+
+build() {
+  download https://github.com/ninja-build/ninja/archive/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Compiling $pkgname"
+    ./configure.py --bootstrap
+  popd
+}
+
+package() {
+  install -m 0755 $pkgname-$pkgver/ninja "$dstdir"/bin
+}

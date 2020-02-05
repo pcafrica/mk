@@ -1,0 +1,29 @@
+#!/bin/bash
+
+pkgname=git
+pkgver=2.16.2
+archive=$pkgname-$pkgver.tar.xz
+sum=8858cbf822eb3c86df91336fbcbdfe69f9c0abc5
+dstdir=$mkToolchainBase
+mkParallelBuild=no
+
+build() {
+  download https://www.kernel.org/pub/software/scm/git/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --prefix="$dstdir" --with-gitconfig="$dstdir"/etc/gitconfig \
+                --with-gitattributes="$dstdir"/etc/gitattributes \
+                --with-openssl --with-libpcre --with-curl --with-expat \
+                --with-shell=$(which bash) --with-zlib --without-tcltk \
+                --with-perl=$(which perl) --with-python=$(which python)
+    message "Compiling $pkgname"
+    make V=1
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

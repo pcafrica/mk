@@ -1,0 +1,56 @@
+#!/bin/bash
+
+pkgname=ncurses
+pkgver=6.1
+archive=$pkgname-$pkgver.tar.gz
+sum=57acf6bc24cacd651d82541929f726f4def780cc
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://ftpmirror.gnu.org/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    if [[ $mkToolchain = gcc-*/5 && -e "$srcdir"/ncurses-$pkgver-gcc5.patch ]]; then
+      message "Applying patches to $pkgname"
+      patch -Np1 -i "$srcdir"/ncurses-$pkgver-gcc5.patch
+    fi
+    message "Configuring $pkgname"
+    # everything works correctly also for installation in the test directory
+    install -dm 0755 "$dstdir"/lib/pkgconfig
+    # PKG_CONFIG_LIBDIR=$mkToolchainBase/lib/pkgconfig
+    #   Specify where to put .pc files.
+    PKG_CONFIG_LIBDIR="$dstdir"/lib/pkgconfig \
+    CPPFLAGS="-P $CPPFLAGS" \
+    ./configure --build=$TARGET --prefix="$dstdir" --mandir="$dstdir"/share/man \
+                --with-cxx --with-cxx-binding --without-ada \
+                --with-pkg-config=$(which pkg-config) --enable-pc-files \
+                --with-shared --without-debug --disable-rpath-hack \
+                --enable-widec --enable-symliks
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+
+  # fix the headers
+  ln -sf ncursesw "$dstdir"/include/ncurses
+
+  # The wide and not-wide are compatibles.
+  for lib in form menu ncurses panel; do
+    rm "$dstdir"/lib/lib${lib}w.a
+    ln -sf lib${lib}w.so "$dstdir"/lib/lib${lib}.so
+    ln -sf ${lib}w.pc "$dstdir"/lib/pkgconfig/${lib}.pc
+  done
+
+  ln -sf libncursesw.so "$dstdir"/lib/libcursesw.so
+  ln -sf libncurses.so "$dstdir"/lib/libcurses.so
+
+  ln -sf libncursesw.so.${pkgver} "$dstdir"/lib/libtinfo.so.${pkgver}
+  ln -sf libtinfo.so.${pkgver} "$dstdir"/lib/libtinfo.so.${pkgver%%.*}
+  ln -sf libtinfo.so.${pkgver%%.*} "$dstdir"/lib/libtinfo.so
+}

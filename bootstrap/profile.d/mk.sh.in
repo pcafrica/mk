@@ -1,0 +1,48 @@
+#! /bin/bash (source)
+# Initialization script for Bash
+
+# Reset
+# =============================================================================
+export mkPrefix=%PREFIX%
+PATH=/usr/bin:/bin
+if [[ "$0" == "$mkPrefix/bin/bash" ]]; then
+  PATH="$mkPrefix/bin:$PATH"
+fi
+export PATH
+export LD_LIBRARY_PATH=
+
+export MANPATH=
+export INFOPATH=
+
+export PKG_CONFIG_PATH=
+export ACLOCAL_PATH=
+
+export LANG=C
+
+# Modules
+# =============================================================================
+source $mkPrefix/lmod/lmod/init/profile
+export MODULEPATH=
+for dir in $(find $mkPrefix/modules -mindepth 1 -maxdepth 1 -type d); do
+  export MODULEPATH=$($mkPrefix/lmod/lmod/libexec/addto --append MODULEPATH $dir)
+done
+export LMOD_IGNORE_CACHE=1
+
+# Colorize
+# =============================================================================
+if [[ $(tput colors 2> /dev/null) -ge 8 ]]; then
+  if [[ $EUID -ne 0 ]]; then
+    export PS1='\[$(tput bold)\]\[$(tput setaf 2)\]\u@\h\[$(tput setaf 4)\] \W \$\[$(tput sgr0)\] '
+  else
+    export PS1='\[$(tput bold)\]\[$(tput setaf 1)\]\u@\h\[$(tput setaf 4)\] \W \$\[$(tput sgr0)\] '
+  fi
+
+  export GREP_COLOR='1;31'
+  alias grep='grep --color=auto'
+  alias ls='ls --color=auto'
+  alias less='less -r'
+  export LMOD_COLORIZE=YES
+else
+  export PS1='\u@\h \W \$ '
+  export LMOD_COLORIZE=NO
+fi

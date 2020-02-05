@@ -1,0 +1,28 @@
+#!/bin/bash
+
+pkgname=flex
+pkgver=2.6.4
+archive=$pkgname-$pkgver.tar.gz
+sum=fafece095a0d9890ebd618adb1f242d8908076e1
+
+dstdir=$mkToolchainBase
+
+build() {
+  download https://github.com/westes/flex/releases/download/v$pkgver/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-nls --disable-shared
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+
+  # remove unused libraries
+  rm -f "$dstdir"/lib/libfl_pic.{a,la}
+}

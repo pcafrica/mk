@@ -1,0 +1,128 @@
+diff --git a/cmake/modules/FindNETCDF.cmake b/cmake/modules/FindNETCDF.cmake
+index f5b8bc2..186324c 100644
+--- a/cmake/modules/FindNETCDF.cmake
++++ b/cmake/modules/FindNETCDF.cmake
+@@ -25,7 +25,7 @@
+ SET(NETCDF_DIR "" CACHE PATH "An optional hint to a NETCDF installation")
+ SET_IF_EMPTY(NETCDF_DIR "$ENV{NETCDF_DIR}")
+ 
+-DEAL_II_FIND_PATH(NETCDF_INCLUDE_DIR netcdfcpp.h
++DEAL_II_FIND_PATH(NETCDF_INCLUDE_DIR netcdf
+   HINTS ${NETCDF_DIR}
+   PATH_SUFFIXES netcdf include
+   )
+@@ -37,7 +37,7 @@ DEAL_II_FIND_PATH(NETCDF_INCLUDE_DIR netcdfcpp.h
+ # - separate C++ and C library search
+ #
+ 
+-DEAL_II_FIND_LIBRARY(NETCDF_CPLUSPLUS_LIBRARY NAMES netcdf_c++ netcdf_cpp
++DEAL_II_FIND_LIBRARY(NETCDF_CPLUSPLUS_LIBRARY NAMES netcdf_c++4 netcdf_cpp4
+   HINTS ${NETCDF_DIR}
+   PATH_SUFFIXES lib${LIB_SUFFIX} lib64 lib
+   )
+diff --git a/include/deal.II/integrators/laplace.h b/include/deal.II/integrators/laplace.h
+index 7379965..994f950 100644
+--- a/include/deal.II/integrators/laplace.h
++++ b/include/deal.II/integrators/laplace.h
+@@ -610,13 +610,11 @@ namespace LocalIntegrators
+       unsigned int deg1,
+       unsigned int deg2)
+     {
+-      const unsigned int normal1 = GeometryInfo<dim>::unit_normal_direction[dinfo1.face_number];
+-      const unsigned int normal2 = GeometryInfo<dim>::unit_normal_direction[dinfo2.face_number];
+       const unsigned int deg1sq = (deg1 == 0) ? 1 : deg1 * (deg1+1);
+       const unsigned int deg2sq = (deg2 == 0) ? 1 : deg2 * (deg2+1);
+ 
+-      double penalty1 = deg1sq / dinfo1.cell->extent_in_direction(normal1);
+-      double penalty2 = deg2sq / dinfo2.cell->extent_in_direction(normal2);
++      double penalty1 = deg1sq / std::sqrt(dinfo1.cell->measure());
++      double penalty2 = deg2sq / std::sqrt(dinfo2.cell->measure());
+       if (dinfo1.cell->has_children() ^ dinfo2.cell->has_children())
+         {
+           Assert (dinfo1.face == dinfo2.face, ExcInternalError());
+diff --git a/include/deal.II/lac/precondition.h b/include/deal.II/lac/precondition.h
+index 5cf413b..23f94d9 100644
+--- a/include/deal.II/lac/precondition.h
++++ b/include/deal.II/lac/precondition.h
+@@ -26,6 +26,7 @@
+ #include <deal.II/lac/tridiagonal_matrix.h>
+ #include <deal.II/lac/solver_cg.h>
+ #include <deal.II/lac/vector_memory.h>
++#include <deal.II/lac/trilinos_vector.h>
+ 
+ DEAL_II_NAMESPACE_OPEN
+ 
+@@ -1758,6 +1759,37 @@ namespace internal
+ 
+       std::vector<double> values;
+     };
++
++    template <class VECTOR>
++    struct Diag {
++        template <class MATRIX>
++        static
++        void reinit(const MATRIX &matrix, VECTOR &v) {
++            v.reinit(matrix.m());
++        }
++
++        static
++        void clear(VECTOR &v) {
++            v.reinit(0);
++        }
++    };
++
++#if defined(DEAL_II_WITH_TRILINOS) && defined(DEAL_II_WITH_MPI)
++    template <>
++    struct Diag<TrilinosWrappers::MPI::Vector> {
++        template <class MATRIX>
++        static
++        void reinit(const MATRIX &matrix, TrilinosWrappers::MPI::Vector &v) {
++            v.reinit(matrix.locally_owned_range_indices(),
++                     matrix.get_mpi_communicator());
++        }
++
++        static
++        void clear(TrilinosWrappers::MPI::Vector &v) {
++            v.clear();
++        }
++    };
++#endif
+   }
+ }
+ 
+@@ -1811,7 +1843,8 @@ PreconditionChebyshev<MatrixType,VectorType>::initialize
+     {
+       Assert(data.matrix_diagonal_inverse.size() == 0,
+              ExcMessage("Matrix diagonal vector set but not sized correctly"));
+-      data.matrix_diagonal_inverse.reinit(matrix.m());
++      internal::PreconditionChebyshev::Diag<VectorType>::
++          reinit(matrix, data.matrix_diagonal_inverse);
+       for (unsigned int i=0; i<matrix.m(); ++i)
+         data.matrix_diagonal_inverse(i) = 1./matrix.el(i,i);
+     }
+@@ -1969,9 +2002,9 @@ void PreconditionChebyshev<MatrixType,VectorType>::clear ()
+ {
+   is_initialized = false;
+   matrix_ptr = 0;
+-  data.matrix_diagonal_inverse.reinit(0);
+-  update1.reinit(0);
+-  update2.reinit(0);
++  internal::PreconditionChebyshev::Diag<VectorType>::clear(data.matrix_diagonal_inverse);
++  internal::PreconditionChebyshev::Diag<VectorType>::clear(update1);
++  internal::PreconditionChebyshev::Diag<VectorType>::clear(update2);
+ }
+ 
+ 
+diff --git a/source/grid/grid_in.cc b/source/grid/grid_in.cc
+index 478895e..c4fe051 100644
+--- a/source/grid/grid_in.cc
++++ b/source/grid/grid_in.cc
+@@ -31,7 +31,7 @@
+ 
+ 
+ #ifdef DEAL_II_WITH_NETCDF
+-#include <netcdfcpp.h>
++#include <netcdf>
+ #endif
+ 
+ 

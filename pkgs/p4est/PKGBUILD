@@ -1,0 +1,60 @@
+#!/bin/bash
+
+pkgname=p4est
+pkgver=2.0
+archive=$pkgname-$pkgver.tar.gz
+sum=f8148c503969a65230c90844f7a33bbda0f2e1c1
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download http://p4est.github.io/release/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    CC=$(which mpicc) \
+    CXX=$(which mpic++) \
+    ./configure --prefix="$dstdir" \
+                --enable-mpi \
+                --enable-shared \
+                --disable-static \
+                --disable-vtk-binary \
+                --without-blas
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+
+  strip "$dstdir/bin"
+  strip "$dstdir/lib"
+
+  reset_rpath "$dstdir/bin"
+  reset_rpath "$dstdir/lib"
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("Dynamic management of a collection of adaptive octrees in parallel")
+help([[
+The p4est library is installed in "\$mkP4estPrefix" directory, the dynamic
+libraries are located in "\$mkP4estLib" directory and headers files in
+"\$mkP4estInc".
+
+url: http://www.p4est.org
+]])
+
+setenv("mkP4estPrefix", "$dstdir")
+setenv("mkP4estLib", "$dstdir/lib")
+setenv("mkP4estInc", "$dstdir/include")
+
+prepend_path("PATH", "$dstdir/bin")
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+prepend_path("ACLOCAL_PATH", "$dstdir/share/aclocal")
+EOF
+  fi
+}

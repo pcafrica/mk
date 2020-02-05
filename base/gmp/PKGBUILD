@@ -1,0 +1,26 @@
+#!/bin/bash
+
+pkgname=gmp
+pkgver=6.1.2
+archive=$pkgname-${pkgver}.tar.xz
+sum=9dc6981197a7d92f339192eea974f5eca48fcffe
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://ftpmirror.gnu.org/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --enable-cxx --enable-fat \
+                --disable-static
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

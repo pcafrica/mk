@@ -1,0 +1,73 @@
+#!/bin/bash
+
+pkgname=suitesparse
+pkgver=5.1.0
+archive=SuiteSparse-$pkgver.tar.gz
+sum=bedf8aa7fdff4247cf1b9029a86cbb76c11627db
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download http://faculty.cse.tamu.edu/davis/SuiteSparse/$archive
+  check $archive $sum
+  extract $archive
+
+  module load openblas
+  module load metis
+  module load tbb
+
+  pushd SuiteSparse
+    [[ -r $srcdir/SuiteSparse-$pkgver.patch ]] && \
+      patch -p1 -i $srcdir/SuiteSparse-$pkgver.patch
+    message "Compiling $pkgname"
+    BLAS="-L$mkOpenblasLib -lopenblas" \
+    LAPACK="-L$mkOpenblasLib -lopenblas" \
+    MY_METIS_LIB="-L$mkMetisLib -lmetis" \
+    MY_METIS_INC="$mkMetisInc" \
+    TBB="-L$mkTbbLib -ltbb" \
+    make library
+  popd
+}
+
+package() {
+  module load openblas
+  module load metis
+  module load tbb
+
+  install -d "$dstdir"/{include,lib}
+
+  BLAS="-L$mkOpenblasLib -lopenblas" \
+  LAPACK="-L$mkOpenblasLib -lopenblas" \
+  MY_METIS_LIB="-L$mkMetisLib -lmetis" \
+  MY_METIS_INC="$mkMetisInc" \
+  TBB="-L$mkTbbLib -ltbb" \
+  make -C SuiteSparse install INSTALL="$dstdir"
+
+  strip "$dstdir"/lib
+  reset_rpath "$dstdir"/lib
+  rm -rf "$dstdir"/share
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("A suite of sparse matrix algorithms")
+help([[
+SuiteSparse libraries are installed with the prefix "\$mkSuitesparsePrefix",
+the dynamic libraries are located in "\$mkSuitesparseLib" directory and the
+headers in "\$mkSuitesparseInc".
+
+url: http://faculty.cse.tamu.edu/davis/suitesparse.html
+]])
+
+load("openblas")
+load("metis")
+load("tbb")
+
+setenv("mkSuitesparsePrefix", "$dstdir")
+setenv("mkSuitesparseLib", "$dstdir/lib")
+setenv("mkSuitesparseInc", "$dstdir/include")
+
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+EOF
+  fi
+}

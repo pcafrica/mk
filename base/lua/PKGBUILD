@@ -1,0 +1,25 @@
+#!/bin/bash
+
+pkgname=lua
+pkgver=5.3.4
+archive=$pkgname-$pkgver.tar.gz
+sum=79790cfd40e09ba796b01a571d4d63b52b1cd950
+dstdir=$mkToolchainBase
+
+build() {
+  download http://www.lua.org/ftp/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Compiling $pkgname"
+    sed -i "s:INSTALL_TOP=.*:INSTALL_TOP=$dstdir:g" Makefile
+    sed -i "s:/man/man1:/share/man/man1:g" Makefile
+    sed -i "s:MYLIBS=:MYLIBS=$(pkg-config --libs ncurses):g" src/Makefile
+    make linux
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

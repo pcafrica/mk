@@ -1,0 +1,30 @@
+#!/bin/bash
+
+pkgname=htop
+pkgver=2.1.0
+archive=$pkgname-$pkgver.tar.gz
+sum=3475818a0c5cd9b444a4656839de08bfc1b47b6c
+
+dstdir=$mkToolchainBase
+
+build() {
+  download http://hisham.hm/$pkgname/releases/$pkgver/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    if [[ -e "$srcdir"/$pkgname-$pkgver.patch ]]; then
+      message "Applying patch to $pkgname"
+      patch -p1 -i "$srcdir"/$pkgname-$pkgver.patch
+    fi
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" \
+                --enable-unicode --enable-linux-affinity
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+pkgname=expat
+pkgver=2.2.5
+archive=$pkgname-$pkgver.tar.bz2
+sum=490659abd7d6c6d4cb4e60c945a15fbf081564f6
+dstdir=$mkToolchainBase
+
+build() {
+  download https://sourceforge.mirrorservice.org/e/ex/expat/expat/$pkgver/$archive
+  download http://prdownloads.sourceforge.net/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --build=$TARGET --prefix="$dstdir" --disable-static
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+}
