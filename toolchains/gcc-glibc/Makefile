@@ -3,7 +3,7 @@ SHELL=/bin/bash
 help:
 	@echo "Help:"
 	@echo "  clean    remove the downloaded files and eventualy the logs"
-	@echo "  install  install all the gcc-glibc toolchains combinations"
+	@echo "  install  install the gcc-glibc/8 toolchain"
 
 install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) --options="8"

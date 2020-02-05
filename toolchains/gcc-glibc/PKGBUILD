@@ -180,7 +180,7 @@ run() {
   rm -vf $module
   install -dm 0755 $(dirname $module)
   install -dm 0755 $dstdir/{base,modules,pkgs,prefix}
-
+plain "OK"
   prefix=$dstdir/prefix
   base=$dstdir/base
 
