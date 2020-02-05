@@ -5,7 +5,7 @@ PREFIX=%PREFIX%
 # The vendor component of the triple (second component)
 VENDOR=mk
 PKGVERSION=mk
-BUGURL=https://bitbucket.org/mattiapenati/mk/issues
+BUGURL=https://github.com/elauksap/mk/issues
 
 # Compiler flags
 # Compiler flags for the native cpu architecture can be retrieved with the

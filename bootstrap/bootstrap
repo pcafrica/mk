@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Copyright (c) 2015, Mattia Penati <mattia.penati@gmail.com>
+# Copyright (c) 2020, Pasquale Claudio Africa <pasqualeclaudio.africa@polimi.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -256,7 +257,7 @@ rm -f hello
 # =============================================================================
 pkgname=chrpath
 pkgver=$chrpath_version
-download https://alioth.debian.org/frs/download.php/latestfile/813/$pkgname-$pkgver.tar.gz
+download https://alioth-archive.debian.org/releases/chrpath/chrpath/$pkgver/$pkgname-$pkgver.tar.gz
 extract $pkgname-$pkgver.tar.gz
 pushd $pkgname-$pkgver
   CC="$CC" \
@@ -267,22 +268,12 @@ pushd $pkgname-$pkgver
   install -vm 0755 chrpath "$PREFIX/bin/chrpath"
 popd
 
-pkgname=netbsd-curses
-pkgver=$curses_version
-download http://ftp.barfooze.de/pub/sabotage/tarballs/$pkgname-$pkgver.tar.xz 
-extract $pkgname-$pkgver.tar.xz
-pushd $pkgname-$pkgver
-  echo "PREFIX=$TMPDIR" > config.mak
-  make CC=$CC CFLAGS="-Os" LDFLAGS="-static" all-static install-static
-popd
-install -vm 0755 "$TMPDIR/bin/tput" "$PREFIX/bin/tput"
-
 pkgname=bash
 pkgver=$bash_version
 download http://ftpmirror.gnu.org/$pkgname/$pkgname-$pkgver.tar.gz
 extract $pkgname-$pkgver.tar.gz
 pushd $pkgname-$pkgver
-  for patch in {1..19}; do
+  for patch in {1..11}; do
     patchfile=$pkgname${pkgver//.}-$(printf "%03d" $patch)
     download http://ftpmirror.gnu.org/$pkgname/$pkgname-$pkgver-patches/$patchfile
     patch -p0 -i $patchfile
@@ -295,9 +286,8 @@ pushd $pkgname-$pkgver
   CC="$CC -L$TMPDIR/lib" \
   CFLAGS="-Os -static ${_cflags[@]}" \
   LDFLAGS="-static -L$TMPDIR/lib" \
-  LIBS="-lterminfo" \
   ./configure --prefix="$PREFIX" --without-bash-malloc \
-    --disable-nls --enable-readline --with-curses --enable-static-link
+    --disable-nls --enable-readline --enable-static-link
   # This avoid the usage of the dynamic linker in alpine linux
   if [[ $ALPINE_LINUX = "yes" ]]; then
     sed -e "s:-rdynamic::g" -i Makefile
@@ -352,7 +342,7 @@ popd
 
 # compose the lua source (static)
 # =============================================================================
-mkdir -vp lua/{src,include}
+mkdir -vp lua/{src,include/encodings}
 
 pkgname=lua
 pkgver=$lua_version
@@ -361,12 +351,16 @@ extract $pkgname-$pkgver.tar.gz
 cp $pkgname-$pkgver/src/*.c lua/src
 cp $pkgname-$pkgver/src/*.h lua/include
 
-download https://raw.githubusercontent.com/antirez/linenoise/master/linenoise.c \
-         lua/src/linenoise.c
-download https://raw.githubusercontent.com/antirez/linenoise/master/linenoise.h \
-         lua/include/linenoise.h
 download https://raw.githubusercontent.com/hoelzro/lua-linenoise/master/linenoise.c \
-         lua/src/linenoise-lua.c
+         lua/src/linenoise.c
+download https://raw.githubusercontent.com/hoelzro/lua-linenoise/master/linenoise.h \
+         lua/include/linenoise.h
+download https://raw.githubusercontent.com/hoelzro/lua-linenoise/master/linenoiselib.c \
+         lua/src/linenoiselib.c
+download https://raw.githubusercontent.com/hoelzro/lua-linenoise/master/encodings/utf8.h \
+         lua/include/encodings/utf8.h
+download https://raw.githubusercontent.com/hoelzro/lua-linenoise/master/encodings/utf8.c \
+         lua/src/utf8.c
 
 download https://raw.githubusercontent.com/keplerproject/luafilesystem/master/src/lfs.c \
          lua/src/lfs.c
@@ -386,7 +380,7 @@ cat > lua/include/config.h << EOF
 #define HAVE_SYS_STATVFS_H 1
 EOF
 
-CFLAGS="-O2 -Wall -DLUA_USE_POSIX -DLUA_COMPAT_5_2 -DLUA_USE_LINENOISE"
+CFLAGS="-O2 -Wall -DLUA_USE_POSIX -DLUA_COMPAT_5_2"
 CPPFLAGS="-I$(pwd)/lua/include"
 LDFLAGS="-Wl,-s -Wl,-E -static -lc -lm"
 if [[ $ALPINE_LINUX = yes ]]; then
