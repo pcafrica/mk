@@ -80,11 +80,11 @@ run() {
   texinfourl=http://ftpmirror.gnu.org/texinfo/$texinfoarchive
   texinfosum=72a06b48862911c638787cc3307871b990a59726
 
-  binutilsver=2.30
+  binutilsver=2.34
   binutilsdir=binutils-$binutilsver
   binutilsarchive=binutils-$binutilsver.tar.bz2
   binutilsurl=http://ftpmirror.gnu.org/binutils/$binutilsarchive
-  binutilssum=33d807f7fa680b00439eb5560acd0c2ef645e5f9
+  binutilssum=361566c9ab5e90bd847d06f46fb9f18ec6c3ecf0
 
   gmpver=6.1.2
   gmpdir=gmp-$gmpver
