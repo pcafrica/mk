@@ -46,9 +46,15 @@ run() {
       islver=0.19
       islsum=dba7264419ba995a0f6b4fde135993677f7c85fd
       ;;
+    9)
+      gccver=9.2.0
+      gccsum=306d27c3465fa36862c206738d06d65fff5c3645
+      islver=0.22
+      islsum=059980e763ddc968e021dc4a216e8328839ea362
+      ;;
     *)
       if [[ -z "$pkgver" ]]; then
-        error "Specify a valid version (5|6|7|8) for gcc"
+        error "Specify a valid version (5|6|7|8|9) for gcc"
       else
         error "Unsupported version '$pkgver'"
       fi
@@ -122,41 +128,47 @@ run() {
       linuxurl=https://www.kernel.org/pub/linux/kernel/v2.6/longterm/v2.6.32
       linuxsum=bbce5984437bb5efa3a3e3aae368d3bc8bcbbbbe
       ;;
-    3.10* | 3.11*)
+    3.10.* | 3.11.*)
       linux=3.10
       linuxver=3.10.105
       linuxurl=https://www.kernel.org/pub/linux/kernel/v3.x
       linuxsum=de6e10e6c141c74b212d8042720decfe5ca40b9b
       ;;
-    3.12* | 3.13*)
+    3.12.* | 3.13.*)
       linux=3.12
       linuxver=3.12.73
       linuxurl=https://www.kernel.org/pub/linux/kernel/v3.x
       linuxsum=5cbaf84a4de6e9d42ce902767a10c14f49167fa2
       ;;
-    3.16*)
+    3.16.*)
       linux=3.16
       linuxver=3.16.43
       linuxurl=https://www.kernel.org/pub/linux/kernel/v3.x
       linuxsum=bb21f8f3ef26f5b49b83e517d7519e510927c658
       ;;
-    4.1*)
+    4.1.*)
       linux=4.1
       linuxver=4.1.39
       linuxurl=https://www.kernel.org/pub/linux/kernel/v4.x
       linuxsum=26874692c37dcc14b6de990523009a1f5638afb3
       ;;
-    4.4* | 4.8*)
+    4.4.* | 4.8.*)
       linux=4.4
       linuxver=4.4.64
       linuxurl=https://www.kernel.org/pub/linux/kernel/v4.x
       linuxsum=4554451ee0b50e55674795f5d760fdbc72df7bf3
       ;;
-    4.9*)
+    4.9.*)
       linux=4.9
       linuxver=4.9.25
       linuxurl=https://www.kernel.org/pub/linux/kernel/v4.x
       linuxsum=af03c7630a24c2350e211142bd7d795558ddcc02
+      ;;
+    4.1*)
+      linux=4.19
+      linuxver=4.19.102
+      linuxurl=https://www.kernel.org/pub/linux/kernel/v4.x
+      linuxsum=4550d0b11d4d7c2a649259f7714f3036cbe8070f
       ;;
     *)
       error "Unsupported version of kernel '$linuxver'"
@@ -166,11 +178,11 @@ run() {
   linuxarchive=linux-$linuxver.tar.xz
   linuxurl=$linuxurl/$linuxarchive
 
-  glibcver=2.27
+  glibcver=2.31
   glibcdir=glibc-$glibcver
   glibcarchive=glibc-$glibcver.tar.xz
   glibcurl=http://ftpmirror.gnu.org/glibc/$glibcarchive
-  glibcsum=1f7a9c43026484943ef7cf6885f2176a2bc1e093
+  glibcsum=55619672e5e13996e264d408949eb4aaa26e7ec8
 
   # cleaning and creating the directories hierarchy
   dstdir=$PREFIX/pkgs/toolchains/$pkgname/$pkgver
