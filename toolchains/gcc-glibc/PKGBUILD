@@ -49,8 +49,8 @@ run() {
     9)
       gccver=9.2.0
       gccsum=306d27c3465fa36862c206738d06d65fff5c3645
-      islver=0.22
-      islsum=059980e763ddc968e021dc4a216e8328839ea362
+      islver=0.19
+      islsum=dba7264419ba995a0f6b4fde135993677f7c85fd
       ;;
     *)
       if [[ -z "$pkgver" ]]; then
@@ -158,17 +158,11 @@ run() {
       linuxurl=https://www.kernel.org/pub/linux/kernel/v4.x
       linuxsum=4554451ee0b50e55674795f5d760fdbc72df7bf3
       ;;
-    4.9.*)
+    4.9.* | 4.1*)
       linux=4.9
       linuxver=4.9.25
       linuxurl=https://www.kernel.org/pub/linux/kernel/v4.x
       linuxsum=af03c7630a24c2350e211142bd7d795558ddcc02
-      ;;
-    4.1*)
-      linux=4.19
-      linuxver=4.19.102
-      linuxurl=https://www.kernel.org/pub/linux/kernel/v4.x
-      linuxsum=4550d0b11d4d7c2a649259f7714f3036cbe8070f
       ;;
     *)
       error "Unsupported version of kernel '$linuxver'"
