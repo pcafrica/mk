@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=emacs
-pkgver=25.3
+pkgver=26.3
 archive=$pkgname-$pkgver.tar.xz
-sum=1cb4f39e9c0a3305fd62f936c7c95ff8e2924323
+sum=79f6d7c4b26787c44189fe5d1520c354f470f3fb
 dstdir=$mkToolchainBase
 
 # Skip if ASLR is enabled

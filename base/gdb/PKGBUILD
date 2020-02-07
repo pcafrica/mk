@@ -1,13 +1,13 @@
 #!/bin/bash
 
 pkgname=gdb
-pkgver=8.1
+pkgver=8.3.1
 archive=$pkgname-$pkgver.tar.xz
-sum=641861f7d3f22b6a23bc3e801f0ff29a78375490
+sum=8e68fc5d524caeb6684a8b6ed24e75396e40c471
 dstdir=$mkToolchainBase
 
 build() {
-  download http://ftpmirror.gnu.org/$pkgname/$archive
+  download https://ftp.gnu.org/gnu/$pkgname/$archive
   check $archive $sum
   extract $archive
 

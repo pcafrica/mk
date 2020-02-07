@@ -1,15 +1,15 @@
 #!/bin/bash
 
 pkgname=automake
-pkgver=1.15.1
+pkgver=1.16.1
 _pkgver=${pkgver%.*}  # Remove only patch the patch level if required
 archive=$pkgname-$pkgver.tar.gz
-sum=d3cd5fc9bbea9f977b51799180cde5d253dcba96
+sum=7a4d8d8b16d2f3cece5ab92c32aba094a4597d97
 
 dstdir=$mkToolchainBase
 
 build() {
-  download http://ftpmirror.gnu.org/$pkgname/$archive
+  download https://ftp.gnu.org/gnu/$pkgname/$archive
   check $archive $sum
   extract $archive
 

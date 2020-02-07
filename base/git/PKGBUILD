@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=git
-pkgver=2.16.2
-archive=$pkgname-$pkgver.tar.xz
-sum=8858cbf822eb3c86df91336fbcbdfe69f9c0abc5
+pkgver=2.25.0
+archive=$pkgname-$pkgver.tar.gz
+sum=57d3e8363f8db7c950c586e76ba1b05fa5293d3e
 dstdir=$mkToolchainBase
 mkParallelBuild=no
 

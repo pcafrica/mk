@@ -1,14 +1,14 @@
 #!/bin/bash
 
 pkgname=bison
-pkgver=3.0.4
+pkgver=3.5.1
 archive=$pkgname-$pkgver.tar.gz
-sum=ec1f2706a7cfedda06d29dc394b03e092a1e1b74
+sum=3aec9c76d2bdef3518bcbebc9108ebd246f6e4df
 
 dstdir=$mkToolchainBase
 
 build() {
-  download http://ftpmirror.gnu.org/$pkgname/$archive
+  download https://ftp.gnu.org/gnu/$pkgname/$archive
   check $archive $sum
   extract $archive
 

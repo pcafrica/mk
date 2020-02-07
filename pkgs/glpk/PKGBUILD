@@ -7,7 +7,7 @@ sum=d9b607a9cf3a25b754a0cd9a842ea5043f8604db
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download http://ftpmirror.gnu.org/$pkgname/$archive
+  download https://ftp.gnu.org/gnu/$pkgname/$archive
   check $archive $sum
   extract $archive
 

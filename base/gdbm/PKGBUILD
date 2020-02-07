@@ -1,14 +1,14 @@
 #!/bin/bash
 
 pkgname=gdbm
-pkgver=1.14
+pkgver=1.18.1
 archive=$pkgname-$pkgver.tar.gz
-sum=1a97314f631e1d538488ba629fa781dec7409901
+sum=4a923ebfac06bb05c1c7699b206719e06a938f0d
 
 dstdir=$mkToolchainBase
 
 build() {
-  download http://ftpmirror.gnu.org/$pkgname/$archive
+  download https://ftp.gnu.org/gnu/$pkgname/$archive
   check $archive $sum
   extract $archive
 

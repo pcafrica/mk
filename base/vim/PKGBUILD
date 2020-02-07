@@ -1,13 +1,13 @@
 #!/bin/bash
 
 pkgname=vim
-pkgver=8.0.1529
-archive=v$pkgver.tar.gz
-sum=2bf9015abd985f8873da00961a7c1c75444ca4e6
+pkgver=8.1
+archive=$pkgname-$pkgver.tar.bz2
+sum=cbca219d11990d866976da309d7ce5b76be48b96
 dstdir=$mkToolchainBase
 
 build() {
-  download https://github.com/vim/vim/archive/$archive
+  download ftp://ftp.vim.org/pub/vim/unix/$archive
   check $archive $sum
   extract $archive
 

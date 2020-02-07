@@ -7,7 +7,7 @@ sum=2bf8d1d1ee345fc8a7915576f5649982
 dstdir=$mkToolchainBase
 
 build() {
-  download https://alioth.debian.org/frs/download.php/latestfile/813/$archive
+download https://alioth-archive.debian.org/releases/chrpath/chrpath/$pkgver/$archive
   check $archive $sum
   extract $archive
 

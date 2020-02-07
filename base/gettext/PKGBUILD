@@ -1,14 +1,14 @@
 #!/bin/bash
 
 pkgname=gettext
-pkgver=0.19.8.1
+pkgver=0.20.1
 archive=$pkgname-$pkgver.tar.gz
-sum=b5d24ba2958c91fc5cc0058165837c99a0f58784
+sum=2aa01db95b064d7f5d1a46de34a2cc6a57eadf36
 
 dstdir=$mkToolchainBase
 
 build() {
-  download http://ftpmirror.gnu.org/$pkgname/$archive
+  download https://ftp.gnu.org/gnu/$pkgname/$archive
   check $archive $sum
   extract $archive
 

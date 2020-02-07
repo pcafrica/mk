@@ -1,23 +1,23 @@
 #!/bin/bash
 
 pkgname=bash
-pkgver=4.4
+pkgver=5.0
 archive=$pkgname-$pkgver.tar.gz
-sum=8de012df1e4f3e91f571c3eb8ec45b43d7c747eb
+sum=d116b469b9e6ea5264a74661d3a4c797da7f997b
 
 dstdir=$mkToolchainBase
 
 build() {
-  download http://ftpmirror.gnu.org/$pkgname/$archive
+  download https://ftp.gnu.org/gnu/$pkgname/$archive
   check $archive $sum
   extract $archive
 
   pushd $pkgname-$pkgver
     # download and apply the patch
     message "Applying patches to $pkgname"
-    for patch in {1..19}; do
+    for patch in {1..11}; do
       patchfile=$pkgname${pkgver//.}-$(printf "%03d" $patch)
-      download http://ftpmirror.gnu.org/$pkgname/$pkgname-$pkgver-patches/$patchfile
+      download https://ftp.gnu.org/gnu/$pkgname/$pkgname-$pkgver-patches/$patchfile
       patch -p0 -i "$srcdir"/$patchfile
     done
     message "Configuring $pkgname"

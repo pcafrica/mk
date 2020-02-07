@@ -1,14 +1,14 @@
 #!/bin/bash
 
 pkgname=gzip
-pkgver=1.9
+pkgver=1.10
 archive=$pkgname-$pkgver.tar.xz
-sum=0249ad4c4ca1f144714e8e21b6d0db24651fc122
+sum=48d28c77cb8cac38573809fdd1665ecf75f91fa9
 
 dstdir=$mkToolchainBase
 
 build() {
-  download http://ftpmirror.gnu.org/$pkgname/$archive
+  download https://ftp.gnu.org/gnu/$pkgname/$archive
   check $archive $sum
   extract $archive
 

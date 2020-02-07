@@ -1,14 +1,14 @@
 #!/bin/bash
 
 pkgname=grep
-pkgver=3.1
+pkgver=3.4
 archive=$pkgname-$pkgver.tar.xz
-sum=d1d677e959c7d874e18e7e3839f26a0f0c1733d5
+sum=1a519e783ea0b46a632a0901bda3beaa1a0b267b
 
 dstdir=$mkToolchainBase
 
 build() {
-  download http://ftpmirror.gnu.org/$pkgname/$archive
+  download https://ftp.gnu.org/gnu/$pkgname/$archive
   check $archive $sum
   extract $archive
 

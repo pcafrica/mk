@@ -1,14 +1,14 @@
 #!/bin/bash
 
 pkgname=diffutils
-pkgver=3.6
+pkgver=3.7
 archive=$pkgname-$pkgver.tar.xz
-sum=1287a553868b808ebfff3790a5cdc6fdf7cb2886
+sum=ad4e0a05ee2e7f5529db6cb84474f45e086e609b
 
 dstdir=$mkToolchainBase
 
 build() {
-  download http://ftpmirror.gnu.org/$pkgname/$archive
+  download https://ftp.gnu.org/gnu/$pkgname/$archive
   check $archive $sum
   extract $archive
 

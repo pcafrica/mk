@@ -5,19 +5,20 @@ pkgname=autoconf
 dstdir=$mkToolchainBase
 
 build() {
-  download http://ftpmirror.gnu.org/$pkgname/$pkgname-2.13.tar.gz
-  download http://ftpmirror.gnu.org/$pkgname/$pkgname-2.54.tar.gz
-  download http://ftpmirror.gnu.org/$pkgname/$pkgname-2.69.tar.gz
-
-  check $pkgname-2.13.tar.gz e4826c8bd85325067818f19b2b2ad2b625da66fc
-  check $pkgname-2.54.tar.gz 0afcc66454b35507d5dac8a38f6649af009a4ccb
+  #download https://ftp.gnu.org/gnu/$pkgname/$pkgname-2.13.tar.gz
+  #download https://ftp.gnu.org/gnu/$pkgname/$pkgname-2.54.tar.gz
+  download https://ftp.gnu.org/gnu/$pkgname/$pkgname-2.69.tar.gz
+  
+  #check $pkgname-2.13.tar.gz e4826c8bd85325067818f19b2b2ad2b625da66fc
+  #check $pkgname-2.54.tar.gz 0afcc66454b35507d5dac8a38f6649af009a4ccb
   check $pkgname-2.69.tar.gz 562471cbcb0dd0fa42a76665acf0dbb68479b78a
 
-  extract $pkgname-2.13.tar.gz
-  extract $pkgname-2.54.tar.gz
+  #extract $pkgname-2.13.tar.gz
+  #extract $pkgname-2.54.tar.gz
   extract $pkgname-2.69.tar.gz
 
-  for pkgver in 2.13 2.54 2.69; do
+  #for pkgver in 2.13 2.54 2.69; do
+  for pkgver in 2.69; do
     pushd $pkgname-$pkgver
       message "Configuring $pkgname-$pkgver"
       ./configure --build=$TARGET --prefix="$dstdir" \
@@ -32,7 +33,8 @@ build() {
 
 package() {
   # installing
-  for pkgver in 2.13 2.54 2.69; do
+  #for pkgver in 2.13 2.54 2.69; do
+  for pkgver in 2.69; do
     make -C $pkgname-$pkgver install
 
     mv -vf "$dstdir"/share/autoconf{,-$pkgver}

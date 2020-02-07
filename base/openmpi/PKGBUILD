@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=openmpi
-pkgver=3.0.0
+pkgver=4.0.2
 archive=$pkgname-$pkgver.tar.bz2
-sum=fa63990db1aec88b36335a1d79abf47ac6348e23
+sum=32ce3761288575fb8e4f6296c9105c3a25cf3235
 dstdir=$mkToolchainBase
 
 install_ofed() {

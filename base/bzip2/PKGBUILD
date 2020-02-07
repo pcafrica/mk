@@ -1,14 +1,14 @@
 #!/bin/bash
 
 pkgname=bzip2
-pkgver=1.0.6
+pkgver=1.0.8
 archive=$pkgname-$pkgver.tar.gz
-sum=00b516f4704d4a7cb50a1d97e6e8e15b
+sum=bf7badf7e248e0ecf465d33c2f5aeec774209227
 
 dstdir=$mkToolchainBase
 
 build() {
-  download http://www.bzip.org/$pkgver/$archive
+  download https://www.sourceware.org/pub/$pkgname/$archive
   check $archive $sum
   extract $archive
 

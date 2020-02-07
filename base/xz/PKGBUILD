@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=xz
-pkgver=5.2.3
+pkgver=5.2.4
 archive=$pkgname-$pkgver.tar.xz
-sum=a2975d12e0905daec48ec87c0098602e0669d195
+sum=63ca380029597b951ce9afc6dec28f44f70bb5bd
 
 dstdir=$mkToolchainBase
 
