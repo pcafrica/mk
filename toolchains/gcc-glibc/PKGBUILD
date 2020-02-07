@@ -65,43 +65,43 @@ run() {
   m4ver=1.4.18
   m4dir=m4-$m4ver
   m4archive=m4-$m4ver.tar.xz
-  m4url=http://ftpmirror.gnu.org/m4/$m4archive
+  m4url=https://ftp.gnu.org/gnu/m4/$m4archive
   m4sum=228604686ca23f42e48b98930babeb5d217f1899
 
   bisonver=3.0.4
   bisondir=bison-$bisonver
   bisonarchive=bison-$bisonver.tar.xz
-  bisonurl=http://ftpmirror.gnu.org/bison/$bisonarchive
+  bisonurl=https://ftp.gnu.org/gnu/bison/$bisonarchive
   bisonsum=8270497aad88c7dd4f2c317298c50513fb0c3c8e
 
   texinfover=6.5
   texinfodir=texinfo-$texinfover
   texinfoarchive=texinfo-$texinfover.tar.xz
-  texinfourl=http://ftpmirror.gnu.org/texinfo/$texinfoarchive
+  texinfourl=https://ftp.gnu.org/gnu/texinfo/$texinfoarchive
   texinfosum=72a06b48862911c638787cc3307871b990a59726
 
   binutilsver=2.34
   binutilsdir=binutils-$binutilsver
   binutilsarchive=binutils-$binutilsver.tar.bz2
-  binutilsurl=http://ftpmirror.gnu.org/binutils/$binutilsarchive
+  binutilsurl=https://ftp.gnu.org/gnu/binutils/$binutilsarchive
   binutilssum=361566c9ab5e90bd847d06f46fb9f18ec6c3ecf0
 
   gmpver=6.1.2
   gmpdir=gmp-$gmpver
   gmparchive=gmp-${gmpver}.tar.bz2
-  gmpurl=http://ftpmirror.gnu.org/gmp/$gmparchive
+  gmpurl=https://ftp.gnu.org/gnu/gmp/$gmparchive
   gmpsum=366ded6a44cd108ba6b3f5b9a252eab3f3a95cdf
 
   mpfrver=4.0.1
   mpfrdir=mpfr-$mpfrver
   mpfrarchive=mpfr-$mpfrver.tar.bz2
-  mpfrurl=http://ftpmirror.gnu.org/mpfr/$mpfrarchive
+  mpfrurl=https://ftp.gnu.org/gnu/mpfr/$mpfrarchive
   mpfrsum=fcbbafb37c683898e585b926608d540ed037609e
 
   mpcver=1.1.0
   mpcdir=mpc-$mpcver
   mpcarchive=mpc-$mpcver.tar.gz
-  mpcurl=http://ftpmirror.gnu.org/mpc/$mpcarchive
+  mpcurl=https://ftp.gnu.org/gnu/mpc/$mpcarchive
   mpcsum=b019d9e1d27ec5fb99497159d43a3164995de2d0
 
   isldir=isl-$islver
@@ -117,7 +117,7 @@ run() {
 
   gccdir=gcc-$gccver
   gccarchive=gcc-$gccver.tar.xz
-  gccurl=http://ftpmirror.gnu.org/gcc/gcc-$gccver/$gccarchive
+  gccurl=https://ftp.gnu.org/gnu/gcc/gcc-$gccver/$gccarchive
 
   linuxver=$(uname -r)
   case $linuxver in
@@ -175,7 +175,7 @@ run() {
   glibcver=2.31
   glibcdir=glibc-$glibcver
   glibcarchive=glibc-$glibcver.tar.xz
-  glibcurl=http://ftpmirror.gnu.org/glibc/$glibcarchive
+  glibcurl=https://ftp.gnu.org/gnu/glibc/$glibcarchive
   glibcsum=55619672e5e13996e264d408949eb4aaa26e7ec8
 
   # cleaning and creating the directories hierarchy
