@@ -26,7 +26,6 @@ install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) libiconv
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) flex
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) bison
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) db
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gdbm
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) perl
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gmp
@@ -38,7 +37,6 @@ install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pkgconf
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) ncurses
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) readline
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gawk
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) bash
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) zlib
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gzip
@@ -48,7 +46,6 @@ install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) texinfo
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pcre
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) grep
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) libtool
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) libffi
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) expat
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) sqlite
@@ -82,7 +79,6 @@ install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) hwloc
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) openmpi
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) valgrind
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) openmpi
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) patchelf
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) chrpath
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pax-utils
