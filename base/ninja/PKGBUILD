@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=ninja
-pkgver=1.8.2
+pkgver=1.10.0
 archive=v$pkgver.tar.gz
-sum=17219deb34dd816363e37470f77ff7231509143a
+sum=7134bca607e17238d272e281ce1cae05d04be970
 
 dstdir=$mkToolchainBase
 
