@@ -14,6 +14,7 @@ build() {
 
   pushd $pkgname-$pkgver
     message "Configuring $pkgname"
+    FORCE_UNSAFE_CONFIGURE=1 \
     ./configure --build=$TARGET --prefix="$dstdir" --without-selinux \
                 --disable-nls --disable-silent-rules
     message "Compiling $pkgname"
