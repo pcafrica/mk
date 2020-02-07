@@ -2,12 +2,12 @@
 
 pkgname=expat
 pkgver=2.2.9
-archive=R_2_2_9.tar.gz
-sum=3842a6da0725ae5ef5a15af144cb156c402d9764
+archive=$pkgname-$pkgver.tar.gz
+sum=3739fa85b056150fa2b2d57ad290d5cb39c97053
 dstdir=$mkToolchainBase
 
 build() {
-  download https://github.com/libexpat/libexpat/archive/$archive
+  download https://github.com/libexpat/libexpat/releases/download/R_2_2_9/$archive
   check $archive $sum
   extract $archive
 

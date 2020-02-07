@@ -17,7 +17,7 @@ build() {
     ./configure --prefix="$dstdir" --disable-static \
                 --enable-unicode-properties \
                 --enable-jit --enable-pcre16 --enable-pcre32 \
-                --enable-pcregrep-libz --enable-pcregrep-libbz2 \
+                --enable-pcregrep-libz \
                 --enable-pcretest-libreadline
     message "Compiling $pkgname"
     make
