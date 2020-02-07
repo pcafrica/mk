@@ -127,3 +127,4 @@ Index: m4-1.4.18/lib/stdio-impl.h
 +#endif
  
  /* BSD stdio derived implementations.  */
+ 
