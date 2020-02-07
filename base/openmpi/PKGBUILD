@@ -130,7 +130,6 @@ package() {
                 --enable-ipv6 --without-x \
                 --without-libltdl --disable-dlopen \
                 --enable-pretty-print-stacktrace \
-                --disable-wrapper-rpath \
                 $with_valgrind $with_ib $with_tm \
                 --with-hwloc="$mkToolchainBase"
     message "Compiling $pkgname"
