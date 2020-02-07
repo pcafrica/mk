@@ -15,7 +15,7 @@ clean:
 
 install:
 	@test -n "${mkToolchainBase}" && test -d "${mkToolchainBase}"
-	@rm -rf "${mkToolchainBase}"/*
+	#@rm -rf "${mkToolchainBase}"/*
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) make
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) diffutils
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) findutils
