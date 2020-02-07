@@ -13,6 +13,12 @@ build() {
   extract $archive
 
   pushd $pkgname-$pkgver
+    [[ -r $srcdir/$pkgname-$pkgver.patch ]] && \
+      patch -p1 -i $srcdir/$pkgname-$pkgver.patch
+    
+    plain "[[ -r $srcdir/$pkgname-$pkgver.patch ]] && \
+      patch -p1 -i $srcdir/$pkgname-$pkgver.patch"
+    
     message "Configuring $pkgname"
     ./configure --build=$TARGET --prefix="$dstdir" --enable-threads=posix
     message "Compiling $pkgname"

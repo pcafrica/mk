@@ -1,5 +1,5 @@
-diff -u b/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.cc b/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.cc
---- b/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.cc
+diff -u a/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.cc b/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.cc
+--- a/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.cc
 +++ b/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.cc
 @@ -1156,8 +1156,9 @@
  CHECK_SIZE_AND_OFFSET(ipc_perm, gid);
@@ -13,7 +13,7 @@ diff -u b/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.cc b/lib
  CHECK_SIZE_AND_OFFSET(ipc_perm, mode);
  #endif
  
-diff -u b/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.h b/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.h
+diff -u a/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.h b/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.h
 --- a/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.h
 +++ b/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.h
 @@ -211,26 +211,13 @@ namespace __sanitizer {
