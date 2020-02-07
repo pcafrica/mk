@@ -186,7 +186,7 @@ run() {
   rm -vf $module
   install -dm 0755 $(dirname $module)
   install -dm 0755 $dstdir/{base,modules,pkgs,prefix}
-plain "OK"
+
   prefix=$dstdir/prefix
   base=$dstdir/base
 
@@ -254,6 +254,7 @@ plain "OK"
     # (5.4) https://www.mail-archive.com/gcc-patches@gcc.gnu.org/msg159613.html
     # (6.4.0) https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81712
     # (6.4.0) https://github.com/voidlinux/void-packages/issues/7284
+    # (9.2.0) https://bugs.gentoo.org/708346
     [[ -r $srcdir/gcc-$gccver.patch ]] && \
       patch -p1 -i $srcdir/gcc-$gccver.patch
   popd
@@ -283,7 +284,7 @@ plain "OK"
               >> $gccdir/gcc/config/rs6000/linux64.h
             ;;
   esac
-  # glibc-2.27 must be fixed to bu compiled in alpine linux
+  # glibc-2.27 must be fixed to be compiled in alpine linux
   # https://sourceware.org/bugzilla/show_bug.cgi?id=21604
   if [[ -e /etc/alpine-release ]]; then
     pushd $glibcdir
