@@ -1,13 +1,13 @@
 #!/bin/bash
 
 pkgname=cgal
-pkgver=4.11.1
-archive=CGAL-$pkgver.tar.xz
-sum=d3cf39673e5c868d7317f67669fe7458147eb18d
+pkgver=5.0.1
+archive=CGAL-$pkgver.tar.gz
+sum=be1fa041f5215badd6126ef84a4421495311beda
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download https://github.com/CGAL/cgal/releases/download/releases%2FCGAL-$pkgver/$archive
+  download https://github.com/CGAL/cgal/archive/releases/$archive
   check $archive $sum
   extract $archive
 
@@ -30,7 +30,7 @@ build() {
           -D LAPACK_LIBRARIES=$mkOpenblasLib/libopenblas.so \
           -D WITH_Eigen3=ON \
           -D EIGEN3_INCLUDE_DIR=$mkEigenInc \
-          ../CGAL-$pkgver
+          ../cgal-releases-CGAL-$pkgver
     message "Compiling $pkgname"
     make
   popd
