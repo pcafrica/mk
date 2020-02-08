@@ -11,7 +11,7 @@ build() {
   check $archive $sum
   extract $archive
 
-  pushd $pkgname-$pkgver
+  pushd $pkgname${pkgver//./}
     message "Configuring $pkgname"
     ./configure --prefix="$dstdir" --with-compiledby="$PKGVERSION" \
                 --disable-nls --disable-sysmouse --disable-gui --with-x=no \
