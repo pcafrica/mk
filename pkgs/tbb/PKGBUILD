@@ -1,34 +1,32 @@
 #!/bin/bash
 
 pkgname=tbb
-pkgver=2018
-_pkgver=2018_U2
-archive=${_pkgver}.tar.gz
-sum=1d3e011649dbe9259156b6cb0fe15f375abd8f9c
+pkgver=2020.1
+archive=v$pkgver.tar.gz
+sum=493a1faf80a7ab320448eec0fbfaedf40e9574ee
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
-url=https://github.com/01org/tbb/archive/
 
 build() {
-  download $url/$archive
+  download https://github.com/intel/tbb/archive/$archive
   check $archive $sum
   extract $archive
 
-  pushd tbb-${_pkgver}
+  pushd $pkgname-$pkgver
     message "Compiling $pkgname"
-    make stdver=c++11 tbb_build_prefix=BUILDPREFIX
+    make stdver=c++17 tbb_build_prefix=BUILDPREFIX
   popd
 }
 
 package() {
   install -vd $dstdir/{include,lib}
 
-  install -v tbb-${_pkgver}/build/BUILDPREFIX_release/*.so.2 $dstdir/lib
+  install -v $pkgname-$pkgver/build/BUILDPREFIX_release/*.so.2 $dstdir/lib
   strip $dstdir/lib
   for name in tbb tbbmalloc tbbmalloc_proxy; do
     ln -sfv lib$name.so.2 $dstdir/lib/lib$name.so
   done
 
-  pushd tbb-${_pkgver}/include
+  pushd tbb-$pkgver/include
     tar -cf - tbb | (cd $dstdir/include && tar -xf -)
   popd
 
