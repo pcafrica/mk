@@ -54,17 +54,17 @@ build() {
                 --disable-nls --enable-optimize --with-zlib --with-swig \
                 --with-expat="$expatinc:$expatlib:expact" \
                 --with-apr="$dstdir" --with-apr-util="$dstdir" \
-                --enable-bdb6
+                --with-lz4="internal" --with-utf8proc="internal" \
+		--enable-bdb6
     message "Compiling $pkgname"
     make
-    make swig-pl swig-py
   popd
 }
 
 package() {
   make -C apr-$aprver install
   make -C apr-util-$aprutilver install
-  make -C $pkgname-$pkgver install install-swig-pl install-swig-py
+  make -C $pkgname-$pkgver install
 
   mv -v "$dstdir"/share/pkgconfig/* "$dstdir"/lib/pkgconfig/
 
