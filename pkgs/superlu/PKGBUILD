@@ -109,13 +109,13 @@ package() {
   # static to shared
   pushd "$dstdir"/lib
     ar x libsuperlu.a
-    cc -shared *.o -o libsuperlu.so.$sluver -L$mkOpenblasLib -lopenblas
+    cc -shared *.o -o libsuperlu.so.$sluver -L$mkOpenblasLib -lopenblas -L$mkMetisLib -lmetis -lparmetis
     ln -sf libsuperlu.so.$sluver libsuperlu.so.${sluver%%.*}
     ln -sf libsuperlu.so.${sluver%%.*} libsuperlu.so
     rm libsuperlu.a *.o
 
     ar x libsuperlu_mt.a
-    cc -shared *.o -o libsuperlu_mt.so.$sluver -L$mkOpenblasLib -lopenblas
+    cc -shared *.o -o libsuperlu_mt.so.$sluver -L$mkOpenblasLib -lopenblas -L$mkMetisLib -lmetis -lparmetis
     ln -sf libsuperlu_mt.so.$slumtver libsuperlu_mt.so.${slumtver%%.*}
     ln -sf libsuperlu_mt.so.${slumtver%%.*} libsuperlu_mt.so
     rm libsuperlu_mt.a *.o
