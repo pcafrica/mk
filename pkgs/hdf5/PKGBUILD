@@ -1,19 +1,19 @@
 #!/bin/bash
 
 pkgname=hdf5
-pkgver=1.8.20
+pkgver=1.10.6
 _pkgver=${pkgver%.*}
 archive=$pkgname-$pkgver.tar.bz2
-sum=21d689a04eb20ad6ea9e422b6e10f7f288d8b516
+sum=5e11d91abe071858b0d9a4f3a202c1e6a0d27290
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 szipver=2.1.1
 sziparchive=szip-$szipver.tar.gz
 szipsum=434931cfe47e9b0730ea85fa5e25477bafd9704a
 
-h5pyver=2.7.1
+h5pyver=2.10.0
 h5pyarchive=$h5pyver.tar.gz
-h5pysum=bacde8f374bb879aeae5da463eee650cd423dce0
+h5pysum=a1b903ec43b3688f9e46c3dfb194c3b7cd4d5cc8
 
 package() {
   download https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-${_pkgver}/hdf5-${pkgver}/src/$archive
@@ -52,7 +52,7 @@ package() {
                 --disable-static \
                 --enable-fortran \
                 --enable-parallel=yes \
-                --enable-production=yes \
+                --enable-build-mode=production \
                 --with-zlib \
                 --with-szlib="$dstdir/lib"
     message "Compiling $pkgname"
@@ -69,8 +69,8 @@ package() {
     message "Building h5py"
     python setup.py build
     message "Installing h5py"
-    install -d -m0755 "$dstdir/lib/python3.6/site-packages"
-    PYTHONPATH="$dstdir/lib/python3.6/site-packages:$PYTHONPATH" \
+    install -d -m0755 "$dstdir/lib/python3.8/site-packages"
+    PYTHONPATH="$dstdir/lib/python3.8/site-packages:$PYTHONPATH" \
     python setup.py install --prefix="$dstdir"
   popd
 
@@ -101,7 +101,7 @@ setenv("mkHdf5Lib", "$dstdir/lib")
 setenv("mkHdf5Inc", "$dstdir/include")
 
 prepend_path("PATH", "$dstdir/bin")
-prepend_path("PYTHONPATH", "$dstdir/lib/python3.6/site-packages")
+prepend_path("PYTHONPATH", "$dstdir/lib/python3.8/site-packages")
 prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
 EOF
   fi
