@@ -17,8 +17,8 @@ build() {
                 --disable-nls --disable-sysmouse --disable-gui --with-x=no \
                 --disable-selinux --enable-multibyte --with-features=huge \
                 --enable-cscope --disable-netbeans --disable-workshop \
-                --enable-perlinterp --enable-pythoninterp \
-                --disable-python3interp --enable-tclinterp \
+                --enable-perlinterp --disable-pythoninterp \
+                --enable-python3interp --enable-tclinterp \
                 --with-tclsh=$(which tclsh) --enable-luainterp \
                 --with-lua-prefix="$mkToolchainBase"
     message "Compiling $pkgname"
@@ -29,8 +29,8 @@ build() {
 }
 
 package() {
-  make -C $pkgname-$pkgver install
+  make -C $pkgname${pkgver//./} install
   make -C vimpager PREFIX="$dstdir" SYSCONFDIR="$dstdir"/etc install
   sed -i "s:/usr/bin/nawk:$mkToolchainBase/bin/nawk:g" \
-    "$dstdir"/share/vim/vim80/tools/mve.awk
+    "$dstdir"/share/vim/$pkgname${pkgver//./}/tools/mve.awk
 }
