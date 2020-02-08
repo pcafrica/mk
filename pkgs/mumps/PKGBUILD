@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=mumps
-pkgver=5.1.2
+pkgver=5.2.1
 archive=MUMPS_$pkgver.tar.gz
-sum=0446c21a7a8bfd5ec94b09541205de3fb019746f
+sum=7f0f17158f5d01d6ce50439d1ecd15ba5818bc0e
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 mkParallelBuild=no
 
