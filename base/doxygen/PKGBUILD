@@ -12,11 +12,12 @@ build() {
   check $archive $sum
   extract $archive
 
-  pushd $pkgname-$pkgver
+  mkdir build
+  pushd build
     message "Compiling $pkgname"
     cmake -DCMAKE_INSTALL_PREFIX="$dstdir" \
 	  -DICONV_DIR=$mkToolchainPrefix \
-	  -DCMAKE_EXE_LINKER_FLAGS="-liconv" .
+	  -DCMAKE_EXE_LINKER_FLAGS="-liconv" ../$pkgname-$pkgver
     make
   popd
 }

@@ -81,12 +81,14 @@ EOF
     make superlulib
   popd
 
-  pushd SuperLU_DIST_$sludistver
+  mkdir -p SuperLU_DIST_$sludistver/build
+  pushd SuperLU_DIST_$sludistver/build
     message "Compiling ${pkgname}-dist"
-    cmake . \
+    cmake \
       -DCMAKE_C_COMPILER=mpicc -DCMAKE_CXX_COMPILER=mpic++ \
       -DTPL_PARMETIS_INCLUDE_DIRS=${mkMetisInc} \
-      -DTPL_PARMETIS_LIBRARIES="-L${mkMetisLib} -lmetis -lparmetis"
+      -DTPL_PARMETIS_LIBRARIES="-L${mkMetisLib} -lmetis -lparmetis" \
+      ..
     make
   popd
 }
@@ -102,24 +104,24 @@ package() {
   # libraries
   install -m0644 SuperLU_$sluver/lib/libsuperlu.a "$dstdir"/lib
   install -m0644 SuperLU_MT_$slumtver/lib/libsuperlu_mt.a "$dstdir"/lib
-  install -m0644 SuperLU_DIST_$sludistver/SRC/libsuperlu_dist.a "$dstdir"/lib
+  install -m0644 SuperLU_DIST_$sludistver/build/SRC/libsuperlu_dist.a "$dstdir"/lib
 
   # static to shared
   pushd "$dstdir"/lib
     ar x libsuperlu.a
-    cc -shared *.o -o libsuperlu.so.$sluver -L$mkOpenblasLib -lopenblas -L$mkMetisLib -lmetis
+    cc -shared *.o -o libsuperlu.so.$sluver -L$mkOpenblasLib -lopenblas
     ln -sf libsuperlu.so.$sluver libsuperlu.so.${sluver%%.*}
     ln -sf libsuperlu.so.${sluver%%.*} libsuperlu.so
     rm libsuperlu.a *.o
 
     ar x libsuperlu_mt.a
-    cc -shared *.o -o libsuperlu_mt.so.$sluver -L$mkOpenblasLib -lopenblas -L$mkMetisLib -lmetis
+    cc -shared *.o -o libsuperlu_mt.so.$sluver -L$mkOpenblasLib -lopenblas
     ln -sf libsuperlu_mt.so.$slumtver libsuperlu_mt.so.${slumtver%%.*}
     ln -sf libsuperlu_mt.so.${slumtver%%.*} libsuperlu_mt.so
     rm libsuperlu_mt.a *.o
 
     ar x libsuperlu_dist.a
-    cc -shared *.o -o libsuperlu_dist.so.$sluver -L$mkOpenblasLib -lopenblas -L$mkMetisLib -lmetis
+    cc -shared *.o -o libsuperlu_dist.so.$sluver -L$mkOpenblasLib -lopenblas -L$mkMetisLib -lmetis -lparmetis
     ln -sf libsuperlu_dist.so.$sludistver libsuperlu_dist.so.${sludistver%%.*}
     ln -sf libsuperlu_dist.so.${sludistver%%.*} libsuperlu_dist.so
     rm libsuperlu_dist.a *.o
