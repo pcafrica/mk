@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=scalapack
-pkgver=2.0.2
+pkgver=2.1.0
 archive=$pkgname-$pkgver.tgz
-sum=ff9532120c2cffa79aef5e4c2f38777c6a1f3e6a
+sum=9dae1d4d49fe187583eec88e71770edb68e082b7
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
