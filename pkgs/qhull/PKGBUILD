@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=qhull
-pkgver=2015.2
-archive=$pkgname-2015-src-7.2.0.tgz
-sum=8188765b9f9f004e38e9906fd2a68e81119f05fb
+pkgver=2019.1
+archive=$pkgname-2019-src-7.3.2.tgz
+sum=c7165fb7ec1af92bf448370c3a3b554766168f18
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
