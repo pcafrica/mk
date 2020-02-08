@@ -1,13 +1,13 @@
 #!/bin/bash
 
 pkgname=hypre
-pkgver=2.13.0
-archive=v$pkgver.tar.gz
-sum=9e3a30251420b4a1a9f199e2005eb7f69a07fca6
+pkgver=2.11.2
+archive=$pkgname-$pkgver.tar.gz
+sum=e20c0132f85978a1a0fe19332e6f920978e6c2bc
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download https://github.com/LLNL/hypre/archive/$archive
+  download https://computing.llnl.gov/projects/hypre-scalable-linear-solvers-multigrid-methods/download/$archive
   check $archive $sum
   extract $archive
 
