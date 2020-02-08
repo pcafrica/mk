@@ -1,13 +1,13 @@
 #!/bin/bash
 
 pkgname=matio
-pkgver=1.5.12
-archive=$pkgname-$pkgver.tar.gz
-sum=cb05a4a9a3af992890237b3f7a87f01cd8819528
+pkgver=1.5.17
+archive=v$pkgver.tar.gz
+sum=915c36158cd30ec6183012b45b1ac408c6ff51ee
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download http://prdownloads.sourceforge.net/$pkgname/$archive
+  download https://github.com/tbeu/$pkgname/archive/$archive
   check $archive $sum
   extract $archive
 
@@ -15,6 +15,7 @@ build() {
 
   pushd $pkgname-$pkgver
     message "Configuring $pkgname"
+    ./autogen.sh
     ./configure --prefix="$dstdir" \
                 --enable-shared \
                 --disable-static \
