@@ -1,13 +1,13 @@
 #!/bin/bash
 
 pkgname=suitesparse
-pkgver=5.1.0
-archive=SuiteSparse-$pkgver.tar.gz
-sum=bedf8aa7fdff4247cf1b9029a86cbb76c11627db
+pkgver=5.6.0
+archive=v$pkgver.tar.gz
+sum=3de08b5ab02610ed0446225aad2445696616fae5
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download http://faculty.cse.tamu.edu/davis/SuiteSparse/$archive
+  download https://github.com/DrTimothyAldenDavis/SuiteSparse/archive/$archive
   check $archive $sum
   extract $archive
 
@@ -15,7 +15,7 @@ build() {
   module load metis
   module load tbb
 
-  pushd SuiteSparse
+  pushd SuiteSparse-$pkgver
     [[ -r $srcdir/SuiteSparse-$pkgver.patch ]] && \
       patch -p1 -i $srcdir/SuiteSparse-$pkgver.patch
     message "Compiling $pkgname"
@@ -40,7 +40,7 @@ package() {
   MY_METIS_LIB="-L$mkMetisLib -lmetis" \
   MY_METIS_INC="$mkMetisInc" \
   TBB="-L$mkTbbLib -ltbb" \
-  make -C SuiteSparse install INSTALL="$dstdir"
+  make -C SuiteSparse-$pkgver install INSTALL="$dstdir"
 
   strip "$dstdir"/lib
   reset_rpath "$dstdir"/lib
