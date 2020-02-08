@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=openssl
-pkgver=1.1.0g
+pkgver=1.1.1d
 archive=$pkgname-$pkgver.tar.gz
-sum=e8240a8be304d4317a750753321b073c664bfdd4
+sum=056057782325134b76d1931c48f2c7e6595d7ef4
 
 dstdir=$mkToolchainBase
 
@@ -15,32 +15,13 @@ build() {
   pushd $pkgname-$pkgver
     message "Configuring $pkgname"
     KERNEL_BITS=64 \
-    ./config --prefix="$dstdir" --openssldir="$dstdir"/etc/ssl --libdir=lib \
-             shared zlib-dynamic
+    ./Configure --prefix="$dstdir" --openssldir="$dstdir"/etc/ssl --libdir=lib \
+    shared zlib-dynamic $OS-$ARCH
     message "Compiling $pkgname"
     make
   popd
 }
 
 package() {
-  # installing openssl
   make -C $pkgname-$pkgver MANDIR="$dstdir"/share/man MANSUFFIX=ssl install
-  sed -i "1s:/usr/bin/perl:$(which perl):" "$dstdir"/bin/c_rehash
-  sed -i "1s:/usr/bin/perl:$(which perl):" "$dstdir"/etc/ssl/misc/tsget
-
-  # installing certificates
-  if [[ ! "$mkTest" = "no" ]]; then
-    export LD_LIBRARY_PATH="$dstdir"/lib
-  else
-    update_linker_cache
-  fi
-  install -d "$dstdir"/libexec/ssl
-  sed -e "s:%PREFIX%:$dstdir:g" "$srcdir"/make-ca > "$dstdir"/libexec/ssl/make-ca
-  chmod 0755 "$dstdir"/libexec/ssl/make-ca
-  sed -i "1s:/bin/bash:$(which bash):" "$dstdir"/libexec/ssl/make-ca
-
-  download http://anduin.linuxfromscratch.org/BLFS/other/certdata.txt
-  "$dstdir"/libexec/ssl/make-ca -f -C "$srcdir"/certdata.txt
-  ln -s ../ca-bundle.crt "$dstdir"/etc/ssl/certs/ca-bundle.crt
-  ln -s ca-bundle.crt "$dstdir"/etc/ssl/certs/ca-certificates.crt
 }
