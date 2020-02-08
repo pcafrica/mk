@@ -3,7 +3,8 @@
 pkgname=gdb
 pkgver=8.3.1
 archive=$pkgname-$pkgver.tar.xz
-sum=8e68fc5d524caeb6684a8b6ed24e75396e40c471
+sum=d403ba208945bbf04f8130ea4853730cdf0c8fc7
+
 dstdir=$mkToolchainBase
 
 build() {
