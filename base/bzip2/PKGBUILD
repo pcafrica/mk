@@ -19,13 +19,13 @@ build() {
     fi
     message "Compiling $pkgname"
     make -f Makefile-libbz2_so
-    make clean
     make
   popd
 }
 
 package() {
   make -C $pkgname-$pkgver install PREFIX="$dstdir"
-  ln -sf libbz2.so.1.0 "$dstdir"/lib/libbz2.so
+  mv $pkgname-$pkgver/libbz2.so.$pkgver "$dstdir"/lib/
+  ln -svf "$dstdir"/lib/libbz2.so.$pkgver "$dstdir"/lib/libbz2.so
   rm -f "$dstdir"/lib/libbz2.a
 }

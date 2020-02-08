@@ -8,7 +8,7 @@ dstdir=$mkToolchainBase
 
 build() {
   # Fix missing library.
-  ln -sv $mkToolchainPrefix/lib/libnsl.so.1 $mkToolchainPrefix/lib/libnsl.so
+  ln -sfv $mkToolchainPrefix/lib/libnsl.so.1 $mkToolchainPrefix/lib/libnsl.so
 
   download http://www.cpan.org/src/5.0/$archive
   check $archive $sum
