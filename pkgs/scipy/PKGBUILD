@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=scipy
-pkgver=1.14.2
+pkgver=1.18.1
 archive=v$pkgver.tar.gz
-sum=c00e70468703830a26ee9173ba1cf4aedf08718f
+sum=e5039bd773c5aa0eb964f6dbb00c9e654a89e294
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 
@@ -17,9 +17,9 @@ package() {
   module load fftw
 
   message "Compiling cython"
-  pip install --verbose --install-option="--prefix=$dstdir" cython
+  pip install --verbose --prefix=$dstdir cython
   export PATH="$dstdir"/bin:$PATH
-  export PYTHONPATH="$dstdir"/lib/python3.6/site-packages:$PYTHONPATH
+  export PYTHONPATH="$dstdir"/lib/python3.8/site-packages:$PYTHONPATH
 
   pip list
 
@@ -54,17 +54,17 @@ EOF
   popd
 
   message "Compiling ipython"
-  pip install --verbose --install-option="--prefix=$dstdir" ipython==6.4.0
+  pip install --verbose --prefix=$dstdi ipython==7.12.0
   message "Compiling sympy"
-  pip install --verbose --install-option="--prefix=$dstdir" sympy==1.1.1
+  pip install --verbose --prefix=$dstdir sympy==1.5.1
   message "Compiling pandas"
   # --no-build-isolation  fix an issue with pip>=10.0.0
-  pip install --verbose --install-option="--prefix=$dstdir" pandas==0.22.0 \
+  pip install --verbose --prefix=$dstdir pandas==1.0.1 \
     --no-build-isolation
   message "Compiling scipy"
-  pip install --verbose --install-option="--prefix=$dstdir" scipy==1.0.1
+  pip install --verbose --prefix=$dstdir scipy==1.4.1
   message "Compiling mpi4py"
-  pip install --verbose --install-option="--prefix=$dstdir" mpi4py==3.0.0
+  pip install --verbose --prefix=$dstdir mpi4py==3.0.3
 
   # module
   if [[ "$mkTest" = "no" ]]; then
@@ -88,7 +88,7 @@ load("suitesparse")
 
 prepend_path("PATH", "$dstdir/bin")
 prepend_path("MANPATH", "$dstdir/share/man")
-prepend_path("PYTHONPATH", "$dstdir/lib/python3.6/site-packages")
+prepend_path("PYTHONPATH", "$dstdir/lib/python3.8/site-packages")
 EOF
   fi
 }
