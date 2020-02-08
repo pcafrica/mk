@@ -14,7 +14,9 @@ build() {
 
   pushd $pkgname-$pkgver
     message "Compiling $pkgname"
-    cmake -DCMAKE_INSTALL_PREFIX="$dstdir" .
+    cmake -DCMAKE_INSTALL_PREFIX="$dstdir" \
+	  -DICONV_DIR=$mkToolchainPrefix \
+	  -DCMAKE_EXE_LINKER_FLAGS="-liconv" .
     make
   popd
 }
