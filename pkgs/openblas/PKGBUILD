@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=openblas
-pkgver=0.2.20
+pkgver=0.3.7
 archive=v$pkgver.tar.gz
-sum=a186074145a24823e82c65672dad1cd1ca6fe89c
+sum=6a79b36d1bf73584a513139806d226f9189d621e
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
