@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=p4est
-pkgver=2.0
+pkgver=2.2
 archive=$pkgname-$pkgver.tar.gz
-sum=f8148c503969a65230c90844f7a33bbda0f2e1c1
+sum=28cbaf51a335c8cc8e78bb38bbb99251ba7ebf80
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
