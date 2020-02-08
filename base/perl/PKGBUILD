@@ -7,6 +7,9 @@ sum=905617fbc5802d59914be2a26a604dee52dd13b3
 dstdir=$mkToolchainBase
 
 build() {
+  # Fix missing library.
+  ln -sv $mkToolchainPrefix/lib/libnsl.so.1 $mkToolchainPrefix/lib/libnsl.so
+
   download http://www.cpan.org/src/5.0/$archive
   check $archive $sum
   extract $archive
