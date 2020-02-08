@@ -1,16 +1,16 @@
 #!/bin/bash
 
 pkgname=boost
-pkgver=1.66.0
+pkgver=1.72.0
 archive=${pkgname}_${pkgver//./_}.tar.bz2
-sum=b6b284acde2ad7ed49b44e856955d7b1ea4e9459
+sum=88866e4075e12255e7a7189d0b8a686e0b1ee9c1
+
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
   download http://prdownloads.sourceforge.net/$pkgname/$archive
   check $archive $sum
   extract $archive
-
 
   pushd ${pkgname}_${pkgver//./_}
     [[ -r $srcdir/$pkgname-$pkgver.patch ]] && \
