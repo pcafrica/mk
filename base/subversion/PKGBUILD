@@ -1,17 +1,17 @@
 #!/bin/bash
 
-aprver=1.6.3
+aprver=1.7.0
 aprarchive=apr-$aprver.tar.bz2
-aprsum=12f2a349483ad6f12db49ba01fbfdbfa
+aprsum=58ebc7b35efaebb211c0b9df594ab16c4d874234
 
 aprutilver=1.6.1
 aprutilarchive=apr-util-$aprutilver.tar.bz2
 aprutilsum=8ff5dc36fa39a2a3db1df196d3ed6086
 
 pkgname=subversion
-pkgver=1.10.6
-archive=$pkgname-$pkgver.tar.gz
-sum=aea5493693c66db50fde691ba3032167fab4a4ee
+pkgver=1.13.0
+archive=$pkgname-$pkgver.tar.bz2
+sum=3815a2dcaf976b3b7371f9f5d83e537f8cb359b4
 dstdir=$mkToolchainBase
 
 build() {
@@ -50,12 +50,12 @@ build() {
 
   pushd $pkgname-$pkgver
     message "Configuring $pkgname"
-    ./configure --build=$TARGET --prefix="$dstdir" --disable-static \
-                --disable-nls --enable-optimize --with-zlib --with-swig \
+    ./configure --build=$TARGET --prefix="$dstdir" \
+                --enable-optimize --with-zlib --with-swig \
                 --with-expat="$expatinc:$expatlib:expact" \
                 --with-apr="$dstdir" --with-apr-util="$dstdir" \
                 --with-lz4="internal" --with-utf8proc="internal" \
-		--enable-bdb6
+                --enable-bdb6
     message "Compiling $pkgname"
     make
   popd
