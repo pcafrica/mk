@@ -1,13 +1,13 @@
 #!/bin/bash
 
 pkgname=eigen
-pkgver=3.3.4
-archive=$pkgver.tar.bz2
-sum=e52d7d7a8c81f5ee0699e63ae3b78fe8214380a5
+pkgver=3.3.7
+archive=$pkgname-$pkgver.tar.bz2
+sum=6aa47fdf963d86152f94496107ed27808d32d47d
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download http://bitbucket.org/eigen/eigen/get/$archive
+  download https://gitlab.com/libeigen/eigen/-/archive/$pkgver/$archive
   check $archive $sum
   extract $archive
 
@@ -33,7 +33,7 @@ build() {
           -D UMFPACK_LIBRARIES="$mkSuitesparseLib"/libumfpack.so \
           -D SUPERLU_INCLUDES="$mkSuperluInc" \
           -D SUPERLU_LIBRARIES="$mkSuperluLib"/libsuperlu.so \
-          ../eigen-eigen-5a0156e40feb
+          ../$pkgname-$pkgver
     # make check || true
   popd
 }
