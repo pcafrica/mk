@@ -1,22 +1,22 @@
 #!/bin/bash
 
 pkgname=netcdf
-pkgver=4.6.0
+pkgver=4.7.3
 archive=v$pkgver.tar.gz
-sum=644de01aa1b63c8fc96a478d2580c2e94cf09cb7
+sum=a78018c377c843cf7b941c2cdad0190920192179
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
-fortranver=4.4.4
+fortranver=4.5.2
 fortranarchive=v$fortranver.tar.gz
-fortransum=9174a7847e14a35d15188f5230979726a0fd541a
+fortransum=b0c176be97ae2edc5481bb9a358926d6f0fe931a
 
-cxxver=4.3.0
+cxxver=4.3.1
 cxxarchive=v$cxxver.tar.gz
-cxxsum=c3290c514cfb414b5316a03e9cee1a48440d373c
+cxxsum=0e3c4845b0638e8319b92488606a4c9759b63446
 
-pythonver=1.3.1rel
+pythonver=1.5.3rel
 pythonarchive=v$pythonver.tar.gz
-pythonsum=48e6b6ce9a52b8a5e44e1dc4ebc5e5c0dc511fca
+pythonsum=cdde5afa8ecce6976ac58389a3aec595c7b53d45
 
 package() {
   download https://github.com/Unidata/netcdf-c/archive/$archive
@@ -58,6 +58,7 @@ package() {
   # netcdf fortran
   pushd $pkgname-fortran-$fortranver
     message "Configuring $pkgname-fortran"
+    FC=mpifort
     CPPFLAGS="-I$dstdir/include -I$mkHdf5Inc $CPPFLAGS" \
     LDFLAGS="-L$dstdir/lib -L$mkHdf5Lib $LDFLAGS" \
     ./configure --prefix="$dstdir" \
@@ -89,8 +90,8 @@ package() {
     message "Installing $pkgname-python"
     USE_NCCONFIG=1 HDF5_DIR="$mkHdf5Prefix" \
       python setup.py build
-    install -d -m0755 "$dstdir/lib/python3.6/site-packages"
-    PYTHONPATH="$dstdir/lib/python3.6/site-packages:$PYTHONPATH" \
+    install -d -m0755 "$dstdir/lib/python3.8/site-packages"
+    PYTHONPATH="$dstdir/lib/python3.8/site-packages:$PYTHONPATH" \
     USE_NCCONFIG=1 HDF5_DIR="$mkHdf5Prefix" \
       python setup.py install --prefix="$dstdir"
   popd
@@ -125,7 +126,7 @@ setenv("mkNetcdfInc", "$dstdir/include")
 
 prepend_path("PATH", "$dstdir/bin")
 prepend_path("MANPATH", "$dstdir/share/man")
-prepend_path("PYTHONPATH", "$dstdir/lib/python3.6/site-packages")
+prepend_path("PYTHONPATH", "$dstdir/lib/python3.8/site-packages")
 prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
 prepend_path("PKG_CONFIG_PATH", "$dstdir/lib/pkgconfig")
 EOF
