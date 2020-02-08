@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=fftw
-pkgver=3.3.7
+pkgver=3.3.8
 archive=$pkgname-$pkgver.tar.gz
-sum=0d5915d7d39b3253c1cc05030d79ac47
+sum=8aac833c943d8e90d51b697b27d4384d
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
