@@ -12,9 +12,9 @@ slumtver=3.1
 slumtarchive=${pkgname}_mt_${slumtver}.tar.gz
 slumtsum=29cb847d17b1b2826f9558cbfa86397898171b3c
 
-sludistver=5.3.0
+sludistver=6.2.0
 sludistarchive=${pkgname}_dist_${sludistver}.tar.gz
-sludistsum=287cc1754cd97933d083f30f0ddb05c5a1b7344b
+sludistsum=0ba4fbcca3dd0cdefaf7ca96bd0acfa17a8cd1f5
 
 build() {
   download http://crd-legacy.lbl.gov/~xiaoye/SuperLU/$sluarchive
@@ -82,32 +82,12 @@ EOF
   popd
 
   pushd SuperLU_DIST_$sludistver
-    cat > make.inc << EOF
-DSuperLUroot = $(pwd)
-DSUPERLULIB  = \$(DSuperLUroot)/lib/libsuperlu_dist.a
-BLASDEF      = -DUSE_VENDOR_BLAS
-BLASLIB      = -L${mkOpenblasLib} -lopenblas
-METISLIB     = -L${mkMetisLib} -lmetis
-PARMETISLIB  = -L${mkMetisLib} -lparmetis
-I_PARMETIS   = -I${mkMetisInc}
-LIBS         = \$(DSUPERLULIB) \$(BLASLIB) \$(PARMETISLIB) \$(METISLIB) \$(FLIBS)
-ARCH         = ar
-ARCHFLAGS    = cr
-RANLIB       = ranlib
-CC           = mpicc
-CFLAGS       = $CFLAGS -std=c99 -fPIC \$(I_PARMETIS) -DDEBUGlevel=0 -DPRNTlevel=0 -DPROFlevel=0
-NOOPTS       = -O0 -std=c99 -fPIC
-FORTRAN      = mpifort
-F90FLAGS     = $CFLAGS -std=c99 -fPIC
-LOADER       = \$(CC)
-LOADOPTS     =
-CDEFS        = -DAdd_
-EOF
-    [[ -r $srcdir/$pkgname-dist-$sludistver.patch ]] && \
-      patch -p1 -i $srcdir/$pkgname-dist-$sludistver.patch
     message "Compiling ${pkgname}-dist"
-    mkdir -v lib
-    make superlulib
+    cmake . \
+      -DCMAKE_C_COMPILER=mpicc -DCMAKE_CXX_COMPILER=mpic++ \
+      -DTPL_PARMETIS_INCLUDE_DIRS=${mkMetisInc} \
+      -DTPL_PARMETIS_LIBRARIES="-L${mkMetisLib} -lmetis -lparmetis"
+    make
   popd
 }
 
@@ -122,29 +102,24 @@ package() {
   # libraries
   install -m0644 SuperLU_$sluver/lib/libsuperlu.a "$dstdir"/lib
   install -m0644 SuperLU_MT_$slumtver/lib/libsuperlu_mt.a "$dstdir"/lib
-  install -m0644 SuperLU_DIST_$sludistver/lib/libsuperlu_dist.a "$dstdir"/lib
+  install -m0644 SuperLU_DIST_$sludistver/SRC/libsuperlu_dist.a "$dstdir"/lib
 
   # static to shared
   pushd "$dstdir"/lib
     ar x libsuperlu.a
-    cc -shared -Wl,--no-undefined -Wl,-soname,libsuperlu.so.${sluver%%.*} \
-       -L$mkOpenblasLib -o libsuperlu.so.${sluver} $(ls *.o) -lm -lopenblas
+    cc -shared *.o -o libsuperlu.so.$sluver -L$mkOpenblasLib -lopenblas -L$mkMetisLib -lmetis
     ln -sf libsuperlu.so.$sluver libsuperlu.so.${sluver%%.*}
     ln -sf libsuperlu.so.${sluver%%.*} libsuperlu.so
     rm libsuperlu.a *.o
 
     ar x libsuperlu_mt.a
-    cc -shared -Wl,--no-undefined -Wl,-soname,libsuperlu_mt.so.${slumtver%%.*} \
-       -L$mkOpenblasLib -o libsuperlu_mt.so.${slumtver} $(ls *.o) \
-       -lm -lopenblas -pthread
+    cc -shared *.o -o libsuperlu_mt.so.$sluver -L$mkOpenblasLib -lopenblas -L$mkMetisLib -lmetis
     ln -sf libsuperlu_mt.so.$slumtver libsuperlu_mt.so.${slumtver%%.*}
     ln -sf libsuperlu_mt.so.${slumtver%%.*} libsuperlu_mt.so
     rm libsuperlu_mt.a *.o
 
     ar x libsuperlu_dist.a
-    mpicc -shared -Wl,--no-undefined -Wl,-soname,libsuperlu_mt.so.${sludistver%%.*} \
-          -L$mkOpenblasLib -L$mkMetisLib -o libsuperlu_dist.so.${sludistver} \
-          $(ls *.o) -lm -lopenblas -lmetis -lparmetis
+    cc -shared *.o -o libsuperlu_dist.so.$sluver -L$mkOpenblasLib -lopenblas -L$mkMetisLib -lmetis
     ln -sf libsuperlu_dist.so.$sludistver libsuperlu_dist.so.${sludistver%%.*}
     ln -sf libsuperlu_dist.so.${sludistver%%.*} libsuperlu_dist.so
     rm libsuperlu_dist.a *.o
