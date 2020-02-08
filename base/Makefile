@@ -15,7 +15,7 @@ clean:
 
 install:
 	@test -n "${mkToolchainBase}" && test -d "${mkToolchainBase}"
-	#@rm -rf "${mkToolchainBase}"/*
+	# @rm -rf "${mkToolchainBase}"/*
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) make
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) diffutils
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) findutils
@@ -65,10 +65,12 @@ install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) libarchive
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) ninja
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) cmake
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) graphviz
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) doxygen
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) db
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) subversion
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) git
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) mercurial
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) sharutils
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) vim
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) emacs
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) libevent
@@ -81,6 +83,5 @@ install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) valgrind
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) patchelf
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) chrpath
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pax-utils
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) unrar
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags)
