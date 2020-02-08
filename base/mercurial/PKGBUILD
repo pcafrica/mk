@@ -1,24 +1,10 @@
 #!/bin/bash
 
-pkgver=
+pkgname=mercurial
+pkgver=5.0.2
 dstdir=$mkToolchainBase
 
 package() {
   HGPYTHON3=1 \
     pip install --prefix=$dstdir -I "mercurial==5.0.2"
-
-  # mercurial configuration file with svn and git extensions
-  install -dm755 "$dstdir"/etc/mercurial
-  echo "[web]" > "$dstdir"/etc/mercurial/hgrc
-  echo "cacerts = $dstdir/etc/ssl/ca-bundle.crt" >> "$dstdir"/etc/mercurial/hgrc
-
-  SVN_PREFIX="$mkToolchainBase" \
-    pip install --prefix=$dstdir -I \
-      "subvertpy==0.10.1" "hgsubversion==1.9" "hg-git==0.8.10"
-
-  # mercurial configuration file with svn and git extensions
-  echo "[extensions]" >> "$dstdir"/etc/mercurial/hgrc
-  echo "hgsubversion =" >> "$dstdir"/etc/mercurial/hgrc
-  echo "hggit =" >> "$dstdir"/etc/mercurial/hgrc
 }
-
