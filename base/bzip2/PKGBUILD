@@ -25,7 +25,7 @@ build() {
 
 package() {
   make -C $pkgname-$pkgver install PREFIX="$dstdir"
-  mv $pkgname-$pkgver/libbz2.so.$pkgver "$dstdir"/lib/
+  mv -v $pkgname-$pkgver/libbz2.so.$pkgver "$dstdir"/lib/
   ln -svf "$dstdir"/lib/libbz2.so.$pkgver "$dstdir"/lib/libbz2.so
   rm -f "$dstdir"/lib/libbz2.a
 }
