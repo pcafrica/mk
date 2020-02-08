@@ -1,19 +1,19 @@
 #!/bin/bash
 
 pkgname=petsc
-pkgver=3.8.3
+pkgver=3.12.4
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 petscver=$pkgver
 petscarchive=$pkgname-$petscver.tar.gz
-petscsum=babcb1bd3222113e28ce1f01bff5535fd0db84c6
+petscsum=3d7fcc9d7bfda60308e0e7450792b0231aac5e2a
 
-slepcver=3.8.2
+slepcver=3.12.2
 slepcarchive=slepc-$slepcver.tar.gz
-slepcsum=7f54f456f84dafb4623b54c1289a830c22680869
+slepcsum=fc8734d9ead1463fff526cd1f91abd1ee00ebae5
 
-petsc4pyver=3.8.1
-slepc4pyver=3.8.0
+petsc4pyver=3.12.0
+slepc4pyver=3.12.0
 
 package() {
   download http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/$petscarchive
@@ -44,8 +44,9 @@ package() {
   # petsc
   pushd $pkgname-$petscver
     message "Configuring PETSc"
-    python2 \
-    ./configure --prefix="$dstdir" \
+    python \
+      ./configure --prefix="$dstdir" \
+                --LDFLAGS="-L$mkToolchainBase/lib -lbz2" \
                 --with-petsc-arch=arch-linux-opt \
                 --with-fortran=1 \
                 --with-pic=1 \
@@ -65,18 +66,8 @@ package() {
                 --with-parmetis=1 --with-parmetis-dir="$mkMetisPrefix" \
                 --with-ptscotch=1 --with-ptscotch-dir="$mkScotchPrefix" \
                 --with-scalapack=1 --with-scalapack-dir="$mkScalapackPrefix" \
-                --with-suitesparse=1 --with-suitesparse-dir="$mkSuitesparsePrefix"
-                # FIXME PETSc search for an old superlu version
-                # --with-superlu=1 \
-                #   --with-superlu-include="$mkSuperluInc" \
-                #   --with-superlu-lib="$mkSuperluLib/libsuperlu.so" \
-                # --with-superlu_dist=1 \
-                #   --with-superlu_dist-include="$mkSuperluInc" \
-                #   --with-superlu_dist-lib="$mkSuperluLib/libsuperlu_dist.so"
-                # FIXME PETSc search for a not existing header
-                # --with-superlu_mt=1 \
-                #   --with-superlu_mt-include="$mkSuperluInc" \
-                #   --with-superlu_mt-lib="$mkSuperluLib/libsuperlu_mt.so" \
+                --with-suitesparse=1 --with-suitesparse-dir="$mkSuitesparsePrefix" \
+                --with-zlib=1 --with-zlib-dir="$mkToolchainBase"
 
     message "Compiling PETSc"
     command make MAKE_NP=$pkgJobs PETSC_DIR=$PWD PETSC_ARCH=arch-linux-opt all
