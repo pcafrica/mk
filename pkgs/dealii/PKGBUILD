@@ -65,9 +65,6 @@ build() {
 package() {
   make -C build install
 
-  rm "$dstdir/LICENSE"
-  rm "$dstdir/README.md"
-
   reset_rpath "$dstdir/lib"
 
   if [[ "$mkTest" = "no" ]]; then
