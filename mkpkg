@@ -615,7 +615,7 @@ reset_rpath_() {
     local filetype=$(get_filetype $file)
     case $filetype in
       executable | library )
-        log "Reset the RAPTH of '$file'"
+        log "Reset the RPATH of '$file'"
         # we need to manage the case when find command find itself:
         #   open: Text file busy
         if [[ "$(basename "$file")" = "find" ]]; then
