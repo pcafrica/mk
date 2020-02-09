@@ -1,0 +1,69 @@
+#!/bin/bash
+
+pkgname=vtk
+pkgver=8.2.0
+archive=VTK-$pkgver.tar.gz
+sum=8af3307da0fc2ef8cafe4a312b821111
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download https://www.vtk.org/files/release/8.2/$archive
+  check $archive $sum
+  extract $archive
+
+  mkdir build
+  pushd build
+    cmake \
+        -D CMAKE_BUILD_TYPE=Release \
+        -D CMAKE_INSTALL_PREFIX=$dstdir \
+        -D BUILD_SHARED_LIBS:BOOL=ON \
+        -D BUILD_DOCUMENTATION:BOOL=OFF \
+        -D BUILD_EXAMPLES:BOOL=OFF \
+        -D BUILD_TESTING:BOOL=OFF \
+        -D VTK_ANDROID_BUILD:BOOL=OFF \
+        -D VTK_EXTRA_COMPILER_WARNINGS:BOOL=OFF \
+        -D VTK_Group_Imaging:BOOL=OFF \
+        -D VTK_Group_MPI:BOOL=OFF \
+        -D VTK_Group_Qt:BOOL=OFF \
+        -D VTK_Group_Rendering:BOOL=OFF \
+        -D VTK_Group_StandAlone:BOOL=ON \
+        -D VTK_Group_Tk:BOOL=OFF \
+        -D VTK_Group_Views:BOOL=OFF \
+        -D VTK_Group_Web:BOOL=OFF \
+        -D VTK_IOS_BUILD:BOOL=OFF \
+        -D VTK_RENDERING_BACKEND:STRING=None \
+        -D VTK_USE_LARGE_DATA:BOOL=OFF \
+        -D VTK_WRAP_JAVA:BOOL=OFF \
+        -D VTK_WRAP_PYTHON:BOOL=OFF \
+        -D VTK_WRAP_TCL:BOOL=OFF \
+        ../VTK-$pkgver
+    make
+  popd
+}
+
+package() {
+  make -C build install
+
+  strip "$dstdir"/lib
+  reset_rpath "$dstdir"/lib
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("The Visualization Toolkit")
+help([[
+VTK libraries are installed with the prefix "\$mkVtkPrefix",
+the dynamic libraries are located in "\$mkVtkLib" directory and the
+headers in "\$mkVtkInc".
+
+]])
+
+setenv("mkVtkPrefix", "$dstdir")
+setenv("mkVtkLib", "$dstdir/lib")
+setenv("mkVtkInc", "$dstdir/include/vtk-8.2")
+
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+EOF
+  fi
+}
