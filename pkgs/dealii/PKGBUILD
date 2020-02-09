@@ -1,16 +1,17 @@
 #!/bin/bash
 
 pkgname=dealii
-pkgver=8.4.1
+pkgver=9.1.1
 archive=$pkgname-$pkgver.tar.gz
-sum=94c489a5ede6b93497951790fe504fbbe1970819
+sum=58ae55a3cb70c8a36f74cb0c737a0d29b281eb94
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download https://github.com/dealii/dealii/releases/download/v$pkgver/$archive
+  download https://github.com/dealii/$pkgname/releases/download/v$pkgver/$archive
   check $archive $sum
   extract $archive
 
+  module load adol-c
   module load arpack
   module load boost
   module load hdf5
@@ -38,6 +39,7 @@ build() {
           -D TBB_DIR=$mkTbbPrefix \
           -D DEAL_II_WITH_MPI=ON \
           -D DEAL_II_WITH_THREADS=ON \
+          -D DEAL_II_WITH_ADOLC=ON -D ADOLC_DIR="$mkAdolcPrefix" \
           -D DEAL_II_WITH_ARPACK=ON -D ARPACK_DIR="$mkArpackPrefix" \
           -D DEAL_II_WITH_BZIP2=ON \
           -D DEAL_II_WITH_BOOST=ON -D BOOST_DIR="$mkBoostPrefix" \
@@ -45,7 +47,6 @@ build() {
           -D DEAL_II_WITH_LAPACK=ON \
             -D LAPACK_LIBRARIES="$mkOpenblasLib/libopenblas.so" \
           -D DEAL_II_WITH_METIS=ON -D METIS_DIR="$mkMetisPrefix" \
-          -D DEAL_II_WITH_NETCDF=OFF \
           -D DEAL_II_WITH_P4EST=ON \
             -D P4EST_DIR="$mkP4estPrefix" \
             -D SC_DIR="$mkP4estPrefix" \
@@ -56,9 +57,6 @@ build() {
           -D DEAL_II_WITH_UMFPACK=ON -D UMFPACK_DIR="$mkSuitesparsePrefix" \
           -D DEAL_II_WITH_ZLIB=ON \
           ../$pkgname-$pkgver
-          # FIXME an old version of NetCDF is used
-          # module load netcdf
-          # -D DEAL_II_WITH_NETCDF=ON -D NETCDF_DIR="$mkNetcdfPrefix" \
     message "Compiling $pkgname"
     make VERBOSE=1
   popd
@@ -85,6 +83,7 @@ libraries are located in "\$mkDealiiLib" directory and headers files in
 url: http://dealii.org/
 ]])
 
+load("adol-c")
 load("arpack")
 load("boost")
 load("hdf5")
