@@ -15,7 +15,7 @@ build() {
   pushd $pkgname-$pkgver
     # lt_cv_sys_lib_search_path_spec
     # lt_cv_sys_lib_dlsearch_path_spec
-    #   Paths where the linker and dynamic linker search by default.
+    # Paths where the linker and dynamic linker search by default.
     message "Configuring $pkgname"
     ./configure --build=$TARGET --prefix="$dstdir" --disable-shared \
       lt_cv_sys_lib_search_path_spec="$mkToolchainPrefix/lib $mkToolchainBase/lib" \
