@@ -16,15 +16,14 @@ build() {
 
   pushd $pkgname-$pkgver/src
     message "Configuring $pkgname"
-    LIBS="-lsuperlu" \
-    LDFLAGS="-L$mkSuperluLib" \
     ./configure --prefix="$dstdir" \
                 --enable-shared \
                 --with-blas=yes \
                   --with-blas-lib=$mkOpenblasLib/libopenblas.so \
                 --with-lapack=yes \
                   --with-lapack-lib=$mkOpenblasLib/libopenblas.so \
-                --with-superlu=no
+                --with-superlu=yes \
+                  --with-superlu-lib=$mkOpenblasLib/libsuperlu.so \
     message "Compiling $pkgname"
     make
   popd
