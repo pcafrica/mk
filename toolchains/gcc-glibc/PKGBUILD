@@ -172,11 +172,17 @@ run() {
   linuxarchive=linux-$linuxver.tar.xz
   linuxurl=$linuxurl/$linuxarchive
 
-  glibcver=2.31
+  glibcver=2.29
   glibcdir=glibc-$glibcver
   glibcarchive=glibc-$glibcver.tar.xz
   glibcurl=https://ftp.gnu.org/gnu/glibc/$glibcarchive
-  glibcsum=55619672e5e13996e264d408949eb4aaa26e7ec8
+  glibcsum=c8376086203fa5e39dc869235ab8a400ed747c44
+  
+  # glibcver=2.31
+  # glibcdir=glibc-$glibcver
+  # glibcarchive=glibc-$glibcver.tar.xz
+  # glibcurl=https://ftp.gnu.org/gnu/glibc/$glibcarchive
+  # glibcsum=55619672e5e13996e264d408949eb4aaa26e7ec8
 
   # cleaning and creating the directories hierarchy
   dstdir=$PREFIX/pkgs/toolchains/$pkgname/$pkgver
@@ -257,6 +263,9 @@ run() {
     # (9.2.0) https://bugs.gentoo.org/708346
     [[ -r $srcdir/gcc-$gccver.patch ]] && \
       patch -p1 -i $srcdir/gcc-$gccver.patch
+
+    [[ -r $srcdir/gcc-${gccver}_glibc-$glibcver.patch ]] && \
+      patch -p1 -i $srcdir/gcc-${gccver}_glibc-$glibcver.patch
   popd
   make -C $linuxdir mrproper
   [[ -d $gmpdir ]] && ln -vs ../$gmpdir $gccdir/gmp

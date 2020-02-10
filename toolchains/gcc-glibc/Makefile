@@ -6,7 +6,7 @@ help:
 	@echo "  install  install the gcc-glibc/8 toolchain"
 
 install:
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) --options="8"
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) --options="9"
 
 clean:
 	@rm -vf *.{tar.{bz2,gz,xz},zip,tgz}
