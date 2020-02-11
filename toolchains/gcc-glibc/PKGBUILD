@@ -173,17 +173,11 @@ run() {
   linuxarchive=linux-$linuxver.tar.xz
   linuxurl=$linuxurl/$linuxarchive
 
-  glibcver=2.28
+  glibcver=2.29
   glibcdir=glibc-$glibcver
   glibcarchive=glibc-$glibcver.tar.xz
   glibcurl=https://ftp.gnu.org/gnu/glibc/$glibcarchive
-  glibcsum=ccb5dc9e51a9884df8488f86982439d47b283b2a
-
-#   glibcver=2.29
-#   glibcdir=glibc-$glibcver
-#   glibcarchive=glibc-$glibcver.tar.xz
-#   glibcurl=https://ftp.gnu.org/gnu/glibc/$glibcarchive
-#   glibcsum=c8376086203fa5e39dc869235ab8a400ed747c44
+  glibcsum=c8376086203fa5e39dc869235ab8a400ed747c44
   
 #   glibcver=2.31
 #   glibcdir=glibc-$glibcver
