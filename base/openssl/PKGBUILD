@@ -15,8 +15,8 @@ build() {
   pushd $pkgname-$pkgver
     message "Configuring $pkgname"
     KERNEL_BITS=64 \
-    ./Configure --prefix="$dstdir" --openssldir="$dstdir"/etc/ssl --libdir=lib \
-                shared zlib-dynamic $OS-$ARCH
+    ./config --prefix="$dstdir" --openssldir="$dstdir"/etc/ssl --libdir=lib \
+             shared zlib-dynamic
     message "Compiling $pkgname"
     make
   popd
