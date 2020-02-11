@@ -2,9 +2,6 @@
 # %PREFIX%/etc/bash.bashrc
 #
 
-# If not running interactively, don't do anything
-[[ $- != *i* ]] && return
-
 shopt -s direxpand
 shopt -s checkwinsize
 
