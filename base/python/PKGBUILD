@@ -29,7 +29,7 @@ build() {
     # --enable-optimizations
     #   A release build with all optimizations active
     ./configure --build=$TARGET --prefix="$dstdir" --enable-shared \
-                --with-threads --enable-ipv6 --enable-unicode=ucs4 \
+                --with-openssl=$mkToolchainBase --enable-ipv6 \
                 --with-system-expat --with-system-ffi --without-ensurepip \
                 --with-dbmliborder=bdb:gdbm:ndbm \
                 --enable-optimizations
@@ -40,7 +40,7 @@ build() {
 
 package() {
   make -C Python-$pkgver install
-  ln -sv python3 "$dstdir"/bin/python
+  ln -svf python3 "$dstdir"/bin/python
 
   # linker cache is not updated
   export LD_LIBRARY_PATH="$dstdir"/lib
