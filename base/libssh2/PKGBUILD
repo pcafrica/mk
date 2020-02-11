@@ -16,7 +16,7 @@ build() {
     message "Configuring $pkgname"
     ./configure --build=$TARGET --prefix="$dstdir" --disable-silent-rules \
                 --disable-static --disable-rpath --disable-examples-build \
-                --with-libz --with-openssl
+                --with-libz --with-crypto=openssl
     message "Building $pkgname"
     make
   popd
