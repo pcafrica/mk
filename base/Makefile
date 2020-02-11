@@ -27,6 +27,7 @@ install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) flex
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) bison
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gdbm
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) db
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) perl
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gmp
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) mpfr
@@ -67,7 +68,6 @@ install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) libarchive
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) ninja
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) cmake
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) db
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) subversion
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) git
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) mercurial
