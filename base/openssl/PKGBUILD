@@ -1,18 +1,18 @@
 #!/bin/bash
 
 pkgname=openssl
-pkgver=1.1.1d
-archive=$pkgname-$pkgver.tar.gz
-sum=056057782325134b76d1931c48f2c7e6595d7ef4
+pkgver=1.0.2u
+archive=OpenSSL_${pkgver//./_}.tar.gz
+sum=88c69471746cc1b97a7a688df45b8d211aad750c
 
 dstdir=$mkToolchainBase
 
 build() {
-  download https://www.openssl.org/source/$archive
+  download https://github.com/openssl/openssl/archive/$archive
   check $archive $sum
   extract $archive
 
-  pushd $pkgname-$pkgver
+  pushd $pkgname-OpenSSL_${pkgver//./_}
     message "Configuring $pkgname"
     KERNEL_BITS=64 \
     ./config --prefix="$dstdir" --openssldir="$dstdir"/etc/ssl --libdir=lib \
@@ -24,7 +24,7 @@ build() {
 
 package() {
   # installing openssl
-  make -C $pkgname-$pkgver MANDIR="$dstdir"/share/man MANSUFFIX=ssl install
+  make -C $pkgname-OpenSSL_${pkgver//./_} MANDIR="$dstdir"/share/man MANSUFFIX=ssl install
   sed -i "1s:/usr/bin/perl:$(which perl):" "$dstdir"/bin/c_rehash
   sed -i "1s:/usr/bin/perl:$(which perl):" "$dstdir"/etc/ssl/misc/tsget
 
