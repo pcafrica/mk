@@ -12,7 +12,9 @@ pkgname=subversion
 pkgver=1.13.0
 archive=$pkgname-$pkgver.tar.bz2
 sum=3815a2dcaf976b3b7371f9f5d83e537f8cb359b4
+
 dstdir=$mkToolchainBase
+mkParallelBuild=no
 
 build() {
   # apr
