@@ -1,0 +1,6 @@
+#
+# %PREFIX%/etc/profile
+#
+
+source %PREFIX%/etc/profile.d/bash_completion.sh
+source %PREFIX%/etc/profile.d/mk.sh
