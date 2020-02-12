@@ -1,4 +1,16 @@
-# Instruction example
+# How to use
+Add the following lines to your `.bashrc` file (or equivalent):
+```bash
+# mk.
+export mkPrefix=/u/sw
+source ${mkPrefix}/etc/profile
+module load gcc-glibc
+module load package_name
+```
+
+Use `module avail` or `module spider` to check the available packages.
+
+# Instructions to compile
 
 ## 1. Bootstrap
 - `bootstrap/bootstrap /u/sw`
@@ -34,3 +46,4 @@ All packages together:
 One single package:
 - `cd pkgs/package`
 - `/u/sw/sbin/mkpkg --jobs=<N> [-v] .`
+
