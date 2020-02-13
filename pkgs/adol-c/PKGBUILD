@@ -43,7 +43,7 @@ setenv("mkAdolcPrefix", "$dstdir")
 setenv("mkAdolcLib", "$dstdir/lib")
 setenv("mkAdolcInc", "$dstdir/include")
 
-prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib64")
 EOF
   fi
 }
