@@ -41,7 +41,6 @@ build() {
           -D DEAL_II_WITH_THREADS=ON \
           -D DEAL_II_WITH_ADOLC=ON -D ADOLC_DIR="$mkAdolcPrefix" \
           -D DEAL_II_WITH_ARPACK=ON -D ARPACK_DIR="$mkArpackPrefix" \
-          -D DEAL_II_WITH_BZIP2=ON \
           -D DEAL_II_WITH_BOOST=ON -D BOOST_DIR="$mkBoostPrefix" \
           -D DEAL_II_WITH_HDF5=ON -D HDF5_DIR="$mkHdf5Prefix" \
           -D DEAL_II_WITH_LAPACK=ON \
@@ -56,6 +55,7 @@ build() {
           -D DEAL_II_WITH_TRILINOS=ON -D TRILINOS_DIR="$mkTrilinosPrefix" \
           -D DEAL_II_WITH_UMFPACK=ON -D UMFPACK_DIR="$mkSuitesparsePrefix" \
           -D DEAL_II_WITH_ZLIB=ON \
+            -D ZLIB_DIR="$mkToolchainBase" \
           ../$pkgname-$pkgver
     message "Compiling $pkgname"
     make VERBOSE=1

@@ -38,9 +38,11 @@ build() {
     message "Configuring $pkgname"
     # Kokkos is disabled due to incompatibilities with gcc 9.2.0.
     cmake -D CMAKE_INSTALL_PREFIX="$dstdir" \
-	  -D CMAKE_C_COMPILER=cc \
-	  -D CMAKE_CXX_COMPILER=c++ \
-	  -D CMAKE_Fortran_COMPILER=f95 \
+          -D CMAKE_C_COMPILER=cc \
+          -D CMAKE_CXX_COMPILER=c++ \
+          -D CMAKE_CXX_COMPILER=c++ \
+          -D CMAKE_Fortran_COMPILER=f95 \
+          -D MPI_BASE_DIR="$mkToolchainBase" \
           -D CMAKE_SKIP_INSTALL_RPATH=ON \
           -D CMAKE_SKIP_RPATH=ON \
           -D BUILD_SHARED_LIBS=ON \
@@ -96,6 +98,7 @@ build() {
             -D HDF5_INCLUDE_DIRS="$mkHdf5Inc" \
             -D HDF5_LIBRARY_DIRS="$mkHdf5Lib" \
           -D TPL_ENABLE_HWLOC=ON \
+            -D HWLOC_INCLUDE_DIRS="$mkToolchainBase"/include \
           -D TPL_ENABLE_HYPRE=ON \
             -D HYPRE_INCLUDE_DIRS="$mkHypreInc" \
             -D HYPRE_LIBRARY_DIRS="$mkHypreLib" \
@@ -121,6 +124,8 @@ build() {
             -D ParMETIS_INCLUDE_DIRS="$mkMetisInc" \
             -D ParMETIS_LIBRARY_DIRS="$mkMetisLib" \
           -D TPL_ENABLE_Pthread=ON \
+            -D Pthread_INCLUDE_DIRS="$mkToolchainPrefix"/include \
+            -D Pthread_LIBRARY_DIRS="$mkToolchainPrefix/lib" \
           -D TPL_ENABLE_SCALAPACK=ON \
             -D SCALAPACK_LIBRARY_DIRS="$mkScalapackLib" \
           -D TPL_ENABLE_Scotch=ON \
@@ -134,7 +139,7 @@ build() {
             -D UMFPACK_LIBRARY_DIRS="$mkSuitesparseLib" \
           -D TPL_ENABLE_X11=OFF \
           -D TPL_ENABLE_Zlib=ON \
-	  -D Pthread_LIBRARY_DIRS="$mkToolchainPrefix/lib" \
+            -D Zlib_INCLUDE_DIRS="$mkToolchainBase"/include \
           ../Trilinos-$pkgname-release-${pkgver//./-}
           # FIXME KLU2 is not compatible with CGAL (definition of EMPTY macro)
           # module load cgal
@@ -144,7 +149,7 @@ build() {
           # FIXME segmentation fault
           # -D TPL_ENABLE_BinUtils=ON \
               #   -D BinUtils_LIBRARY_NAMES="bfd;iberty;z;dl" \
-	  # FIXME Trilinos looks for static suitesparse library.
+          # FIXME Trilinos looks for static suitesparse library.
           # -D TPL_ENABLE_Cholmod=ON \
           #   -D Cholmod_INCLUDE_DIRS="$mkSuitesparseInc" \
           #   -D Cholmod_LIBRARY_DIRS="$mkSuitesparseLib" \
