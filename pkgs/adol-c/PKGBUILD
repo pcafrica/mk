@@ -40,7 +40,7 @@ url: https://projects.coin-or.org/ADOL-C
 ]])
 
 setenv("mkAdolcPrefix", "$dstdir")
-setenv("mkAdolcLib", "$dstdir/lib")
+setenv("mkAdolcLib", "$dstdir/lib64")
 setenv("mkAdolcInc", "$dstdir/include")
 
 prepend_path("LD_LIBRARY_PATH", "$dstdir/lib64")
