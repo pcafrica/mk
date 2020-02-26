@@ -57,6 +57,7 @@ VTK libraries are installed with the prefix "\$mkVtkPrefix",
 the dynamic libraries are located in "\$mkVtkLib" directory and the
 headers in "\$mkVtkInc".
 
+url: https://www.vtk.org
 ]])
 
 setenv("mkVtkPrefix", "$dstdir")
