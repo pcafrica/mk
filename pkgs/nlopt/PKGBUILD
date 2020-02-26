@@ -1,0 +1,54 @@
+#!/bin/bash
+
+pkgname=nlopt
+pkgver=2.6.1
+archive=v$pkgver.tar.gz
+sum=4abb044e26f4da39cb9676ae59188d3d2ab312df
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download https://github.com/stevengj/$pkgname/archive/$archive
+  check $archive $sum
+  extract $archive
+
+  module load octave
+
+  mkdir build
+  pushd build
+    message "Configuring $pkgname"
+    cmake -DCMAKE_INSTALL_PREFIX=$dstdir ../$pkgname-$pkgver
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C build install
+
+  strip "$dstdir/bin"
+  strip "$dstdir/lib"
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("NLopt is a free/open-source library for nonlinear optimization")
+help([[
+The NLopt library is installed in "\$mkNloptPrefix" directory, the dynamic
+libraries are located in "\$mkNloptLib" directory and headers files in
+"\$mkNloptInc".
+
+url: https://nlopt.readthedocs.io
+]])
+
+load("octave")
+
+setenv("mkNloptPrefix", "$dstdir")
+setenv("mkNloptInc", "$dstdir/include")
+setenv("mkNloptLib", "$dstdir/lib")
+
+prepend_path("PATH", "$dstdir/bin")
+prepend_path("PYTHONPATH", "$dstdir/lib/python3.8/site-packages/")
+EOF
+  fi
+}
