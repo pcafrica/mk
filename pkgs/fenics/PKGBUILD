@@ -196,7 +196,6 @@ prepend_path("PYTHONPATH", "$dstdir/lib/python3.8/site-packages")
 prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
 prepend_path("PKG_CONFIG_PATH", "$dstdir/lib/pkgconfig")
 
-setenv("BOOST_ROOT", os.getenv("mkBoostPrefix"))
 EOF
   fi
 }
