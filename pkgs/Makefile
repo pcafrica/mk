@@ -46,6 +46,7 @@ install: libs
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) vtk
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) octave
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) R
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pybind11
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) fenics
 
 .PHONY: help clean libs install

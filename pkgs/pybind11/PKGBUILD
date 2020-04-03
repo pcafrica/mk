@@ -1,0 +1,48 @@
+#!/bin/bash
+
+pkgname=pybind11
+pkgver=2.2.3
+archive=v$pkgver.tar.gz
+sum=55b637945bbf47d99d2c906bf0c13f49
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download https://github.com/pybind/$pkgname/archive/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    mkdir build
+    cd build
+
+    cmake -DCMAKE_INSTALL_PREFIX=$dstdir \
+          -DPYBIND11_TEST=off \
+          ..
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver/build install
+
+  strip "$dstdir/lib"
+  reset_rpath "$dstdir/lib"
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("pybind11 is a library that enables to create Python bindings of existing C++ code.")
+help([[
+The pybind11 library is installed in "\$mkPybind11Prefix" directory and headers files in
+"\$mkPybind11Inc".
+
+url: https://github.com/pybind/pybind11
+]])
+
+setenv("mkPybind11Prefix", "$dstdir")
+setenv("mkPybind11Inc", "$dstdir/include")
+
+EOF
+  fi
+}
