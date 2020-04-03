@@ -1,17 +1,17 @@
 #!/bin/bash
 
 pkgname=adol-c
-pkgver=2.6.4-rc1
-archive=v$pkgver.tar.gz
-sum=3812e450d05c739bda532c62f1cd4c7918dbfe72
+pkgver=2.7.2
+archive=$pkgver.tar.gz
+sum=372c86eaa8b11f83825b2d9e0719b5ce3cb7066d
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download https://github.com/tjhei/$pkgname/archive/$archive
+  download https://github.com/coin-or/ADOL-C/archive/releases/$archive
   check $archive $sum
   extract $archive
 
-  pushd $pkgname-$pkgver
+  pushd ADOL-C-releases-$pkgver
     message "Configuring $pkgname"
     autoreconf -i
     ./configure --prefix="$dstdir" --with-boost=no
@@ -21,7 +21,7 @@ build() {
 }
 
 package() {
-  make -C $pkgname-$pkgver install
+  make -C ADOL-C-releases-$pkgver install
 
   strip "$dstdir/lib"
   reset_rpath "$dstdir/lib"
@@ -40,8 +40,8 @@ url: https://projects.coin-or.org/ADOL-C
 ]])
 
 setenv("mkAdolcPrefix", "$dstdir")
-setenv("mkAdolcLib", "$dstdir/lib64")
 setenv("mkAdolcInc", "$dstdir/include")
+setenv("mkAdolcLib", "$dstdir/lib64")
 
 prepend_path("LD_LIBRARY_PATH", "$dstdir/lib64")
 EOF

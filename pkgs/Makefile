@@ -9,7 +9,7 @@ help:
 
 clean:
 	@rm -vf */*.{tar.{bz2,gz,xz},zip,tgz}
-	@find . -name \*.log -exec rm -v '{}' \;
+	@find . -name "*.log" -exec rm -v '{}' \;
 
 libs:
 	test -n "${mkToolchainBase}" && test -d "${mkToolchainBase}"
@@ -40,13 +40,13 @@ libs:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) petsc
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) trilinos
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) adol-c
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pybind11
 
 install: libs
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) dealii
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) vtk
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) octave
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) R
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pybind11
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) fenics
 
 .PHONY: help clean libs install
