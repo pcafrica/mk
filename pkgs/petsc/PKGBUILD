@@ -93,7 +93,7 @@ package() {
   message "Installing Python bindings"
   PETSC_DIR="$dstdir" \
     pip install --verbose --install-option="--prefix=$dstdir" petsc4py==$petsc4pyver
-  PYTHONPATH=$dstdir/lib/python3.6/site-packages:$PYTHONPATH \
+  PYTHONPATH=$dstdir/lib/python3.8/site-packages:$PYTHONPATH \
   PETSC_DIR="$dstdir" SLEPC_DIR="$dstdir" \
     pip install --verbose --install-option="--prefix=$dstdir" slepc4py==$slepc4pyver
 
@@ -148,7 +148,7 @@ setenv("SLEPC_DIR", "$dstdir")
 prepend_path("PATH", "$dstdir/bin")
 prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
 prepend_path("PKG_CONFIG_PATH", "$dstdir/lib/pkgconfig")
-prepend_path("PYTHONPATH", "$dstdir/lib/python3.6/site-packages")
+prepend_path("PYTHONPATH", "$dstdir/lib/python3.8/site-packages")
 EOF
   fi
 }
