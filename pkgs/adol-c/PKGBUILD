@@ -9,9 +9,9 @@ dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 build() {
   download https://github.com/coin-or/ADOL-C/archive/releases/$archive
   check $archive $sum
-  extract $archive
+  extract $archive $pkgname-$pkgver
 
-  pushd ADOL-C-releases-$pkgver
+  pushd $pkgname-$pkgver
     message "Configuring $pkgname"
     autoreconf -i
     ./configure --prefix="$dstdir" --with-boost=no
@@ -21,7 +21,7 @@ build() {
 }
 
 package() {
-  make -C ADOL-C-releases-$pkgver install
+  make -C $pkgname-$pkgver install
 
   strip "$dstdir/lib"
   reset_rpath "$dstdir/lib"
