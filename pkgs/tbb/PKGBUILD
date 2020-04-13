@@ -3,13 +3,13 @@
 pkgname=tbb
 pkgver=2020.1
 archive=v$pkgver.tar.gz
-sum=493a1faf80a7ab320448eec0fbfaedf40e9574ee
+sum=734f335d06ee80a7d4a20cc0da734c59
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download https://github.com/intel/tbb/archive/$archive
+  download https://github.com/oneapi-src/oneTBB/archive/$archive
   check $archive $sum
-  extract $archive
+  extract $archive $pkgname-$pkgver
 
   pushd $pkgname-$pkgver
     message "Compiling $pkgname"
@@ -26,7 +26,7 @@ package() {
     ln -sfv lib$name.so.2 $dstdir/lib/lib$name.so
   done
 
-  pushd tbb-$pkgver/include
+  pushd $pkgname-$pkgver/include
     tar -cf - tbb | (cd $dstdir/include && tar -xf -)
   popd
 
@@ -39,7 +39,7 @@ help([[
 The TBB library is installed in "\$mkTbbPrefix" directory, the dynamic libraries
 are located in "\$mkTbbLib" directory and headers files in "\$mkTbbInc".
 
-url: https://www.threadingbuildingblocks.org/
+url: https://software.intel.com/en-us/tbb
 ]])
 
 setenv("mkTbbPrefix", "$dstdir")
