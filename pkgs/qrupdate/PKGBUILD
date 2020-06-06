@@ -7,7 +7,7 @@ sum=f7403b646ace20f4a2b080b4933a1e9152fac526
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download http://prdownloads.sourceforge.net/$pkgname/$archive
+  download https://downloads.sourceforge.net/project/$pkgname/$pkgname/1.2/$archive
   check $archive $sum
   extract $archive
 
