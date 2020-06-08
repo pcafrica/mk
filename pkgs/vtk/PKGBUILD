@@ -1,13 +1,13 @@
 #!/bin/bash
 
 pkgname=vtk
-pkgver=8.2.0
+pkgver=9.0.0
 archive=VTK-$pkgver.tar.gz
-sum=8af3307da0fc2ef8cafe4a312b821111
+sum=fa61cd36491d89a17edab18522bdda49
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download https://www.vtk.org/files/release/8.2/$archive
+  download https://www.vtk.org/files/release/9.0/$archive
   check $archive $sum
   extract $archive
 
