@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=dealii
-pkgver=9.1.1
+pkgver=9.2.0
 archive=$pkgname-$pkgver.tar.gz
-sum=58ae55a3cb70c8a36f74cb0c737a0d29b281eb94
+sum=fff66749d7e7e8baf569e5da5a42f93e99424a86
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
