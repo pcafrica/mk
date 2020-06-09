@@ -14,28 +14,23 @@ build() {
   mkdir build
   pushd build
     cmake \
-        -D CMAKE_BUILD_TYPE=Release \
-        -D CMAKE_INSTALL_PREFIX=$dstdir \
-        -D BUILD_SHARED_LIBS:BOOL=ON \
-        -D BUILD_DOCUMENTATION:BOOL=OFF \
-        -D BUILD_EXAMPLES:BOOL=OFF \
-        -D BUILD_TESTING:BOOL=OFF \
-        -D VTK_ANDROID_BUILD:BOOL=OFF \
-        -D VTK_EXTRA_COMPILER_WARNINGS:BOOL=OFF \
-        -D VTK_Group_Imaging:BOOL=OFF \
-        -D VTK_Group_MPI:BOOL=OFF \
-        -D VTK_Group_Qt:BOOL=OFF \
-        -D VTK_Group_Rendering:BOOL=OFF \
-        -D VTK_Group_StandAlone:BOOL=ON \
-        -D VTK_Group_Tk:BOOL=OFF \
-        -D VTK_Group_Views:BOOL=OFF \
-        -D VTK_Group_Web:BOOL=OFF \
-        -D VTK_IOS_BUILD:BOOL=OFF \
-        -D VTK_RENDERING_BACKEND:STRING=None \
-        -D VTK_USE_LARGE_DATA:BOOL=OFF \
-        -D VTK_WRAP_JAVA:BOOL=OFF \
-        -D VTK_WRAP_PYTHON:BOOL=OFF \
-        -D VTK_WRAP_TCL:BOOL=OFF \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=$dstdir \
+        -DBUILD_SHARED_LIBS:BOOL=ON \
+        -DBUILD_DOCUMENTATION:BOOL=OFF \
+        -DBUILD_EXAMPLES:BOOL=OFF \
+        -DBUILD_TESTING:BOOL=OFF \
+        -DVTK_EXTRA_COMPILER_WARNINGS:BOOL=OFF \
+        -DVTK_GROUP_ENABLE_Imaging:STRING=DONT_WANT \
+        -DVTK_GROUP_ENABLE_MPI:STRING=DONT_WANT \
+        -DVTK_GROUP_ENABLE_Qt:STRING=DONT_WANT \
+        -DVTK_GROUP_ENABLE_Rendering:STRING=DONT_WANT \
+        -DVTK_GROUP_ENABLE_StandAlone:STRING=WANT \
+        -DVTK_GROUP_ENABLE_Views:STRING=DONT_WANT \
+        -DVTK_GROUP_ENABLE_Web:STRING=DONT_WANT \
+        -DVTK_USE_MPI:BOOL=OFF \
+        -DVTK_WRAP_JAVA:BOOL=OFF \
+        -DVTK_WRAP_PYTHON:BOOL=OFF \
         ../VTK-$pkgver
     make
   popd
