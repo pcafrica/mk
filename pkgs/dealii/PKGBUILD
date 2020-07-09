@@ -44,18 +44,18 @@ build() {
           -D DEAL_II_WITH_BOOST=ON -D BOOST_DIR="$mkBoostPrefix" \
           -D DEAL_II_WITH_HDF5=ON -D HDF5_DIR="$mkHdf5Prefix" \
           -D DEAL_II_WITH_LAPACK=ON \
-            -D LAPACK_LIBRARIES="$mkOpenblasLib/libopenblas.so" \
+          -D LAPACK_LIBRARIES="$mkOpenblasLib/libopenblas.so" \
           -D DEAL_II_WITH_METIS=ON -D METIS_DIR="$mkMetisPrefix" \
           -D DEAL_II_WITH_P4EST=ON \
-            -D P4EST_DIR="$mkP4estPrefix" \
-            -D SC_DIR="$mkP4estPrefix" \
+          -D P4EST_DIR="$mkP4estPrefix" \
+          -D SC_DIR="$mkP4estPrefix" \
           -D DEAL_II_WITH_PETSC=ON -D PETSC_DIR="$mkPetscPrefix" \
           -D DEAL_II_WITH_OPENCASCADE=OFF \
           -D DEAL_II_WITH_SLEPC=ON -D SLEPC_DIR="$mkPetscPrefix" \
           -D DEAL_II_WITH_TRILINOS=ON -D TRILINOS_DIR="$mkTrilinosPrefix" \
           -D DEAL_II_WITH_UMFPACK=ON -D UMFPACK_DIR="$mkSuitesparsePrefix" \
           -D DEAL_II_WITH_ZLIB=ON \
-            -D ZLIB_DIR="$mkToolchainBase" \
+          -D ZLIB_DIR="$mkToolchainBase" \
           ../$pkgname-$pkgver
     message "Compiling $pkgname"
     make VERBOSE=1
