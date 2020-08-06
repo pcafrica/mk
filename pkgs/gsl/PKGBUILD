@@ -1,0 +1,55 @@
+#!/bin/bash
+
+pkgname=gsl
+pkgver=2.6
+archive=$pkgname-$pkgver.tar.gz
+sum=9273164b6bdf60d0577518a1c1310eff6659e3dd
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download ftp://ftp.gnu.org/gnu/$pkgname/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --prefix="$dstdir" \
+                --enable-shared \
+                --disable-static
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver install
+
+  strip "$dstdir"/bin
+  strip "$dstdir"/lib
+
+  reset_rpath "$dstdir"/bin
+  reset_rpath "$dstdir"/lib
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("GNU Scientific Library")
+help([[
+GSL library is installed in "\$mkGlsPrefix" directory, the binaries are
+located in "\$mkGlsBin", the dynamic libraries are located in "\$mkGlsLib"
+and header files in "\$mkGlpkInc".
+
+url: https://www.gnu.org/software/gsl/
+]])
+
+setenv("mkGslPrefix", "$dstdir")
+setenv("mkGslBin", "$dstdir/bin")
+setenv("mkGslLib", "$dstdir/lib")
+setenv("mkGslInc", "$dstdir/include")
+
+prepend_path("PATH", "$dstdir/bin")
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+EOF
+  fi
+}
