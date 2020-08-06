@@ -24,6 +24,8 @@ build() {
 package() {
   make -C $pkgname-$pkgver install
 
+  sudo ln -s "$mkToolchainPrefix/lib/libm.so" "$dstdir"/lib
+
   strip "$dstdir"/bin
   strip "$dstdir"/lib
 
@@ -48,6 +50,7 @@ setenv("mkGslBin", "$dstdir/bin")
 setenv("mkGslLib", "$dstdir/lib")
 setenv("mkGslInc", "$dstdir/include")
 
+setenv("GSL_CONFIG", "$dstdir/bin/gsl-config")
 prepend_path("PATH", "$dstdir/bin")
 prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
 EOF
