@@ -21,6 +21,7 @@ build() {
   pushd build
     message "Configuring $pkgname"
     cmake -D CMAKE_INSTALL_PREFIX="$dstdir" \
+          -D CMAKE_CXX_COMPILER="$(which mpic++)" \
           -D CMAKE_CXX_FLAGS="-I$mkEigenInc" \
           -D DAKOTA_HAVE_MPI=ON \
           -D DAKOTA_PYTHON=ON \
