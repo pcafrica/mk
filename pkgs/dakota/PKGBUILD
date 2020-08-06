@@ -17,6 +17,7 @@ build() {
   module load gsl
   module load openblas
   module load scipy
+  module load trilinos
 
   mkdir build
   pushd build
@@ -79,7 +80,9 @@ setenv("mkDakotaLib", "$dstdir/lib")
 setenv("mkDakotaInc", "$dstdir/include")
 
 prepend_path("PATH", "$dstdir/bin")
-append_path("LD_LIBRARY_PATH", "$dstdir/lib")
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+
+load("trilinos") -- Here because Trilinos library path should come before that of Dakota.
 EOF
   fi
 }
