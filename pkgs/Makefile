@@ -41,10 +41,12 @@ libs:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) trilinos
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) adol-c
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pybind11
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gsl
 
 install: libs
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) dealii
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) vtk
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) dakota
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) octave
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) R
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) fenics
