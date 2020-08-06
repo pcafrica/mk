@@ -77,7 +77,7 @@ The deal.II library is installed in "\$mkDealiiPrefix" directory, the dynamic
 libraries are located in "\$mkDealiiLib" directory and header files in
 "\$mkDealiiInc".
 
-url: http://dealii.org/
+url: https://dealii.org/
 ]])
 
 load("adol-c")
