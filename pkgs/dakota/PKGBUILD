@@ -79,7 +79,7 @@ setenv("mkDakotaLib", "$dstdir/lib")
 setenv("mkDakotaInc", "$dstdir/include")
 
 prepend_path("PATH", "$dstdir/bin")
-prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+append_path("LD_LIBRARY_PATH", "$dstdir/lib")
 EOF
   fi
 }
