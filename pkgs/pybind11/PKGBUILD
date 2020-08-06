@@ -34,7 +34,7 @@ package() {
 -- -*- lua -*-
 whatis("pybind11 is a library that enables to create Python bindings of existing C++ code.")
 help([[
-The pybind11 library is installed in "\$mkPybind11Prefix" directory and headers files in
+The pybind11 library is installed in "\$mkPybind11Prefix" directory and header files in
 "\$mkPybind11Inc".
 
 url: https://github.com/pybind/pybind11

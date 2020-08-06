@@ -41,7 +41,7 @@ package() {
 whatis("GNU Linear Programming Kit : solve LP, MIP and other problems")
 help([[
 GLPK library is installed in "\$mkGlpkPrefix" directory, the dynamic libraries
-are located in "\$mkGlpkLib" directory and headers files in "\$mkGlpkInc".
+are located in "\$mkGlpkLib" directory and header files in "\$mkGlpkInc".
 
 url: https://www.gnu.org/software/glpk/
 ]])

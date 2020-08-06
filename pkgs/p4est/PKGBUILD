@@ -42,7 +42,7 @@ package() {
 whatis("Dynamic management of a collection of adaptive octrees in parallel")
 help([[
 The p4est library is installed in "\$mkP4estPrefix" directory, the dynamic
-libraries are located in "\$mkP4estLib" directory and headers files in
+libraries are located in "\$mkP4estLib" directory and header files in
 "\$mkP4estInc".
 
 url: http://www.p4est.org

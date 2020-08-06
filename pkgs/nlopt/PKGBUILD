@@ -35,7 +35,7 @@ package() {
 whatis("NLopt is a free/open-source library for nonlinear optimization")
 help([[
 The NLopt library is installed in "\$mkNloptPrefix" directory, the dynamic
-libraries are located in "\$mkNloptLib" directory and headers files in
+libraries are located in "\$mkNloptLib" directory and header files in
 "\$mkNloptInc".
 
 url: https://nlopt.readthedocs.io

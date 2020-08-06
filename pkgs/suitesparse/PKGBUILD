@@ -53,8 +53,8 @@ package() {
 whatis("A suite of sparse matrix algorithms")
 help([[
 SuiteSparse libraries are installed with the prefix "\$mkSuitesparsePrefix",
-the dynamic libraries are located in "\$mkSuitesparseLib" directory and the
-headers in "\$mkSuitesparseInc".
+the dynamic libraries are located in "\$mkSuitesparseLib" directory and
+header files in "\$mkSuitesparseInc".
 
 url: http://faculty.cse.tamu.edu/davis/suitesparse.html
 ]])

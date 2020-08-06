@@ -42,7 +42,7 @@ package() {
 whatis("A library for solving large, sparse linear systems of equations")
 help([[
 The HYPRE library is installed in "\$mkHyprePrefix" directory, the dynamic
-libraries are located in "\$mkHypreLib" directory and headers files in
+libraries are located in "\$mkHypreLib" directory and header files in
 "\$mkHypreInc".
 
 url: https://github.com/LLNL/hypre

@@ -14,7 +14,7 @@ build() {
 
   pushd $pkgname-$pkgver
     ./autogen.sh
-    # install the headers file in the proper position
+    # install the header files in the proper position
     sed -e '/^includesdir/ s/$(libdir).*$/$(includedir)/' \
         -i include/Makefile.in
     sed -e '/^includedir/ s/=.*$/=@includedir@/' \

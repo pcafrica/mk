@@ -138,7 +138,7 @@ whatis("Solve large, sparse nonsymmetric systems of equations")
 help([[
 This package contains all the SuperLU library (serial, multithreaded and
 distributed one). They are installed in "\$mkSuperluPrefix" directory, the
-dynamic libraries are located in "\$mkSuperluLib" directory and headers files
+dynamic libraries are located in "\$mkSuperluLib" directory and header files
 in "\$mkSuperluInc".
 
 url: http://crd-legacy.lbl.gov/~xiaoye/SuperLU/

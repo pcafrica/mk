@@ -33,7 +33,7 @@ package() {
 whatis("Automatic Differentiation by OverLoading in C++")
 help([[
 The ADOL-C library is installed in "\$mkAdolcPrefix" directory, the dynamic
-libraries are located in "\$mkAdolcLib" directory and headers files in
+libraries are located in "\$mkAdolcLib" directory and header files in
 "\$mkAdolcInc".
 
 url: https://projects.coin-or.org/ADOL-C

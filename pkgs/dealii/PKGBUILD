@@ -74,7 +74,7 @@ package() {
 whatis("C++ software library supporting the creation of finite element")
 help([[
 The deal.II library is installed in "\$mkDealiiPrefix" directory, the dynamic
-libraries are located in "\$mkDealiiLib" directory and headers files in
+libraries are located in "\$mkDealiiLib" directory and header files in
 "\$mkDealiiInc".
 
 url: http://dealii.org/

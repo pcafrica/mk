@@ -118,7 +118,7 @@ package() {
 whatis("Sparse solver library using Gaussian elimination")
 help([[
 MUMPS library is installed in "\$mkMumpsPrefix" directory, the dynamic
-libraries are located in "\$mkMumpsLib" directory and headers files in
+libraries are located in "\$mkMumpsLib" directory and header files in
 "\$mkMumpsInc".
 
 url: http://mumps.enseeiht.fr

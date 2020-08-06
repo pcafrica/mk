@@ -184,7 +184,7 @@ package() {
 whatis("Algorithms for the solution of large-scale, multi-physics engineering and scientific problems")
 help([[
 The Trilinos framework is installed in "\$mkTrilinosPrefix" directory, the
-dynamic libraries are located in "\$mkTrilinosLib" directory and headers files
+dynamic libraries are located in "\$mkTrilinosLib" directory and header files
 in "\$mkTrilinosInc".
 
 url: https://trilinos.org/

@@ -37,7 +37,7 @@ package() {
 whatis("Widely used C++ template library for task parallelism.")
 help([[
 The TBB library is installed in "\$mkTbbPrefix" directory, the dynamic libraries
-are located in "\$mkTbbLib" directory and headers files in "\$mkTbbInc".
+are located in "\$mkTbbLib" directory and header files in "\$mkTbbInc".
 
 url: https://software.intel.com/en-us/tbb
 ]])

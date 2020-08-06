@@ -47,8 +47,8 @@ package() {
 whatis("The Visualization Toolkit")
 help([[
 VTK libraries are installed with the prefix "\$mkVtkPrefix",
-the dynamic libraries are located in "\$mkVtkLib" directory and the
-headers in "\$mkVtkInc".
+the dynamic libraries are located in "\$mkVtkLib" directory and
+header files in "\$mkVtkInc".
 
 url: https://www.vtk.org
 ]])
