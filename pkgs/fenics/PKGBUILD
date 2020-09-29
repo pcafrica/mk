@@ -156,6 +156,13 @@ package() {
     make VERBOSE=1
     message "Installing mshr"
     make install
+
+    cd ../mshr-$pkgver/python
+    message "Installing mshr Python interface"
+
+    CPPFLAGS+="-I$mkBoostInc" \
+    PYBIND11_DIR=$mkPybind11Prefix \
+    python3 setup.py install --prefix="$dstdir" --optimize=1
   popd
 
   # installing cbc.block
