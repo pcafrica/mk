@@ -4,7 +4,11 @@ pkgname=dealii
 pkgver=9.2.0
 archive=$pkgname-$pkgver.tar.gz
 sum=fff66749d7e7e8baf569e5da5a42f93e99424a86
-dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+[[ -r $srcdir/$pkgname-$pkgver.patch ]] && \
+  suffix=-patch
+
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver$suffix
 
 build() {
   download https://github.com/dealii/$pkgname/releases/download/v$pkgver/$archive
@@ -69,7 +73,7 @@ package() {
 
   if [[ "$mkTest" = "no" ]]; then
     install -vd $mkToolchainModules/$pkgname
-    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+    cat > $mkToolchainModules/$pkgname/$pkgver$suffix.lua << EOF
 -- -*- lua -*-
 whatis("C++ software library supporting the creation of finite element")
 help([[
