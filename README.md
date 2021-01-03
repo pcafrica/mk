@@ -7,7 +7,7 @@ sudo tar xzvf mk-version.tar.gz -C /
 3. Add the following lines to your `.bashrc` file (or equivalent):
 ```bash
 # mk.
-export mkPrefix=/u/sw
+export mkPrefix=/opt/mk
 source ${mkPrefix}/etc/profile
 module load gcc-glibc
 module load package_name

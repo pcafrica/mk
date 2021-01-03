@@ -1,4 +1,4 @@
-SHELL=/bin/bash
+SHELL=/opt/mk/bin/bash
 
 help:
 	@echo "Help:"

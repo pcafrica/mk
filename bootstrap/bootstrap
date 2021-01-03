@@ -232,7 +232,7 @@ if [[ $COMPILE_MUSL_LIBC = "yes" && ( $? -ne 0 || $ARCH == "x86_64" ) ]]; then
   # =====================================================================
   pkgname=musl
   pkgver=$musl_version
-  download http://www.musl-libc.org/releases/$pkgname-$pkgver.tar.gz
+  download https://musl.libc.org/releases/$pkgname-$pkgver.tar.gz
   extract $pkgname-$pkgver.tar.gz
   pushd $pkgname-$pkgver
     # Power64 patch
@@ -269,12 +269,12 @@ popd
 
 pkgname=bash
 pkgver=$bash_version
-download http://ftpmirror.gnu.org/$pkgname/$pkgname-$pkgver.tar.gz
+download https://ftp.gnu.org/gnu/$pkgname/$pkgname-$pkgver.tar.gz
 extract $pkgname-$pkgver.tar.gz
 pushd $pkgname-$pkgver
-  for patch in {1..11}; do
+  for patch in $(seq 1 $bash_n_patches); do
     patchfile=$pkgname${pkgver//.}-$(printf "%03d" $patch)
-    download http://ftpmirror.gnu.org/$pkgname/$pkgname-$pkgver-patches/$patchfile
+    download https://ftp.gnu.org/gnu/$pkgname/$pkgname-$pkgver-patches/$patchfile
     patch -p0 -i $patchfile
   done
   _cflags=( \
@@ -299,7 +299,7 @@ popd
 
 pkgname=bash-completion
 pkgver=$bash_completion_version
-download https://github.com/scop/bash-completion/releases/download/$pkgver/$pkgname-$pkgver.tar.xz
+download https://github.com/scop/$pkgname/releases/download/$pkgver/$pkgname-$pkgver.tar.xz
 extract $pkgname-$pkgver.tar.xz
 pushd $pkgname-$pkgver
   ./configure --prefix="$PREFIX"
@@ -308,10 +308,9 @@ popd
 
 pkgname=busybox
 pkgver=$busybox_version
-download http://busybox.net/downloads/$pkgname-$pkgver.tar.bz2
+download https://busybox.net/downloads/$pkgname-$pkgver.tar.bz2
 extract $pkgname-$pkgver.tar.bz2
 pushd $pkgname-$pkgver
-  # see http://www.openwall.com/lists/musl/2012/10/08/2
   [[ -r $DIR/$pkgname-$pkgver.patch ]] && patch -p1 -i $DIR/$pkgname-$pkgver.patch
   cp -v $DIR/$pkgname-$pkgver.config .config
   make V=1 CC="$CC" LDFLAGS="-static"
@@ -324,7 +323,7 @@ done
 
 pkgname=file
 pkgver=$file_version
-download ftp://ftp.astron.com/pub/file/$pkgname-$pkgver.tar.gz
+download https://astron.com/pub/$pkgname/$pkgname-$pkgver.tar.gz
 extract $pkgname-$pkgver.tar.gz
 pushd $pkgname-$pkgver
   CC="$CC" \
@@ -339,62 +338,18 @@ pushd $pkgname-$pkgver
 popd
 
 
-# compose the lua source (static)
+# lua
 # =============================================================================
-mkdir -vp lua/{src,include/encodings}
-
+# See https://lmod.readthedocs.io/en/latest/030_installing.html.
 pkgname=lua
-pkgver=$lua_version
-download http://www.lua.org/ftp/$pkgname-$pkgver.tar.gz
-extract $pkgname-$pkgver.tar.gz
-cp $pkgname-$pkgver/src/*.c lua/src
-cp $pkgname-$pkgver/src/*.h lua/include
+pkgver=5.1.4.9
+download https://sourceforge.net/projects/lmod/files/$pkgname-$pkgver.tar.bz2
+extract $pkgname-$pkgver.tar.bz2
 
-download https://raw.githubusercontent.com/hoelzro/lua-linenoise/master/linenoise.c \
-         lua/src/linenoise.c
-download https://raw.githubusercontent.com/hoelzro/lua-linenoise/master/linenoise.h \
-         lua/include/linenoise.h
-download https://raw.githubusercontent.com/hoelzro/lua-linenoise/master/linenoiselib.c \
-         lua/src/linenoiselib.c
-download https://raw.githubusercontent.com/hoelzro/lua-linenoise/master/encodings/utf8.h \
-         lua/include/encodings/utf8.h
-download https://raw.githubusercontent.com/hoelzro/lua-linenoise/master/encodings/utf8.c \
-         lua/src/utf8.c
-
-download https://raw.githubusercontent.com/keplerproject/luafilesystem/master/src/lfs.c \
-         lua/src/lfs.c
-download https://raw.githubusercontent.com/keplerproject/luafilesystem/master/src/lfs.h \
-         lua/include/lfs.h
-
-download https://raw.githubusercontent.com/stevedonovan/luabuild/master/modules/luaposix/lua52compat.h \
-         lua/include/lua52compat.h
-download https://raw.githubusercontent.com/stevedonovan/luabuild/master/modules/luaposix/lposix.c \
-         lua/src/lposix.c
-
-sed -e "s:/usr/local:$PREFIX:g" -i lua/include/luaconf.h
-sed '13,17d' -i lua/include/lua52compat.h
-cat > lua/include/config.h << EOF
-#define VERSION "5.1.20"
-#define HAVE_STATVFS 1
-#define HAVE_SYS_STATVFS_H 1
-EOF
-
-CFLAGS="-O2 -Wall -DLUA_USE_POSIX -DLUA_COMPAT_5_2"
-CPPFLAGS="-I$(pwd)/lua/include"
-LDFLAGS="-Wl,-s -Wl,-E -static -lc -lm"
-if [[ $ALPINE_LINUX = yes ]]; then
-  LDFLAGS="-static"
-fi
-pushd lua/src
-  [[ -r $DIR/$pkgname-$pkgver.patch ]] && \
-    patch -p1 -i $DIR/$pkgname-$pkgver.patch
-  for file in $(ls -A); do
-    $CC $CPPFLAGS $CFLAGS -c $file
-  done
-  $CC $(ls *.o | grep -v ^luac.o) $LDFLAGS -o lua
-  $CC $(ls *.o | grep -v ^lua.o) $LDFLAGS -o luac
-  install -m 0755 lua "$PREFIX/bin/lua"
-  install -m 0755 luac "$PREFIX/bin/luac"
+pushd $pkgname-$pkgver
+  ./configure --prefix="$PREFIX"
+  make
+  make install
 popd
 
 # Lmod
