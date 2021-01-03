@@ -26,8 +26,8 @@ install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) libiconv
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) flex
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) bison
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gdbm
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) db
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gdbm
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) perl
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gmp
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) mpfr

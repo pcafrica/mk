@@ -223,15 +223,12 @@ dependencies:
     efficiently handles projects of any size and offers an easy and intuitive
     interface.
 
-  sharutils: texinfo
-    Makes so-called shell archives out of many files.
-
   vim: git, lua, python, sharutils, tcl
     Vim is an advanced text editor that seeks to provide the power of the
     de-facto Unix editor 'Vi', with a more complete feature set.
 
   emacs: libxml2, ncurses, perl
-    GNU Emacs is an extensible, customizable text editor—and more.
+    GNU Emacs is an extensible, customizable text editor and more.
 
   libevent: openssl, python
     The libevent API provides a mechanism to execute a callback function when a
@@ -275,10 +272,6 @@ dependencies:
 
   chrpath: no dependencies
     Command line tool to adjust the RPATH or RUNPATH of ELF binaries.
-
-  pax-utils: python
-    ELF related utils for ELF 32/64 binaries that can check files for security
-    relevant properties.
 
   unrar:
     The UnRar package contains a RAR extraction utility used for extracting
