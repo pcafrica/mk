@@ -1,8 +1,8 @@
 #!/bin/bash
 
 pkgname=automake
-pkgver=1.16.1
-_pkgver=${pkgver%.*}  # Remove only patch the patch level if required
+_pkgver=1.16
+pkgver=$_pkgver.1
 archive=$pkgname-$pkgver.tar.gz
 sum=7a4d8d8b16d2f3cece5ab92c32aba094a4597d97
 
