@@ -347,7 +347,7 @@ download https://sourceforge.net/projects/lmod/files/$pkgname-$pkgver.tar.bz2
 extract $pkgname-$pkgver.tar.bz2
 
 pushd $pkgname-$pkgver
-  ./configure --prefix="$PREFIX"
+  ./configure --prefix="$PREFIX"/lua/
   make
   make install
 popd
@@ -360,13 +360,12 @@ download https://github.com/TACC/Lmod/archive/$pkgver.tar.gz
 extract $pkgver.tar.gz
 pushd $pkgname-$pkgver
   [[ -r $DIR/$pkgname-$pkgver.patch ]] && patch -p1 -i $DIR/$pkgname-$pkgver.patch
-  PATH=$PREFIX/bin:$PATH \
+  PATH=$PREFIX/lua/bin:$PATH \
   ./configure --prefix="$PREFIX" --without-tcl \
-              --with-lua_include="$TMPDIR"/src/lua/include \
               --with-module-root-path="$PREFIX"/modules \
-              LUAC_PATH="$PREFIX"/bin/luac \
-              pager="$PREFIX"/bin/less \
-              luaprog="$PREFIX"/bin/lua
+              luaprog="$PREFIX"/lua/bin/lua \
+              LUAC_PATH="$PREFIX"/lua/bin/luac \
+              pager="$PREFIX"/bin/less
   make install
 popd
 
@@ -374,7 +373,7 @@ popd
 # =============================================================================
 popd
 rm -rf "$PREFIX"/share/{cmake,man,pkgconfig}
-rm -rf "$PREFIX"/{include}
+rm -rf "$PREFIX"/{lib,include}
 rm -rf "$TMPDIR"
 
 # configuration scripts
