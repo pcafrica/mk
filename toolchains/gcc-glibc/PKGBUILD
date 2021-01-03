@@ -52,9 +52,15 @@ run() {
       islver=0.19
       islsum=dba7264419ba995a0f6b4fde135993677f7c85fd
       ;;
+    10)
+      gccver=10.2.0
+      gccsum=8de0aecd3a52bb92b43082df8a9256356d1f03be
+      islver=0.23
+      islsum=ed28663a94320ba368a60afedbad8005af8beaf3
+      ;;
     *)
       if [[ -z "$pkgver" ]]; then
-        error "Specify a valid version (5|6|7|8|9) for gcc"
+        error "Specify a valid version (5|6|7|8|9|10) for gcc"
       else
         error "Unsupported version '$pkgver'"
       fi
@@ -68,35 +74,35 @@ run() {
   m4url=https://ftp.gnu.org/gnu/m4/$m4archive
   m4sum=228604686ca23f42e48b98930babeb5d217f1899
 
-  bisonver=3.0.4
+  bisonver=3.7.4
   bisondir=bison-$bisonver
   bisonarchive=bison-$bisonver.tar.xz
   bisonurl=https://ftp.gnu.org/gnu/bison/$bisonarchive
-  bisonsum=8270497aad88c7dd4f2c317298c50513fb0c3c8e
+  bisonsum=3fa6e50d9cb7145e7c2c1ad354e621c0eeb21d88
 
-  texinfover=6.5
+  texinfover=6.7
   texinfodir=texinfo-$texinfover
   texinfoarchive=texinfo-$texinfover.tar.xz
   texinfourl=https://ftp.gnu.org/gnu/texinfo/$texinfoarchive
-  texinfosum=72a06b48862911c638787cc3307871b990a59726
+  texinfosum=d84d46368e2694919c05a539cb8c616ac89bf4df
 
-  binutilsver=2.34
+  binutilsver=2.35.1
   binutilsdir=binutils-$binutilsver
   binutilsarchive=binutils-$binutilsver.tar.bz2
   binutilsurl=https://ftp.gnu.org/gnu/binutils/$binutilsarchive
-  binutilssum=361566c9ab5e90bd847d06f46fb9f18ec6c3ecf0
+  binutilssum=df4eb943bf65df4bbbd0a001efcc98113423c5dd
 
-  gmpver=6.1.2
+  gmpver=6.2.1
   gmpdir=gmp-$gmpver
   gmparchive=gmp-${gmpver}.tar.bz2
   gmpurl=https://ftp.gnu.org/gnu/gmp/$gmparchive
-  gmpsum=366ded6a44cd108ba6b3f5b9a252eab3f3a95cdf
+  gmpsum=2dcf34d4a432dbe6cce1475a835d20fe44f75822
 
-  mpfrver=4.0.1
+  mpfrver=4.1.0
   mpfrdir=mpfr-$mpfrver
   mpfrarchive=mpfr-$mpfrver.tar.bz2
   mpfrurl=https://ftp.gnu.org/gnu/mpfr/$mpfrarchive
-  mpfrsum=fcbbafb37c683898e585b926608d540ed037609e
+  mpfrsum=877d35a8a81a4d2d9446252e9b4ae944754d8ceb
 
   mpcver=1.1.0
   mpcdir=mpc-$mpcver
@@ -111,7 +117,6 @@ run() {
   libelfver=0.8.13
   libelfdir=libelf-$libelfver
   libelfarchive=libelf-$libelfver.tar.gz
-#  libelfurl=http://www.mr511.de/software/$libelfarchive
   libelfurl=https://fossies.org/linux/misc/old/$libelfarchive
   libelfsum=c1d6ac5f182d19dd685c4dfd74eedbfe3992425d
 
@@ -119,7 +124,7 @@ run() {
   gccarchive=gcc-$gccver.tar.xz
   gccurl=https://ftp.gnu.org/gnu/gcc/gcc-$gccver/$gccarchive
 
-#  linuxver=$(uname -r)
+  # linuxver=$(uname -r)
   linuxver=3.10.0
   case $linuxver in
     2.6.32*)
@@ -159,11 +164,17 @@ run() {
       linuxurl=https://www.kernel.org/pub/linux/kernel/v4.x
       linuxsum=4554451ee0b50e55674795f5d760fdbc72df7bf3
       ;;
-    4.9.* | 4.1*)
+    4.9.*)
       linux=4.9
       linuxver=4.9.25
       linuxurl=https://www.kernel.org/pub/linux/kernel/v4.x
       linuxsum=af03c7630a24c2350e211142bd7d795558ddcc02
+      ;;
+    4.1*)
+      linux=4.19
+      linuxver=4.19.164
+      linuxurl=https://www.kernel.org/pub/linux/kernel/v4.x
+      linuxsum=18d5ba7c5d729c56aea8148d12dea75848b6c5c8
       ;;
     *)
       error "Unsupported version of kernel '$linuxver'"
@@ -173,18 +184,12 @@ run() {
   linuxarchive=linux-$linuxver.tar.xz
   linuxurl=$linuxurl/$linuxarchive
 
-  glibcver=2.29
+  glibcver=2.32
   glibcdir=glibc-$glibcver
   glibcarchive=glibc-$glibcver.tar.xz
   glibcurl=https://ftp.gnu.org/gnu/glibc/$glibcarchive
-  glibcsum=c8376086203fa5e39dc869235ab8a400ed747c44
+  glibcsum=71ff0af28bdf4525d7b91ec5d82d1fc002000e91
   
-#   glibcver=2.31
-#   glibcdir=glibc-$glibcver
-#   glibcarchive=glibc-$glibcver.tar.xz
-#   glibcurl=https://ftp.gnu.org/gnu/glibc/$glibcarchive
-#   glibcsum=55619672e5e13996e264d408949eb4aaa26e7ec8
-
   # cleaning and creating the directories hierarchy
   dstdir=$PREFIX/pkgs/toolchains/$pkgname/$pkgver
   module=$PREFIX/modules/toolchains/$pkgname/$pkgver.lua
@@ -305,7 +310,7 @@ run() {
 
   # fix CFLAGS and CXXFLAGS environment variables
   # `-DNDEBUG` disables the assertions, but it generates some warnings in GCC
-  # and Glibc, such warnings are treated as errors.
+  # and glibc, such warnings are treated as errors.
   export CFLAGS=`echo "$CFLAGS" | sed "s/-DNDEBUG //g"`
   export CXXFLAGS=`echo "$CXXFLAGS" | sed "s/-DNDEBUG //g"`
 
@@ -412,7 +417,7 @@ run() {
   popd
   rm -rf $linuxdir
 
-  message "Compiling the native Glibc standard library"
+  message "Compiling the native glibc standard library"
   mkdir glibc-build
   pushd glibc-build
     # this prevent to use lib64 directory
@@ -421,7 +426,7 @@ run() {
     # --build=$BUILD --host=$TARGET --with-binutils="$tmpdir/tools/bin"
     #   Enables the cross compilation, using the just installed Binutils.
     # --prefix="$prefix" --libdir="$prefix/lib" --libexecdir="$prefix/lib"
-    #   Install GLibc in '$prefix' directory
+    #   Install glibc in '$prefix' directory
     # --with-pkgversion="$PKGVERSION" --with-bugurl="$BUGURL"
     #   Customize the information.
     # --with-headers="$prefix/include" --enable-kernel=$linux
@@ -566,34 +571,7 @@ run() {
   popd
   rm -rf gcc-build
   rm -rf $gccdir
-  rm -rf $libelfdir $isldir $mpcdir $mpfrdir $gmpdir
-
-  # this last step is required to install properly gold linker, with the
-  # previous version ld.gold is bugged
-  message "Compile the native compiler [Binutils]"
-  mkdir binutils-build
-  pushd binutils-build
-    # --build=$TARGET
-    #   Built for the given target.
-    # --prefix="$prefix" --with-lib-path="$prefix/lib:$base/lib"
-    #   Install binutils programs in '$prefix' directory.
-    # --with-pkgversion="$PKGVERSION" --with-bugurl="$BUGURL"
-    #   Customize the information.
-    # --enable-ld --enable-gold --enable-plugins
-    #   Enables both the standard and Google linker, and also the plugins.
-    # --disable-werror
-    #   It does not convert warning to error.
-    ../$binutilsdir/configure --build=$TARGET \
-                              --prefix="$prefix" --with-lib-path="$prefix/lib:$base/lib" \
-                              --with-pkgversion="$PKGVERSION" --with-bugurl="$BUGURL" \
-                              --disable-nls --disable-multilib \
-                              --enable-ld --enable-gold --enable-plugins \
-                              --disable-werror
-    make
-    make install
-  popd
-  rm -rf binutils-build
-  rm -rf $binutilsdir
+  rm -rf $libelfdir $isldir $mpcdir $mpfrdir $gmpdir $binutilsdir
 
   rm "$prefix"/bin/ld; ln -s ld.gold "$prefix"/bin/ld
 
@@ -652,9 +630,9 @@ EOF
   # create the module file
   cat > $module << EOF
 -- -*- lua -*-
-whatis("Loads the toolchain based on GCC $pkgver and GLibC library.")
+whatis("Loads the toolchain based on GCC $pkgver and glibc library.")
 help([[
-This module loads the toolchain based on GCC $pkgver and GLibC library. Moreover
+This module loads the toolchain based on GCC $pkgver and glibc library. Moreover
 it contains all the base packages for the development, for the details about the
 installed software see the main documentation.
 ]])

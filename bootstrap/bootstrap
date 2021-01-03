@@ -374,7 +374,7 @@ popd
 # =============================================================================
 popd
 rm -rf "$PREFIX"/share/{cmake,man,pkgconfig}
-rm -rf "$PREFIX"/{lib,include}
+rm -rf "$PREFIX"/{include}
 rm -rf "$TMPDIR"
 
 # configuration scripts

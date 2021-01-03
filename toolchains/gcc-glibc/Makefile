@@ -1,4 +1,4 @@
-SHELL=/opt/mk/bin/bash
+SHELL=/bin/bash
 
 help:
 	@echo "Help:"
@@ -6,7 +6,7 @@ help:
 	@echo "  install  install the gcc-glibc/9 toolchain"
 
 install:
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) --options="9"
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) --options="10"
 
 clean:
 	@rm -vf *.{tar.{bz2,gz,xz},zip,tgz}

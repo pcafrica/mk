@@ -9,7 +9,7 @@ See `mkpkg` for a full list of optionally parsed environment variables
 (such as `mkKeepBuildDir` and `mkDebug`).
 - `export mkPrefix=/opt/mk`
 - `cd toolchain/gcc-glibc`
-- `/opt/mk/sbin/mkpkg --options=9 --jobs=<N> [-v] .` or `make install`
+- `/opt/mk/sbin/mkpkg --options=10 --jobs=<N> [-v] .` or `make install mkFlags=<flags>`
 
 
 ## 3. Base
