@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=gawk
-pkgver=5.0.1
+pkgver=5.1.0
 archive=$pkgname-$pkgver.tar.gz
-sum=4ad1a3e5d016b5484bcbcbf866d73967c4af1b5e
+sum=18cea4de8b9c116fcbdbcc0837966f6b21338bed
 
 dstdir=$mkToolchainBase
 

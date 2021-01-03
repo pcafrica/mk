@@ -2,9 +2,9 @@
 
 pkgname=automake
 _pkgver=1.16
-pkgver=$_pkgver.1
+pkgver=$_pkgver.3
 archive=$pkgname-$pkgver.tar.gz
-sum=7a4d8d8b16d2f3cece5ab92c32aba094a4597d97
+sum=b36e3877d961c1344351cc97b35b683a4dfadc0c
 
 dstdir=$mkToolchainBase
 

@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=gettext
-pkgver=0.20.1
+pkgver=0.21
 archive=$pkgname-$pkgver.tar.gz
-sum=2aa01db95b064d7f5d1a46de34a2cc6a57eadf36
+sum=e6c0a0cba5b00a604c9118403a8199c77a538526
 
 dstdir=$mkToolchainBase
 

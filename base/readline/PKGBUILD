@@ -1,9 +1,10 @@
 #!/bin/bash
 
 pkgname=readline
-pkgver=7.0
+pkgver=8.1
+n_patches=0
 archive=$pkgname-$pkgver.tar.gz
-sum=d9095fa14a812495052357e1d678b3f2ac635463
+sum=48c5e0c3a212449e206e21ba82856accac842c6f
 
 dstdir=$mkToolchainBase
 
@@ -16,7 +17,7 @@ build() {
 
   pushd $pkgname-$pkgver
     message "Applying patches to $pkgname"
-    for patch in {1..3}; do
+    for patch in $(seq 1 $n_patches); do
       patchfile=$pkgname${pkgver//.}-$(printf "%03d" $patch)
       download https://ftp.gnu.org/gnu/$pkgname/$pkgname-$pkgver-patches/$patchfile
       patch -p0 -i "$srcdir"/$patchfile

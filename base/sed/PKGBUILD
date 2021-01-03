@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=sed
-pkgver=4.4
+pkgver=4.8
 archive=$pkgname-$pkgver.tar.xz
-sum=a196cd036efd52a8e349cfe88ab4baa555fb29d5
+sum=61bd770062d49cdab3f0f45df473e2bf950ba266
 
 dstdir=$mkToolchainBase
 

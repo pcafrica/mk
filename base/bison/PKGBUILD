@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=bison
-pkgver=3.5.1
+pkgver=3.7
 archive=$pkgname-$pkgver.tar.gz
-sum=3aec9c76d2bdef3518bcbebc9108ebd246f6e4df
+sum=d5a3596a3f7b23ab452724e6cac17943947e915a
 
 dstdir=$mkToolchainBase
 

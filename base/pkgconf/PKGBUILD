@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=pkgconf
-pkgver=1.4.1
+pkgver=1.7.3
 archive=$pkgname-$pkgver.tar.gz
-sum=3755f4f8aed444348ced0514729863e56336a1c4
+sum=55d761c1fed5a212ccb4aad73a33a7ae4c7588e8
 
 dstdir=$mkToolchainBase
 

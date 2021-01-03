@@ -39,15 +39,11 @@ dependencies:
     context-free grammar into a deterministic LR or generalized LR (GLR)
     parser employing LALR(1) parser tables.
 
-  db: libtool
-    Berkeley DB is a family of embedded key-value database libraries providing
-    scalable high-performance data management services to applications.
-
   gdbm: libtool
     GNU dbm is a set of database routines that use extensible hashing. It works
     similar to the standard UNIX dbm routines.
 
-  perl: db, gdbm
+  perl: gdbm
     Perl 5 is a highly capable, feature-rich programming language with over 27
     years of development. Perl 5 runs on over 100 platforms from portables to
     mainframes and is suitable for both rapid prototyping and large scale
@@ -91,8 +87,6 @@ dependencies:
     The GNU Readline library provides a set of functions for use by
     applications that allow users to edit command lines as they are typed in.
 
-  (recompile gawk because of circular dependency gawk <> readline)
-
   bash: ncurses, readline
     The Bash package contains the Bourne-Again SHell.
 
@@ -129,8 +123,6 @@ dependencies:
   grep: pcre, texinfo
     Grep searches one or more input files for lines containing a match to a
     specified pattern.
-
-  (recompile libtool because of circular dependency libtool <> grep)
 
   libffi: libtool
     The libffi library provides a portable, high level programming interface to

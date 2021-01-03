@@ -1,11 +1,14 @@
 #!/bin/bash
 
 pkgname=bash
-pkgver=5.0
+pkgver=5.1
+n_patches=4
 archive=$pkgname-$pkgver.tar.gz
-sum=d116b469b9e6ea5264a74661d3a4c797da7f997b
+sum=063019501ef1f30fad99d2b735a7ae2ce1d11423
 
 dstdir=$mkToolchainBase
+
+mkParallelBuild=no
 
 build() {
   download https://ftp.gnu.org/gnu/$pkgname/$archive
@@ -15,7 +18,7 @@ build() {
   pushd $pkgname-$pkgver
     # download and apply the patch
     message "Applying patches to $pkgname"
-    for patch in {1..11}; do
+    for patch in $(seq 1 $n_patches); do
       patchfile=$pkgname${pkgver//.}-$(printf "%03d" $patch)
       download https://ftp.gnu.org/gnu/$pkgname/$pkgname-$pkgver-patches/$patchfile
       patch -p0 -i "$srcdir"/$patchfile
@@ -32,7 +35,7 @@ package() {
   make -C $pkgname-$pkgver install
   ln -sfv bash $dstdir/bin/sh
 
-  # replace shabang
+  # replace shebang
   if [[ "$mkTest" = "no" ]]; then
     for file in c89 c99 catchsegv; do
       [[ -e "$mkToolchainPrefix"/bin/$file ]] &&

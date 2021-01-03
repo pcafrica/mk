@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=ncurses
-pkgver=6.1
+pkgver=6.2
 archive=$pkgname-$pkgver.tar.gz
-sum=57acf6bc24cacd651d82541929f726f4def780cc
+sum=56e410fb77f2b5501a0b2f6a995376f3cefe1097
 
 dstdir=$mkToolchainBase
 

@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=libiconv
-pkgver=1.15
+pkgver=1.16
 archive=$pkgname-$pkgver.tar.gz
-sum=7af3149fa7c4bd1d3a36a30f02e95a0ebfd6b18f
+sum=2d9d1d8fa9f7859b181de984d60eacd2499a5701
 
 dstdir=$mkToolchainBase
 

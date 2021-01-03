@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=gmp
-pkgver=6.2.0
+pkgver=6.2.1
 archive=$pkgname-${pkgver}.tar.xz
-sum=052a5411dc74054240eec58132d2cf41211d0ff6
+sum=0578d48607ec0e272177d175fd1807c30b00fdf2
 
 dstdir=$mkToolchainBase
 

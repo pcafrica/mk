@@ -15,7 +15,7 @@ clean:
 
 install:
 	@test -n "${mkToolchainBase}" && test -d "${mkToolchainBase}"
-	# @rm -rf "${mkToolchainBase}"/*
+	#@rm -rf "${mkToolchainBase}"/*
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) make
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) diffutils
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) findutils
@@ -26,13 +26,11 @@ install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) libiconv
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) flex
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) bison
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) db
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gdbm
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) perl
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gmp
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) mpfr
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) mpc
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gawk
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) autoconf
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) automake
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pkgconf
@@ -48,7 +46,6 @@ install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) texinfo
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pcre
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) grep
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) libtool
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) libffi
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) expat
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) sqlite
