@@ -1,13 +1,14 @@
 #!/bin/bash
 
 pkgname=lua
-pkgver=5.3.4
+pkgver=5.4.2
 archive=$pkgname-$pkgver.tar.gz
-sum=79790cfd40e09ba796b01a571d4d63b52b1cd950
+sum=96d4a21393c94bed286b8dc0568f4bdde8730b22
+
 dstdir=$mkToolchainBase
 
 build() {
-  download http://www.lua.org/ftp/$archive
+  download https://www.lua.org/ftp/$archive
   check $archive $sum
   extract $archive
 
