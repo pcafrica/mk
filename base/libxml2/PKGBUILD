@@ -13,8 +13,6 @@ build() {
   extract $archive
 
   pushd $pkgname-$pkgver
-    message "Configuring $pkgname"
-
     # (2.9.10 with Python 3.9) https://bugzilla.redhat.com/show_bug.cgi?id=1808343
     sed -i "s|TRUE|true|g" encoding.c
     if [[ -e "$srcdir"/$pkgname-$pkgver.patch ]]; then
@@ -22,6 +20,7 @@ build() {
       patch -p1 -i "$srcdir"/$pkgname-$pkgver.patch
     fi
 
+    message "Configuring $pkgname"
     ./configure --build=$TARGET --prefix="$dstdir" --disable-static \
                 --with-threads --with-icu --with-history
     message "Compiling $pkgname"

@@ -47,7 +47,7 @@ build() {
   check $archive $sum
   extract $archive
 
-a8096c1584a3efa5282dd  expatinc="$(pkg-config --variable=includedir expat)"
+  expatinc="$(pkg-config --variable=includedir expat)"
   expatlib="$(pkg-config --variable=libdir expat)"
 
   pushd $pkgname-$pkgver

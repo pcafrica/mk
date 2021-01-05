@@ -41,6 +41,7 @@ package() {
 
   download http://anduin.linuxfromscratch.org/BLFS/other/certdata.txt
   "$dstdir"/libexec/ssl/make-ca -f -C "$srcdir"/certdata.txt
-  ln -sf ../ca-bundle.crt "$dstdir"/etc/ssl/certs/ca-bundle.crt
-  ln -sf ca-bundle.crt "$dstdir"/etc/ssl/certs/ca-certificates.crt
+
+  ln -s "$dstdir"/etc/pki/tls/certs/ca-bundle.crt "$dstdir"/etc/ssl/certs/ca-bundle.crt
+  ln -s "$dstdir"/etc/pki/tls/certs/ca-bundle.crt "$dstdir"/etc/ssl/certs/ca-certificates.crt
 }

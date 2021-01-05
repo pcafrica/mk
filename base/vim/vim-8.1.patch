@@ -1,0 +1,11 @@
+--- a/src/if_lua.c	2021-01-05 14:29:10.831724963 +0000
++++ b/src/if_lua.c	2021-01-05 14:29:10.855725241 +0000
+@@ -408,7 +408,7 @@
+ }
+ #endif
+ 
+-#if LUA_VERSION_NUM > 501
++#if LUA_VERSION_NUM > 501 && LUA_VERSION_NUM < 504
+     static int
+ luaL_typeerror (lua_State *L, int narg, const char *tname)
+ {

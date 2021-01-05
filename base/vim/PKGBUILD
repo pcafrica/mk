@@ -4,6 +4,7 @@ pkgname=vim
 pkgver=8.1
 archive=$pkgname-$pkgver.tar.bz2
 sum=cbca219d11990d866976da309d7ce5b76be48b96
+
 dstdir=$mkToolchainBase
 
 build() {
@@ -12,6 +13,11 @@ build() {
   extract $archive
 
   pushd $pkgname${pkgver//./}
+    if [[ -e "$srcdir"/$pkgname-$pkgver.patch ]]; then
+      message "Applying patch to $pkgname"
+      patch -p1 -i "$srcdir"/$pkgname-$pkgver.patch
+    fi
+
     message "Configuring $pkgname"
     ./configure --prefix="$dstdir" --with-compiledby="$PKGVERSION" \
                 --disable-nls --disable-sysmouse --disable-gui --with-x=no \
@@ -20,7 +26,8 @@ build() {
                 --enable-perlinterp --disable-pythoninterp \
                 --enable-python3interp --enable-tclinterp \
                 --with-tclsh=$(which tclsh) --enable-luainterp \
-                --with-lua-prefix="$mkToolchainBase"
+                --with-lua-prefix="$mkToolchainBase" \
+                --without-local-dir
     message "Compiling $pkgname"
     make
   popd

@@ -13,7 +13,7 @@ clean:
 	@rm -vf bash/bash??-???
 	@rm -vf openssl/certdata.txt
 
-done:
+install:
 	@test -n "${mkToolchainBase}" && test -d "${mkToolchainBase}"
 	#@rm -rf "${mkToolchainBase}"/*
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) make
@@ -29,8 +29,6 @@ done:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) db
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gdbm
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) perl
-
-install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gmp
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) mpfr
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) mpc
