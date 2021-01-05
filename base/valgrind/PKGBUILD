@@ -4,6 +4,7 @@ pkgname=valgrind
 pkgver=3.16.1
 archive=$pkgname-$pkgver.tar.bz2
 sum=192bfe53802abb7f23edbb8aad61158a60c34f8a
+
 dstdir=$mkToolchainBase
 
 build() {
@@ -12,10 +13,13 @@ build() {
   extract $archive
 
   pushd $pkgname-$pkgver
-    # (3.12.0) https://bugs.kde.org/show_bug.cgi?id=376729
-    # (3.15.0) https://bugs.kde.org/show_bug.cgi?id=401416
-    [[ -r "$srcdir"/$pkgname-$pkgver.patch ]] &&
+    # (3.12.0)  https://bugs.kde.org/show_bug.cgi?id=376729
+    # (3.15.0+) https://bugs.kde.org/show_bug.cgi?id=401416
+    if [[ -e "$srcdir"/$pkgname-$pkgver.patch ]]; then
+      message "Applying patch to $pkgname"
       patch -p1 -i "$srcdir"/$pkgname-$pkgver.patch
+    fi
+
     message "Configuring $pkgname"
     ./configure --build=$TARGET --prefix="$dstdir" --disable-silent-rules \
                 --mandir="$dstdir"/share/man --with-mpicc=$(which mpicc)
