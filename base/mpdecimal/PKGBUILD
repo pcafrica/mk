@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=mpdecimal
-pkgver=2.4.2
+pkgver=2.5.0
 archive=$pkgname-$pkgver.tar.gz
-sum=b926360a96fba40f9363abe111e24d776c661adb
+sum=c7f4cd22308db22a09efc0cfd80b18a6d22c2f03
 
 dstdir=$mkToolchainBase
 

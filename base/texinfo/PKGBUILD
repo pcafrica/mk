@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=texinfo
-pkgver=6.5
+pkgver=6.7
 archive=$pkgname-$pkgver.tar.xz
-sum=72a06b48862911c638787cc3307871b990a59726
+sum=d84d46368e2694919c05a539cb8c616ac89bf4df
 
 dstdir=$mkToolchainBase
 

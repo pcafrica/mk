@@ -1,14 +1,14 @@
 #!/bin/bash
 
 pkgname=xz
-pkgver=5.2.4
-archive=$pkgname-$pkgver.tar.xz
-sum=1d3a6910c28d40df0134f4a49e5570e8249120c5
+pkgver=5.2.5
+archive=$pkgname-$pkgver.tar.gz
+sum=fa2ae4db119f639a01b02f99f1ba671ece2828eb
 
 dstdir=$mkToolchainBase
 
 build() {
-  download https://sourceforge.mirrorservice.org/l/lz/lzmautils/$archive
+  download https://tukaani.org/$pkgname/$archive
   check $archive $sum
   extract $archive
 

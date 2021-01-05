@@ -44,7 +44,7 @@ install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) xz
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) tar
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) texinfo
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pcre
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pcre2
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) grep
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) libffi
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) expat
@@ -54,6 +54,7 @@ install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) openssh
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) mpdecimal
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) python
+
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) lua
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) tcl
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) swig
