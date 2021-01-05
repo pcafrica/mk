@@ -1,14 +1,14 @@
 #!/bin/bash
 
 pkgname=libarchive
-pkgver=3.3.3
+pkgver=3.5.1
 archive=$pkgname-$pkgver.tar.gz
-sum=499a8f48a895faff4151d7398b24070d578f0b2e
+sum=8783fd595f1405400e624ac2c0977d9dc3f9ca30
 
 dstdir=$mkToolchainBase
 
 build() {
-  download http://libarchive.org/downloads/$archive
+  download https://libarchive.org/downloads/$archive
   check $archive $sum
   extract $archive
 

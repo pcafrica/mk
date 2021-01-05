@@ -13,7 +13,7 @@ clean:
 	@rm -vf bash/bash??-???
 	@rm -vf openssl/certdata.txt
 
-install:
+done:
 	@test -n "${mkToolchainBase}" && test -d "${mkToolchainBase}"
 	#@rm -rf "${mkToolchainBase}"/*
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) make
@@ -26,8 +26,11 @@ install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) libiconv
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) flex
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) bison
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) db
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gdbm
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) perl
+
+install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gmp
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) mpfr
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) mpc
@@ -81,5 +84,4 @@ install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) openmpi
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) patchelf
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) chrpath
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) unrar
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags)

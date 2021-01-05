@@ -39,11 +39,15 @@ dependencies:
     context-free grammar into a deterministic LR or generalized LR (GLR)
     parser employing LALR(1) parser tables.
 
+  db: libtool
+    Berkeley DB is a family of embedded key-value database libraries providing
+    scalable high-performance data management services to applications.
+
   gdbm: libtool
     GNU dbm is a set of database routines that use extensible hashing. It works
     similar to the standard UNIX dbm routines.
 
-  perl: gdbm
+  perl: db, gdbm
     Perl 5 is a highly capable, feature-rich programming language with over 27
     years of development. Perl 5 runs on over 100 platforms from portables to
     mainframes and is suitable for both rapid prototyping and large scale
@@ -239,7 +243,6 @@ dependencies:
 
   libnl: no dependencies
     Library for applications dealing with netlink sockets.
-    ATTENTION: do not upgrade to version 3.2.28
 
   hwloc: icu, libtool, libxml2, xz, zlib
     Portable Hardware Locality is a portable abstraction of hierarchical
@@ -264,7 +267,3 @@ dependencies:
 
   chrpath: no dependencies
     Command line tool to adjust the RPATH or RUNPATH of ELF binaries.
-
-  unrar:
-    The UnRar package contains a RAR extraction utility used for extracting
-    files from RAR archives.

@@ -1,14 +1,14 @@
 #!/bin/bash
 
 pkgname=emacs
-pkgver=26.3
+pkgver=27.1
 archive=$pkgname-$pkgver.tar.xz
-sum=2960e1dddef401b18abd779cb159306984157eef
+sum=d1b6b9efa666614c5628dda9ea78628796a73f7f
 
 dstdir=$mkToolchainBase
 
 build() {
-  download http://ftp.gnu.org/gnu/emacs/emacs-$pkgver.tar.xz
+  download https://ftp.gnu.org/gnu/$pkgname/$archive
   check $archive $sum
   extract $archive
 

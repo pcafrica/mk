@@ -1,9 +1,11 @@
 #!/bin/bash
 
+pkgname=sphinx
 pkgver=3.4.2
+
 dstdir=$mkToolchainBase
 
 package() {
-  pip install -I --prefix="$dstdir" "sphinx==$pkgver"
+  pip install -I --prefix="$dstdir" "$pkgname==$pkgver"
 }
 

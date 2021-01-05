@@ -1,0 +1,27 @@
+#!/bin/bash
+
+pkgname=db
+pkgver=6.2.32
+archive=$pkgname-$pkgver.tar.gz
+sum=51824cee0a59cdcfb11413ac4558c851dda24551
+
+dstdir=$mkToolchainBase
+
+build() {
+  download https://download.oracle.com/berkeley-db/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver/build_unix
+    message "Configuring $pkgname"
+    ../dist/configure --build=$TARGET --prefix="$dstdir" --enable-cxx \
+                      --disable-java --disable-tcl --disable-localization \
+                      --enable-compat185 --enable-dbm --disable-static
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C $pkgname-$pkgver/build_unix install
+}

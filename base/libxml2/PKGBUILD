@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=libxml2
-pkgver=2.9.7
+pkgver=2.9.10
 archive=$pkgname-$pkgver.tar.gz
-sum=ab3325e6cdda50ab2382fdfe0bdb6f7d1b9224a6
+sum=db6592ec9ca9708c4e71bf6bfd907bbb5cd40644
 
 dstdir=$mkToolchainBase
 
@@ -14,8 +14,16 @@ build() {
 
   pushd $pkgname-$pkgver
     message "Configuring $pkgname"
+
+    # (2.9.10 with Python 3.9) https://bugzilla.redhat.com/show_bug.cgi?id=1808343
+    sed -i "s|TRUE|true|g" encoding.c
+    if [[ -e "$srcdir"/$pkgname-$pkgver.patch ]]; then
+      message "Applying patch to $pkgname"
+      patch -p1 -i "$srcdir"/$pkgname-$pkgver.patch
+    fi
+
     ./configure --build=$TARGET --prefix="$dstdir" --disable-static \
-                --with-thread --with-icu --with-history
+                --with-threads --with-icu --with-history
     message "Compiling $pkgname"
     make
   popd
@@ -24,6 +32,9 @@ build() {
 package() {
   make -C $pkgname-$pkgver install
   pushd $pkgname-$pkgver/python
+    sed -i "s|\"/usr/include\",$||g" setup.py
+    sed -i "s|\"/usr/local/include\",$||g" setup.py
+    sed -i "s|\"/opt/include\",$||g" setup.py
     python setup.py install --prefix="$dstdir"
   popd
 }

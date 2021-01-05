@@ -1,14 +1,14 @@
 #!/bin/bash
 
 pkgname=libevent
-pkgver=2.1.8
+pkgver=2.1.12
 archive=$pkgname-$pkgver-stable.tar.gz
-sum=f3eeaed018542963b7d2416ef1135ecc
-url=https://github.com/$pkgname/$pkgname/releases/download/release-$pkgver-stable/
+sum=b5333f021f880fe76490d8a799cd79f4
+
 dstdir=$mkToolchainBase
 
 build() {
-  download $url/$archive
+  download https://github.com/$pkgname/$pkgname/releases/download/release-$pkgver-stable/$archive
   check $archive $sum
   extract $archive
 

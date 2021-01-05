@@ -1,7 +1,7 @@
 #!/bin/bash
 
 pkgname=openmpi
-pkgver=4.0.2
+pkgver=4.1.0
 archive=$pkgname-$pkgver.tar.bz2
 sum=32ce3761288575fb8e4f6296c9105c3a25cf3235
 dstdir=$mkToolchainBase
@@ -53,7 +53,7 @@ install_inifipath() {
 }
 
 package() {
-  download http://www.open-mpi.org/software/ompi/v${pkgver%.*}/downloads/$archive
+  download https://download.open-mpi.org/release/open-mpi/v${pkgver%.*}/$archive
   check $archive $sum
   extract $archive
 

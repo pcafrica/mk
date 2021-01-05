@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=git
-pkgver=2.25.0
+pkgver=2.30.0
 archive=$pkgname-$pkgver.tar.gz
-sum=57d3e8363f8db7c950c586e76ba1b05fa5293d3e
+sum=ebd126e12cb8e39ea62bb999ffa6f166ded26068
 dstdir=$mkToolchainBase
 
 build() {

@@ -8,7 +8,7 @@ sum=c7f4cd22308db22a09efc0cfd80b18a6d22c2f03
 dstdir=$mkToolchainBase
 
 build() {
-  download http://www.bytereef.org/software/mpdecimal/releases/$archive
+  download https://www.bytereef.org/software/mpdecimal/releases/$archive
   check $archive $sum
   extract $archive
 

@@ -1,10 +1,11 @@
 #!/bin/bash
 
 pkgname=mercurial
-pkgver=5.0.2
+pkgver=5.6.1
+
 dstdir=$mkToolchainBase
 
 package() {
   HGPYTHON3=1 \
-    pip install --prefix=$dstdir -I "mercurial==5.0.2"
+    pip install -I --prefix="$dstdir" -I "$pkgname==$pkgver"
 }

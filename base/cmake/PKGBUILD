@@ -1,14 +1,14 @@
 #!/bin/bash
 
 pkgname=cmake
-pkgver=3.16.4
+pkgver=3.19.2
 archive=$pkgname-$pkgver.tar.gz
-sum=3ae23da521d5c0e871dd820a0d3af5504f0bd6db
+sum=a8096c1584a3efa5282ddb8f5b419f098099faed
 
 dstdir=$mkToolchainBase
 
 build() {
-  download http://www.cmake.org/files/v${pkgver%.*}/$archive
+  download https://www.cmake.org/files/v${pkgver%.*}/$archive
   check $archive $sum
   extract $archive
 
@@ -16,8 +16,7 @@ build() {
     message "Configuring $pkgname"
     ./configure --prefix="$dstdir" --parallel=$pkgJobs \
                 --mandir=/share/man --docdir=/share/doc/cmake \
-                --system-curl --system-expat --no-system-jsoncpp \
-                --system-zlib --system-bzip2 --system-libarchive --no-qt-gui \
+                --no-system-libs --no-qt-gui \
                 --sphinx-man
     message "Compiling $pkgname"
     make
