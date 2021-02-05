@@ -34,7 +34,7 @@ build() {
           -D Eigen3_DIR="$mkEigenPrefix/share/eigen3/cmake" \
           -D LAPACK_LIBS="$mkOpenblasLib/libopenblas.so" \
           -D BLAS_LIBS="$mkOpenblasLib/libopenblas.so" \
-          -D DAKOTA_NO_FIND_TRILINOS=ON \
+          -D Trilinos_DIR="$mkTrilinosLib/cmake/Trilinos" \
           -D HAVE_QUESO=ON \
           -D DAKOTA_HAVE_GSL=ON \
           ../$pkgname-$pkgver.0.src
@@ -81,10 +81,6 @@ setenv("mkDakotaInc", "$dstdir/include")
 
 prepend_path("PATH", "$dstdir/bin")
 prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
-
--- Trilinos library path should come before that of Dakota,
--- due to possible conflicts with the two installations of Teuchos.
-load("trilinos")
 EOF
   fi
 }
