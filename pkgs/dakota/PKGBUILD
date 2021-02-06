@@ -82,7 +82,9 @@ setenv("mkDakotaInc", "$dstdir/include")
 prepend_path("PATH", "$dstdir/bin")
 prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
 
-load("trilinos") -- Here because Trilinos library path should come before that of Dakota.
+-- Trilinos library path should come before that of Dakota,
+-- due to possible conflicts with the two installations of Teuchos.
+load("trilinos")
 EOF
   fi
 }
