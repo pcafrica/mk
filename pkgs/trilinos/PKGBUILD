@@ -64,7 +64,6 @@ build() {
           -D Trilinos_ENABLE_ML=ON \
           -D Trilinos_ENABLE_MueLu=ON \
           -D Trilinos_ENABLE_NOX=ON \
-          -D Trilinos_ENABLE_ROL=ON \
           -D Trilinos_ENABLE_Rythmos=ON \
           -D Trilinos_ENABLE_Sacado=ON \
           -D Trilinos_ENABLE_ShyLU=OFF \

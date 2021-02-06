@@ -24,7 +24,7 @@ build() {
     message "Configuring $pkgname"
     cmake -D CMAKE_INSTALL_PREFIX="$dstdir" \
           -D CMAKE_CXX_COMPILER=$(which mpic++) \
-          -D CMAKE_CXX_FLAGS="-I$mkEigenInc -I$mkTrilinosInc" \
+          -D CMAKE_CXX_FLAGS="-I$mkEigenInc" \
           -D DAKOTA_HAVE_MPI=ON \
           -D DAKOTA_PYTHON=ON \
           -D PYTHON_NUMARRAY_INCLUDE_DIR="$mkScipyPrefix/lib/python3.8/site-packages/numpy-1.18.1-py3.8-linux-x86_64.egg/numpy/core/include/numpy/" \
