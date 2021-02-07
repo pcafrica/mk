@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=trilinos
-pkgver=12.18.1
+pkgver=13.0.1
 archive=$pkgname-release-${pkgver//./-}.tar.gz
-sum=5d8a48415867a61a5105901db9e66389a7b8ca55
+sum=bf3f645e9140bd7d55a1143779cf5c25a583c087
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
