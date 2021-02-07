@@ -72,6 +72,7 @@ build() {
           -D Trilinos_ENABLE_Stratimikos=ON \
           -D Trilinos_ENABLE_Teko=OFF \
           -D Trilinos_ENABLE_Teuchos=ON \
+            -D Teuchos_HIDE_DEPRECATED_CODE=ON \
           -D Trilinos_ENABLE_Thyra=ON \
           -D Trilinos_ENABLE_Tpetra=OFF \
           -D Trilinos_ENABLE_Zoltan=ON \
