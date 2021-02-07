@@ -35,6 +35,7 @@ build() {
           -D LAPACK_LIBS="$mkOpenblasLib/libopenblas.so" \
           -D BLAS_LIBS="$mkOpenblasLib/libopenblas.so" \
           -D Trilinos_DIR="$mkTrilinosLib/cmake/Trilinos" \
+          -D HAVE_PECOS=OFF \
           -D HAVE_QUESO=ON \
           -D DAKOTA_HAVE_GSL=ON \
           ../$pkgname-$pkgver.0.src
