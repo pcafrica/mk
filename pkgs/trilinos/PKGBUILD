@@ -67,6 +67,7 @@ build() {
           -D Trilinos_ENABLE_ROL=ON \
           -D Trilinos_ENABLE_Rythmos=ON \
           -D Trilinos_ENABLE_Sacado=ON \
+            -D Sacado_NEW_FAD_DESIGN_IS_DEFAULT=OFF \
           -D Trilinos_ENABLE_ShyLU=OFF \
           -D Trilinos_ENABLE_Stokhos=OFF \
           -D Trilinos_ENABLE_Stratimikos=ON \
