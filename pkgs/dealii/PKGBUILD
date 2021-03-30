@@ -5,9 +5,6 @@ pkgver=9.2.0
 archive=$pkgname-$pkgver.tar.gz
 sum=fff66749d7e7e8baf569e5da5a42f93e99424a86
 
-[[ -r $srcdir/$pkgname-$pkgver.patch ]] && \
-  suffix=-patch
-
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver$suffix
 
 build() {
@@ -25,11 +22,6 @@ build() {
   module load petsc
   module load tbb
   module load trilinos
-
-  pushd $pkgname-$pkgver
-    [[ -r $srcdir/$pkgname-$pkgver.patch ]] && \
-      patch -p1 -i $srcdir/$pkgname-$pkgver.patch
-  popd
 
   mkdir build
   pushd build
