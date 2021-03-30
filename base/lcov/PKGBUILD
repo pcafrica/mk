@@ -1,0 +1,18 @@
+#!/bin/bash
+
+pkgname=lcov
+pkgver=1.15
+archive=$pkgname-$pkgver.tar.gz
+sum=3d1200498c1d9ee67c311ecff459f741e8493c45
+
+dstdir=$mkToolchainBase
+
+build() {
+  download https://github.com/linux-test-project/$pkgname/releases/download/v$pkgver/$pkgname-$pkgver.tar.gz
+  check $archive $sum
+  extract $archive
+}
+
+package() {
+  make -C $pkgname-$pkgver install PREFIX=$mkToolchainBase
+}
