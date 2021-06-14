@@ -58,9 +58,15 @@ run() {
       islver=0.23
       islsum=ed28663a94320ba368a60afedbad8005af8beaf3
       ;;
+    11)
+      gccver=11.1.0
+      gccsum=9db7917f4ce337026335430814de0a5e991ec6c1
+      islver=0.24
+      islsum=ae5fbb33bcb442121fbbf482a93f6b3c84d489ee
+      ;;
     *)
       if [[ -z "$pkgver" ]]; then
-        error "Specify a valid version (5|6|7|8|9|10) for gcc"
+        error "Specify a valid version (5|6|7|8|9|10|11) for gcc"
       else
         error "Unsupported version '$pkgver'"
       fi
@@ -68,17 +74,17 @@ run() {
       ;;
   esac
 
-  m4ver=1.4.18
+  m4ver=1.4.19
   m4dir=m4-$m4ver
   m4archive=m4-$m4ver.tar.xz
   m4url=https://ftp.gnu.org/gnu/m4/$m4archive
-  m4sum=228604686ca23f42e48b98930babeb5d217f1899
+  m4sum=b44b5c9746b69ee19204b7cb76d3a7b3eac69259
 
-  bisonver=3.7.4
+  bisonver=3.7.6
   bisondir=bison-$bisonver
   bisonarchive=bison-$bisonver.tar.xz
   bisonurl=https://ftp.gnu.org/gnu/bison/$bisonarchive
-  bisonsum=3fa6e50d9cb7145e7c2c1ad354e621c0eeb21d88
+  bisonsum=bbd6362383a7276cd85ed3f19cb5416aeb98e5db
 
   texinfover=6.7
   texinfodir=texinfo-$texinfover
@@ -86,11 +92,11 @@ run() {
   texinfourl=https://ftp.gnu.org/gnu/texinfo/$texinfoarchive
   texinfosum=d84d46368e2694919c05a539cb8c616ac89bf4df
 
-  binutilsver=2.35.1
+  binutilsver=2.36.1
   binutilsdir=binutils-$binutilsver
   binutilsarchive=binutils-$binutilsver.tar.bz2
   binutilsurl=https://ftp.gnu.org/gnu/binutils/$binutilsarchive
-  binutilssum=df4eb943bf65df4bbbd0a001efcc98113423c5dd
+  binutilssum=968cddc17354142ab7d60b93d7f169ec8373a9f4
 
   gmpver=6.2.1
   gmpdir=gmp-$gmpver
@@ -104,11 +110,11 @@ run() {
   mpfrurl=https://ftp.gnu.org/gnu/mpfr/$mpfrarchive
   mpfrsum=877d35a8a81a4d2d9446252e9b4ae944754d8ceb
 
-  mpcver=1.1.0
+  mpcver=1.2.1
   mpcdir=mpc-$mpcver
   mpcarchive=mpc-$mpcver.tar.gz
   mpcurl=https://ftp.gnu.org/gnu/mpc/$mpcarchive
-  mpcsum=b019d9e1d27ec5fb99497159d43a3164995de2d0
+  mpcsum=2a4919abf445c6eda4e120cd669b8733ce337227
 
   isldir=isl-$islver
   islarchive=isl-$islver.tar.bz2
@@ -128,7 +134,7 @@ run() {
   linuxver=3.10.0
   case $linuxver in
     2.6.32*)
-      warning "Too old linux version, it is no longer supported (last update March 2016)"
+      warning "Too old linux version, it is no longer supported (last update June 2021)."
       linux=2.6.32
       linuxver=2.6.32.71
       linuxurl=https://www.kernel.org/pub/linux/kernel/v2.6/longterm/v2.6.32
@@ -184,11 +190,11 @@ run() {
   linuxarchive=linux-$linuxver.tar.xz
   linuxurl=$linuxurl/$linuxarchive
 
-  glibcver=2.32
+  glibcver=2.33
   glibcdir=glibc-$glibcver
   glibcarchive=glibc-$glibcver.tar.xz
   glibcurl=https://ftp.gnu.org/gnu/glibc/$glibcarchive
-  glibcsum=71ff0af28bdf4525d7b91ec5d82d1fc002000e91
+  glibcsum=c33953a648e5f6373211cc9f6d9b9647d862aa45
   
   # cleaning and creating the directories hierarchy
   dstdir=$PREFIX/pkgs/toolchains/$pkgname/$pkgver
