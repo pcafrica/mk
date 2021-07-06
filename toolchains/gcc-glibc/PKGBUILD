@@ -178,9 +178,9 @@ run() {
       ;;
     4.1*)
       linux=4.19
-      linuxver=4.19.164
+      linuxver=4.19.196
       linuxurl=https://www.kernel.org/pub/linux/kernel/v4.x
-      linuxsum=18d5ba7c5d729c56aea8148d12dea75848b6c5c8
+      linuxsum=6d7edad673d55c50c83f3b375c22d6c5b289b8d5
       ;;
     *)
       error "Unsupported version of kernel '$linuxver'"
