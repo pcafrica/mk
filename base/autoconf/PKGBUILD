@@ -23,21 +23,5 @@ build() {
 }
 
 package() {
-  # installing
   make -C $pkgname-$pkgver install
-
-  mv -vf "$dstdir"/share/autoconf{,-$pkgver}
-  mv -vf "$dstdir"/share/info/autoconf{,-$pkgver}.info
-  mv -vf "$dstdir"/share/info/standards{,-$pkgver}.info
-
-  # link to the last version
-  ln -vsf autoconf-$pkgver "$dstdir"/share/autoconf
-  ln -vsf autoconf-$pkgver.info "$dstdir"/share/info/autoconf.info
-  ln -vsf standards-$pkgver.info "$dstdir"/share/info/standards.info
-  for exe in autoconf autoheader autom4te autoreconf autoscan autoupdate ifnames; do
-    ln -vsf $exe-$pkgver "$dstdir"/bin/$exe
-  done
-  for doc in autoconf autoheader autom4te autoreconf autoscan autoupdate config.guess config.sub ifnames; do
-    ln -vsf $doc-$pkgver.1 "$dstdir"/share/man/man1/$doc.1
-  done
 }

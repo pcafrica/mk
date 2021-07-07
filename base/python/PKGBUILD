@@ -55,8 +55,5 @@ package() {
   ln -svf pip${pkgver%.*} "$dstdir"/bin/pip${pkgver%%.*}
   ln -svf pip${pkgver%%.*} "$dstdir"/bin/pip
 
-  rm -vf "$dstdir"/bin/easy_install
-  ln -svf easy_install-${pkgver%.*} "$dstdir"/bin/easy_install
-
   pip install six
 }

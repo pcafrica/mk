@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=gdb
-pkgver=10.1
+pkgver=10.2
 archive=$pkgname-$pkgver.tar.xz
-sum=c625efd87116525fb3bbeca7eaa1028ee62c0e7d
+sum=1056e2743a825ecce46ec9eec37f0b357831012b
 
 dstdir=$mkToolchainBase
 

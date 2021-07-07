@@ -3,7 +3,7 @@
 pkgname=emacs
 pkgver=27.2
 archive=$pkgname-$pkgver.tar.xz
-sum=d1b6b9efa666614c5628dda9ea78628796a73f7f
+sum=8d18e2bfb6e28cf060ce7587290954e9c582aa25
 
 dstdir=$mkToolchainBase
 

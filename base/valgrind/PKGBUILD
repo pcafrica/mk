@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=valgrind
-pkgver=3.16.1
+pkgver=3.17.0
 archive=$pkgname-$pkgver.tar.bz2
-sum=192bfe53802abb7f23edbb8aad61158a60c34f8a
+sum=7770912c7465f93a90c5a9d5c1b1b036ebec04fd
 
 dstdir=$mkToolchainBase
 

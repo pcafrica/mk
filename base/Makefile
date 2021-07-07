@@ -37,6 +37,7 @@ install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) autoconf
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) automake
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pkgconf
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) lcov
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) ncurses
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) readline
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gawk
@@ -71,8 +72,6 @@ install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) mercurial
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) vim
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) emacs
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) libevent
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) tmux
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) htop
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gdb
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) libnl
@@ -82,5 +81,4 @@ install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) openmpi
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) patchelf
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) chrpath
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) lcov
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags)
