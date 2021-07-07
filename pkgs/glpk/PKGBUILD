@@ -3,7 +3,7 @@
 pkgname=glpk
 pkgver=5.0
 archive=$pkgname-$pkgver.tar.gz
-sum=d9b607a9cf3a25b754a0cd9a842ea5043f8604db
+sum=3a85b1e4c806b91deebfcf9a845b9308cd785d64
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {

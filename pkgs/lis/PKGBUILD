@@ -3,7 +3,7 @@
 pkgname=lis
 pkgver=2.0.30
 archive=$pkgname-$pkgver.zip
-sum=f66525dccbf3163e229b5ec979b2d22c0f5d2cc3
+sum=2cd87eba4605b8e5d689a70cd5275c22017d6e53
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {

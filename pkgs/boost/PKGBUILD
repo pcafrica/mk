@@ -3,12 +3,12 @@
 pkgname=boost
 pkgver=1.76.0
 archive=${pkgname}_${pkgver//./_}.tar.bz2
-sum=88866e4075e12255e7a7189d0b8a686e0b1ee9c1
+sum=8064156508312dde1d834fec3dca9b11006555b6
 
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download https://downloads.sourceforge.net/project/$pkgname/$pkgname/$pkgver/$archive
+  download https://boostorg.jfrog.io/artifactory/main/release/$pkgver/source/$archive
   check $archive $sum
   extract $archive
 

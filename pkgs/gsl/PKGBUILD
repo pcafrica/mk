@@ -3,7 +3,7 @@
 pkgname=gsl
 pkgver=2.7
 archive=$pkgname-$pkgver.tar.gz
-sum=9273164b6bdf60d0577518a1c1310eff6659e3dd
+sum=29179db0d746f422bb0ceca2cbda4de107a2c651
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {

@@ -3,7 +3,7 @@
 pkgname=p4est
 pkgver=2.3.2
 archive=$pkgname-$pkgver.tar.gz
-sum=28cbaf51a335c8cc8e78bb38bbb99251ba7ebf80
+sum=b41c8ef29ca88be0ae73116dca8afed2743fb2ef
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {

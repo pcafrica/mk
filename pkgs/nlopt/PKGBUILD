@@ -3,7 +3,7 @@
 pkgname=nlopt
 pkgver=2.6.2
 archive=v$pkgver.tar.gz
-sum=4abb044e26f4da39cb9676ae59188d3d2ab312df
+sum=d7f7962e4e8cc014b734d591d8041a64d56250c3
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
@@ -48,7 +48,7 @@ setenv("mkNloptInc", "$dstdir/include")
 setenv("mkNloptLib", "$dstdir/lib")
 
 prepend_path("PATH", "$dstdir/bin")
-prepend_path("PYTHONPATH", "$dstdir/lib/python3.8/site-packages/")
+prepend_path("PYTHONPATH", "$dstdir/lib/python3.9/site-packages/")
 EOF
   fi
 }

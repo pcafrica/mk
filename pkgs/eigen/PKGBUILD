@@ -3,7 +3,7 @@
 pkgname=eigen
 pkgver=3.3.9
 archive=$pkgname-$pkgver.tar.bz2
-sum=6aa47fdf963d86152f94496107ed27808d32d47d
+sum=516322dc3d98f7f6d20f11050da43084f68e6c71
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {

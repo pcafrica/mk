@@ -3,12 +3,12 @@
 pkgname=R
 pkgver=4.1.0
 archive=$pkgname-$pkgver.tar.gz
-sum=8eda2af51d63877fcc6674274b6801af605173c5
+sum=c84697f2a0a5b89ff75dfe10fcb87656cc68144c
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 mirror=https://cran.mirror.garr.it/mirrors/CRAN
 
 build() {
-  download https://cran.r-project.org/src/base/R-3/$archive
+  download https://cran.r-project.org/src/base/R-4/$archive
   check $archive $sum
   extract $archive
 

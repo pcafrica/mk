@@ -3,7 +3,7 @@
 pkgname=qhull
 pkgver=2020.2
 archive=$pkgname-2020-src-8.0.2.tgz
-sum=c7165fb7ec1af92bf448370c3a3b554766168f18
+sum=2dbc240919560ac008a92363984754a70677b353
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {

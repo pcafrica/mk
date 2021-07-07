@@ -3,7 +3,7 @@
 pkgname=openblas
 pkgver=0.3.15
 archive=v$pkgver.tar.gz
-sum=6a79b36d1bf73584a513139806d226f9189d621e
+sum=d7d1f67c1ef0c14c93761bdf44f0da8d0dd4bc0f
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {

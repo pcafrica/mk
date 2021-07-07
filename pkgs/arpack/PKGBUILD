@@ -3,11 +3,11 @@
 pkgname=arpack
 pkgver=3.8.0
 archive=$pkgver.tar.gz
-sum=cb5a6e1f3c5ab231440bbe30f4a0808d76215e93
+sum=6b89dc1b298e1db7df17094308fc3309afa49618
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download https://github.com/opencollab/arpack-ng/archive/$archive
+  download https://github.com/opencollab/$pkgname-ng/archive/$archive
   check $archive $sum
   extract $archive
 

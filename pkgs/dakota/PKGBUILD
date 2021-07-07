@@ -27,7 +27,7 @@ build() {
           -D CMAKE_CXX_FLAGS="-I$mkEigenInc -I$mkTrilinosInc" \
           -D DAKOTA_HAVE_MPI=ON \
           -D DAKOTA_PYTHON=ON \
-          -D PYTHON_NUMARRAY_INCLUDE_DIR="$mkScipyPrefix/lib/python3.8/site-packages/numpy-1.18.1-py3.8-linux-x86_64.egg/numpy/core/include/numpy/" \
+          -D PYTHON_NUMARRAY_INCLUDE_DIR="$mkScipyPrefix/lib/python3.9/site-packages/numpy/core/include/numpy/" \
           -D DL_LIBRARY="$mkToolchainPrefix/lib/libdl.so" \
           -D libm="$mkToolchainPrefix/lib/libm.so" \
           -D BOOST_ROOT="$mkBoostPrefix" \

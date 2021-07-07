@@ -61,7 +61,7 @@ package() {
 
   # make python happy
   export PATH="$dstdir/bin:$PATH"
-  export PYTHONPATH="$dstdir/lib/python3.8/site-packages:$PYTHONPATH"
+  export PYTHONPATH="$dstdir/lib/python3.9/site-packages:$PYTHONPATH"
 
   # installing FIAT
   pushd fiat-$pkgver
@@ -209,7 +209,7 @@ setenv("mkFenicsInc", "$dstdir/include")
 
 prepend_path("PATH", "$dstdir/bin")
 prepend_path("MANPATH", "$dstdir/share/man")
-prepend_path("PYTHONPATH", "$dstdir/lib/python3.8/site-packages")
+prepend_path("PYTHONPATH", "$dstdir/lib/python3.9/site-packages")
 prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
 prepend_path("PKG_CONFIG_PATH", "$dstdir/lib/pkgconfig")
 

@@ -16,6 +16,7 @@ build() {
   mkdir build
   pushd build
     message "Configuring $pkgname"
+    FFLAGS="-std=legacy" \
     LDFLAGS="-L$mkOpenblasLib" \
     cmake -D CMAKE_INSTALL_PREFIX="$dstdir" \
           -D CMAKE_SKIP_INSTALL_RPATH=ON \

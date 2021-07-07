@@ -6,7 +6,7 @@ dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 sluver=$pkgver
 sluarchive=${pkgname}_${sluver}.tar.gz
-slusum=10ce07b87d002c86cce2f71b84cb144de3112fb4
+slusum=531a6379f2c3fcd90154df3ef512c958b86d7f29
 
 slumtver=3.1
 slumtarchive=${pkgname}_mt_${slumtver}.tar.gz
@@ -14,7 +14,7 @@ slumtsum=29cb847d17b1b2826f9558cbfa86397898171b3c
 
 sludistver=7.0.0
 sludistarchive=${pkgname}_dist_${sludistver}.tar.gz
-sludistsum=0ba4fbcca3dd0cdefaf7ca96bd0acfa17a8cd1f5
+sludistsum=5161fb0fdc54833fecbb0f7d03ed90a9e021c7c8
 
 build() {
   download https://crd-legacy.lbl.gov/~xiaoye/SuperLU/$sluarchive
@@ -32,7 +32,7 @@ build() {
   module load openblas
   module load metis
 
-  pushd SuperLU_$sluver
+  pushd superlu-$sluver
     cat > make.inc << EOF
 SuperLUroot = $(pwd)
 SUPERLULIB  = \$(SuperLUroot)/lib/libsuperlu.a
@@ -44,13 +44,14 @@ ARCH        = ar
 ARCHFLAGS   = cr
 RANLIB      = ranlib
 CC          = cc
-CFLAGS      = -DPRNTlevel=0 $CFLAGS -fPIC -DAdd_
+CFLAGS      = -DPRNTlevel=0 $CFLAGS -fPIC -DAdd_ -I.
 NOOPTS      = -fPIC
 FORTRAN     = gfortran
 LOADER      = \$(CC)
 LOADOPTS    =
 EOF
     message "Compiling $pkgname"
+    mkdir lib
     make superlulib
   popd
 
@@ -88,6 +89,7 @@ EOF
       -DCMAKE_C_COMPILER=mpicc -DCMAKE_CXX_COMPILER=mpic++ \
       -DTPL_PARMETIS_INCLUDE_DIRS=${mkMetisInc} \
       -DTPL_PARMETIS_LIBRARIES="-L${mkMetisLib} -lmetis -lparmetis" \
+      -Denable_examples=OFF -Denable_tests=OFF \
       ..
     make
   popd
@@ -97,12 +99,12 @@ package() {
   install -d -m0755 "$dstdir"/{include,lib}
 
   # header files
-  install -m0644 SuperLU_$sluver/SRC/*.h "$dstdir"/include
+  install -m0644 superlu-$sluver/SRC/*.h "$dstdir"/include
   install -m0644 SuperLU_MT_$slumtver/SRC/*.h "$dstdir"/include
   install -m0644 SuperLU_DIST_$sludistver/SRC/*.h "$dstdir"/include
 
   # libraries
-  install -m0644 SuperLU_$sluver/lib/libsuperlu.a "$dstdir"/lib
+  install -m0644 superlu-$sluver/lib/libsuperlu.a "$dstdir"/lib
   install -m0644 SuperLU_MT_$slumtver/lib/libsuperlu_mt.a "$dstdir"/lib
   install -m0644 SuperLU_DIST_$sludistver/build/SRC/libsuperlu_dist.a "$dstdir"/lib
 

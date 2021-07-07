@@ -3,7 +3,7 @@
 pkgname=suitesparse
 pkgver=5.10.1
 archive=v$pkgver.tar.gz
-sum=3de08b5ab02610ed0446225aad2445696616fae5
+sum=83dd96b32701e12b7577acb7d9aea80138d7e46e
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {

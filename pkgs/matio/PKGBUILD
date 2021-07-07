@@ -3,7 +3,7 @@
 pkgname=matio
 pkgver=1.5.21
 archive=v$pkgver.tar.gz
-sum=915c36158cd30ec6183012b45b1ac408c6ff51ee
+sum=ec802e9090f6693039e747a793c78df9cc4a84d6
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {

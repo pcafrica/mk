@@ -4,7 +4,7 @@ pkgname=octave
 pkgver=6.2.0
 archive=$pkgname-$pkgver.tar.gz
 
-sum=bc9e4ceed93c7f7dcc692daeb9dccb182b2d5e9e
+sum=e357629c9249f1dfeb807618c3b6a08b3dba9b4a
 
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 

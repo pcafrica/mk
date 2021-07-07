@@ -2,31 +2,26 @@
 
 pkgname=hdf5
 pkgver=1.12.0
-_pkgver=${pkgver%.*}
 archive=$pkgname-$pkgver.tar.bz2
-sum=5e11d91abe071858b0d9a4f3a202c1e6a0d27290
-dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+sum=6020131b6e18e6866816b1fe68980512c696c2bf
 
 szipver=2.1.1
 sziparchive=szip-$szipver.tar.gz
 szipsum=434931cfe47e9b0730ea85fa5e25477bafd9704a
 
 h5pyver=3.3.0
-h5pyarchive=$h5pyver.tar.gz
-h5pysum=a1b903ec43b3688f9e46c3dfb194c3b7cd4d5cc8
+
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 package() {
-  download https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-${_pkgver}/hdf5-${pkgver}/src/$archive
+  download https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-${pkgver%.*}/hdf5-${pkgver}/src/$archive
   download https://support.hdfgroup.org/ftp/lib-external/szip/$szipver/src/$sziparchive
-  download https://github.com/h5py/h5py/archive/$h5pyarchive
 
   check $archive $sum
   check $sziparchive $szipsum
-  check $h5pyarchive $h5pysum
 
   extract $archive
   extract $sziparchive
-  extract $h5pyarchive
 
   # szip
   pushd szip-$szipver
@@ -53,6 +48,7 @@ package() {
                 --enable-fortran \
                 --enable-parallel=yes \
                 --enable-build-mode=production \
+                --with-default-api-version=v18 \
                 --with-zlib \
                 --with-szlib="$dstdir/lib"
     message "Compiling $pkgname"
@@ -62,17 +58,8 @@ package() {
   popd
 
   # h5py
-  module load scipy
-  pushd h5py-$h5pyver
-    message "Configuring h5py"
-    python setup.py configure --mpi --hdf5="$dstdir"
-    message "Building h5py"
-    python setup.py build
-    message "Installing h5py"
-    install -d -m0755 "$dstdir/lib/python3.8/site-packages"
-    PYTHONPATH="$dstdir/lib/python3.8/site-packages:$PYTHONPATH" \
-    python setup.py install --prefix="$dstdir"
-  popd
+  message "Compiling h5py"
+  pip install --verbose --prefix=$dstdir h5py==$h5pyver
 
   # cleaning
   rm -rf "$dstdir"/share
@@ -101,7 +88,7 @@ setenv("mkHdf5Lib", "$dstdir/lib")
 setenv("mkHdf5Inc", "$dstdir/include")
 
 prepend_path("PATH", "$dstdir/bin")
-prepend_path("PYTHONPATH", "$dstdir/lib/python3.8/site-packages")
+prepend_path("PYTHONPATH", "$dstdir/lib/python3.9/site-packages")
 prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
 EOF
   fi

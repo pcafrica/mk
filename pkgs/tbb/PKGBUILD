@@ -3,7 +3,8 @@
 pkgname=tbb
 pkgver=2021.3.0
 archive=v$pkgver.tar.gz
-sum=734f335d06ee80a7d4a20cc0da734c59
+sum=a5d8a6b66da348473b7dbe3d43d7eaaf
+
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
@@ -11,24 +12,24 @@ build() {
   check $archive $sum
   extract $archive $pkgname-$pkgver
 
-  pushd $pkgname-$pkgver
-    message "Compiling $pkgname"
-    make stdver=c++17 tbb_build_prefix=BUILDPREFIX
+  message "Compiling $pkgname"
+
+  mkdir build
+  pushd build
+    cmake \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=$dstdir \
+        -DTBB_TEST=OFF \
+        ../$pkgname-$pkgver
+    make
   popd
 }
 
 package() {
-  install -vd $dstdir/{include,lib}
+  make -C build install
 
-  install -v $pkgname-$pkgver/build/BUILDPREFIX_release/*.so.2 $dstdir/lib
-  strip $dstdir/lib
-  for name in tbb tbbmalloc tbbmalloc_proxy; do
-    ln -sfv lib$name.so.2 $dstdir/lib/lib$name.so
-  done
-
-  pushd $pkgname-$pkgver/include
-    tar -cf - tbb | (cd $dstdir/include && tar -xf -)
-  popd
+  strip "$dstdir"/lib
+  reset_rpath "$dstdir"/lib
 
   if [[ "$mkTest" = "no" ]]; then
     install -vd $mkToolchainModules/$pkgname

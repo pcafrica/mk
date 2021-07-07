@@ -6,11 +6,11 @@ dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 petscver=$pkgver
 petscarchive=$pkgname-$petscver.tar.gz
-petscsum=3d7fcc9d7bfda60308e0e7450792b0231aac5e2a
+petscsum=a0288520765a464550c0d96f3e3c0bf254c48005
 
 slepcver=3.15.1
 slepcarchive=slepc-$slepcver.tar.gz
-slepcsum=fc8734d9ead1463fff526cd1f91abd1ee00ebae5
+slepcsum=43c32ee14ad3f3cd1c3f264c8ced187a4a407002
 
 petsc4pyver=3.15.0
 slepc4pyver=3.15.1
@@ -82,7 +82,8 @@ package() {
     ./configure --prefix="$dstdir" \
                 --with-arpack=1 \
                 --with-arpack-dir="$mkArpackPrefix" \
-                --with-arpack-flags="-L$mkArpackLib,-larpack,-lparpack"
+                --with-arpack-include="$mkArpackInclude" \
+                --with-arpack-lib="-L$mkArpackLib,-larpack,-lparpack"
     message "Compiling SLEPc"
     command make MAKE_NP=$pkgJobs SLEPC_DIR=$PWD PETSC_DIR="$dstdir"
     message "Installing SLEPc"
@@ -92,10 +93,10 @@ package() {
   # python bindings
   message "Installing Python bindings"
   PETSC_DIR="$dstdir" \
-    pip install --verbose --install-option="--prefix=$dstdir" petsc4py==$petsc4pyver
-  PYTHONPATH=$dstdir/lib/python3.8/site-packages:$PYTHONPATH \
+    pip install --verbose --prefix="$dstdir" petsc4py==$petsc4pyver
+  PYTHONPATH=$dstdir/lib/python3.9/site-packages:$PYTHONPATH \
   PETSC_DIR="$dstdir" SLEPC_DIR="$dstdir" \
-    pip install --verbose --install-option="--prefix=$dstdir" slepc4py==$slepc4pyver
+    pip install --verbose --prefix="$dstdir" slepc4py==$slepc4pyver
 
   # cleaning
   find "$dstdir"/include -name \*html -exec rm {} \;
@@ -148,7 +149,7 @@ setenv("SLEPC_DIR", "$dstdir")
 prepend_path("PATH", "$dstdir/bin")
 prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
 prepend_path("PKG_CONFIG_PATH", "$dstdir/lib/pkgconfig")
-prepend_path("PYTHONPATH", "$dstdir/lib/python3.8/site-packages")
+prepend_path("PYTHONPATH", "$dstdir/lib/python3.9/site-packages")
 EOF
   fi
 }

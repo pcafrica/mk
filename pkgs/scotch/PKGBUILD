@@ -3,7 +3,7 @@
 pkgname=scotch
 pkgver=6.1.1
 archive=${pkgname}-v$pkgver.tar.gz
-sum=01bfd1a89d12d07eb8163d126431addacef152f5
+sum=27f5d3c069bef5d9e0b74edd4703deea0190cecd
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 mkParallelBuild=no
 
@@ -12,12 +12,12 @@ build() {
   check $archive $sum
   extract $archive
 
-  pushd ${pkgname}_$pkgver
+  pushd ${pkgname}-v$pkgver
     [[ -r $srcdir/$pkgname-$pkgver.patch ]] && \
       patch -p1 -i $srcdir/$pkgname-$pkgver.patch
   popd
 
-  pushd ${pkgname}_$pkgver/src
+  pushd ${pkgname}-v$pkgver/src
     # MPI implementation is not threadsafe, do not use DSCOTCH_PTHREAD
     CFLAGS="$CFLAGS -Drestrict=__restrict -DCOMMON_PTHREAD_BARRIER -DCOMMON_PTHREAD"
     CFLAGS="$CFLAGS -DSCOTCH_CHECK_AUTO -DCOMMON_RANDOM_FIXED_SEED -DCOMMON_TIMING_OLD -DSCOTCH_RENAME"
@@ -56,7 +56,7 @@ EOF
 
 package() {
   install -vd -m0755 $dstdir
-  make -C ${pkgname}_$pkgver/src install prefix=$dstdir
+  make -C ${pkgname}-v$pkgver/src install prefix=$dstdir
 
   strip $dstdir/bin
   strip $dstdir/lib

@@ -3,7 +3,7 @@
 pkgname=dealii
 pkgver=9.3.1
 archive=$pkgname-$pkgver.tar.gz
-sum=fff66749d7e7e8baf569e5da5a42f93e99424a86
+sum=d7aeb5aa397d2299fd9ffc8e82ba0408eeb9d8fc
 
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver$suffix
 

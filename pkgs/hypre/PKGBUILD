@@ -3,7 +3,7 @@
 pkgname=hypre
 pkgver=2.22.0
 archive=v$pkgver.tar.gz
-sum=c62139bebc004f77f5f4232eda382f786f46d6fd
+sum=86218c9cb0c6ea4329ac4ce1924b753ed62d53dd
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
