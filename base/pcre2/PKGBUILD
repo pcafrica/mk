@@ -1,9 +1,9 @@
 #!/bin/bash
 
-pkgname=pcre
-pkgver=8.44
+pkgname=pcre2
+pkgver=10.37
 archive=$pkgname-$pkgver.tar.gz
-sum=934324e2d0e7c16d144c52817ab88f6f70c24692
+sum=b3ff5654faeb79a0789b974cde7af45626ef78ac
 
 dstdir=$mkToolchainBase
 
@@ -16,7 +16,7 @@ build() {
     message "Configuring $pkgname"
     ./configure --prefix="$dstdir" --disable-static \
                 --enable-unicode-properties \
-                --enable-jit --enable-pcre16 --enable-pcre32 \
+                --enable-jit --enable-pcre2-16 --enable-pcre2-32 \
                 --enable-pcregrep-libz \
                 --enable-pcretest-libreadline
     message "Compiling $pkgname"

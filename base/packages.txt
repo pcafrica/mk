@@ -6,6 +6,11 @@ dependencies:
     GNU Make is a tool which controls the generation of executables and other
     non-source files of a program from the program's source files.
 
+  coreutils: no dependencies
+    The GNU Core Utilities are the basic file, shell and text manipulation
+    utilities of the GNU operating system. These are the core utilities which
+    are expected to exist on every operating system.
+
   diffutils: no dependencies
     GNU Diffutils is a package of several programs related to finding
     differences between files.
@@ -56,6 +61,10 @@ dependencies:
   gmp: libtool
     GMP is a free library for arbitrary precision arithmetic, operating on
     signed integers, rational numbers, and floating-point numbers.
+
+  mpdecimal: no dependencies
+    mpdecimal is a package for correctly-rounded arbitrary precision decimal
+    floating point arithmetic.
 
   mpfr: gmp, libtool
     The MPFR library is a C library for multiple-precision floating-point
@@ -120,11 +129,11 @@ dependencies:
   texinfo: ncurses, perl
     Texinfo is the official documentation format of the GNU project.
 
-  pcre: bzip2, ncurses, readline, zlib
-    The PCRE library is a set of functions that implement regular expression
+  pcre2: bzip2, ncurses, readline, zlib
+    The PCRE2 library is a set of functions that implement regular expression
     pattern matching using the same syntax and semantics as Perl 5.
 
-  grep: pcre, texinfo
+  grep: pcre2, texinfo
     Grep searches one or more input files for lines containing a match to a
     specified pattern.
 
@@ -152,10 +161,6 @@ dependencies:
   openssh: openssl
     Free version of the SSH connectivity tools. Used by OpenMPI.
 
-  mpdecimal: no dependencies
-    mpdecimal is a package for correctly-rounded arbitrary precision decimal
-    floating point arithmetic.
-
   python: bzip2, db, expat, gdbm, libffi, mpdecimal, openssl, sqlite, zlib
     Python is a general purpose scripting language.
 
@@ -166,10 +171,6 @@ dependencies:
     Tcl (Tool Command Language) is a very powerful but easy to learn dynamic
     programming language, suitable for a very wide range of uses, including web
     and desktop applications, networking, administration, testing and many more.
-
-  swig: lua, pcre, python,tcl
-    SWIG is a software development tool that connects programs written in C and
-    C++ with a variety of high-level programming languages.
 
   sphinx: python
     Sphinx is a tool that makes it easy to create intelligent and beautiful
@@ -184,12 +185,12 @@ dependencies:
   libxml2: icu, python
     Libxml2 is the XML C parser and toolkit developed for the Gnome project.
 
-  libidn: texinfo
+  libidn2: texinfo
     GNU Libidn is a fully documented implementation of the Stringprep, Punycode
     and IDNA specifications. Libidn's purpose is to encode and decode
     internationalized domain names.
 
-  curl: libidn, libssh2, libtool, openssl, zlib
+  curl: libidn2, libssh2, libtool, openssl, zlib
     curl is an open source command line tool and library for transferring data
     with URL syntax.
 
@@ -209,7 +210,7 @@ dependencies:
     Subversion is a version control system that is designed to be a compelling
     replacement for CVS in the open source community.
 
-  git: curl, expat, openssl, pcre, perl, python, subversion
+  git: curl, expat, openssl, pcre2, perl, python, subversion
     Git is a free and open source distributed version control system designed
     to handle everything from small to very large projects with speed and
     efficiency.
@@ -268,7 +269,7 @@ dependencies:
   chrpath: no dependencies
     Command line tool to adjust the RPATH or RUNPATH of ELF binaries.
 
-lcov: no dependencies
+  lcov: no dependencies
     LCOV is an extension of GCOV, a GNU tool which provides information about
     what parts of a program are actually executed (i.e. "covered") while running
     a particular test case.

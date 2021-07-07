@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=autoconf
-pkgver=2.70
+pkgver=2.71
 archive=$pkgname-$pkgver.tar.gz
-sum=890559932abf6181677eff03674fd7ad157dbc8f
+sum=abe5a4bcf06ebd1bbbf81007159df346f5c1db8b
 
 dstdir=$mkToolchainBase
 

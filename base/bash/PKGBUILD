@@ -2,7 +2,7 @@
 
 pkgname=bash
 pkgver=5.1
-n_patches=4
+n_patches=8
 archive=$pkgname-$pkgver.tar.gz
 sum=063019501ef1f30fad99d2b735a7ae2ce1d11423
 

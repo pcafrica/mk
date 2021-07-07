@@ -17,6 +17,7 @@ install:
 	@test -n "${mkToolchainBase}" && test -d "${mkToolchainBase}"
 	#@rm -rf "${mkToolchainBase}"/*
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) make
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) coreutils
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) diffutils
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) findutils
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) sed
@@ -30,6 +31,7 @@ install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gdbm
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) perl
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gmp
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) mpdecimal
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) mpfr
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) mpc
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) autoconf
@@ -45,7 +47,7 @@ install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) xz
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) tar
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) texinfo
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pcre
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pcre2
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) grep
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) libffi
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) expat
@@ -53,15 +55,13 @@ install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) openssl
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) libssh2
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) openssh
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) mpdecimal
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) python
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) lua
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) tcl
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) swig
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) sphinx
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) icu
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) libxml2
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) libidn
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) libidn2
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) curl
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) libarchive
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) ninja

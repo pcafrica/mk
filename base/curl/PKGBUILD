@@ -1,14 +1,14 @@
 #!/bin/bash
 
 pkgname=curl
-pkgver=7.74.0
+pkgver=7.77.0
 archive=$pkgname-$pkgver.tar.gz
-sum=cd7239cf9223b39ade86a14eb37fe68f5656eae9
+sum=fdbb773251bba86ff95a3fe51f9969fd5004bdde
 
 dstdir=$mkToolchainBase
 
 build() {
-  download https://curl.haxx.se/download/$archive
+  download https://curl.se/download/$archive
   check $archive $sum
   extract $archive
 
@@ -16,7 +16,7 @@ build() {
     message "Configuring $pkgname"
     ./configure --build=$TARGET --prefix="$dstdir" --disable-silent-rules \
                 --disable-static --with-libz --with-libidn --with-libssh2 \
-                --enable-threaded-resolver --enable-ipv6 \
+                --with-openssl --enable-threaded-resolver --enable-ipv6 \
                 --with-ca-bundle="$mkToolchainBase"/etc/ssl/certs/ca-certificates.crt
     message "Compiling $pkgname"
     make

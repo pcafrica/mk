@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=expat
-pkgver=2.2.10
+pkgver=2.4.1
 archive=$pkgname-$pkgver.tar.gz
-sum=042cd99f79d7141e9eec12cc215646aac3f307db
+sum=171c635c757e0ac9005f72b9578af021fddbcfb3
 
 dstdir=$mkToolchainBase
 

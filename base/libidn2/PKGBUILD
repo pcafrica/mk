@@ -1,21 +1,21 @@
 #!/bin/bash
 
-pkgname=swig
-pkgver=4.0.2
+pkgname=libidn2
+pkgver=2.3.1
 archive=$pkgname-$pkgver.tar.gz
-sum=7c3e46cb5af2b469722cafa0d91e127b
+sum=00664b3e4373154caefb3e85c264e0078f269bc6
 
 dstdir=$mkToolchainBase
 
 build() {
-  download https://prdownloads.sourceforge.net/$pkgname/$archive
+  download https://ftp.gnu.org/gnu/libidn/$archive
   check $archive $sum
   extract $archive
 
   pushd $pkgname-$pkgver
     message "Configuring $pkgname"
     ./configure --build=$TARGET --prefix="$dstdir" --disable-silent-rules \
-                --with-pcre --with-tcl --with-python --with-lua --disable-ccache
+                --disable-static --disable-nls --disable-rpath
     message "Compiling $pkgname"
     make
   popd

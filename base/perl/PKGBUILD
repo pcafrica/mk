@@ -1,16 +1,14 @@
 #!/bin/bash
 
 pkgname=perl
-pkgver=5.32.0
+pkgver=5.34.0
 archive=$pkgname-$pkgver.tar.gz
-sum=ddecb3117c016418b19ed3a8827e4b521b47d6bb
+sum=870b4e1ffe33f94a4996a4acbbcebb8422c5e73a
 
 dstdir=$mkToolchainBase
 
-mkParallelBuild=no
-
 build() {
-  # Fix missing library.
+  ## Fix missing library.
   ln -sfv $mkToolchainPrefix/lib/libnsl.so.1 $mkToolchainPrefix/lib/libnsl.so
 
   download https://www.cpan.org/src/5.0/$archive

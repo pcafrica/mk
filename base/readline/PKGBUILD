@@ -2,7 +2,7 @@
 
 pkgname=readline
 pkgver=8.1
-n_patches=0
+n_patches=1
 archive=$pkgname-$pkgver.tar.gz
 sum=48c5e0c3a212449e206e21ba82856accac842c6f
 
@@ -13,8 +13,7 @@ build() {
   check $archive $sum
   extract $archive
 
-  # download and apply the patch
-
+  # download and apply the patches
   pushd $pkgname-$pkgver
     message "Applying patches to $pkgname"
     for patch in $(seq 1 $n_patches); do

@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=libffi
-pkgver=3.3
+pkgver=3.4.2
 archive=v$pkgver.tar.gz
-sum=f25aefb928eed09e858878382e10641f
+sum=f2e272ec793571f28d52006ad14534c4
 
 dstdir=$mkToolchainBase
 

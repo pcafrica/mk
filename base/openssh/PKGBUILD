@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=openssh
-pkgver=8.4p1
+pkgver=8.6p1
 archive=$pkgname-$pkgver.tar.gz
-sum=69305059e10a60693ebe6f17731f962c9577535c
+sum=8f9f0c94317baeb97747d6258f3997b4542762c0
 
 dstdir=$mkToolchainBase
 

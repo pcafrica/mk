@@ -1,9 +1,9 @@
 #!/bin/bash
 
-pkgname=libidn
-pkgver=1.36
-archive=$pkgname-$pkgver.tar.gz
-sum=a543823486a1077608f78de187e528a5ea833d5b
+pkgname=coreutils
+pkgver=8.32
+archive=$pkgname-$pkgver.tar.xz
+sum=b2b12195e276c64c8e850cf40ea2cff9b3aa53f6
 
 dstdir=$mkToolchainBase
 
@@ -14,8 +14,12 @@ build() {
 
   pushd $pkgname-$pkgver
     message "Configuring $pkgname"
-    ./configure --build=$TARGET --prefix="$dstdir" --disable-silent-rules \
-                --disable-static --disable-nls --disable-rpath
+    [[ -r "$srcdir"/$pkgname-$pkgver.patch ]] && \
+      patch -p1 -i "$srcdir"/$pkgname-$pkgver.patch
+
+    FORCE_UNSAFE_CONFIGURE=1 \
+      ./configure --build=$TARGET --prefix="$dstdir"
+
     message "Compiling $pkgname"
     make
   popd

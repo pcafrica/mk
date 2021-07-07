@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=findutils
-pkgver=4.7.0
+pkgver=4.8.0
 archive=$pkgname-$pkgver.tar.xz
-sum=bd2fae4add80334173e03272aeed5635d4a0fa03
+sum=b702a37d3a33038102659777ba1fe99835bb19fe
 
 dstdir=$mkToolchainBase
 

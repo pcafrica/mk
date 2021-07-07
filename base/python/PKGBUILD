@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=python
-pkgver=3.9.1
+pkgver=3.9.6
 archive=Python-$pkgver.tar.xz
-sum=77f4105846f6740297e50d7535a42c02d6b8e7db
+sum=05826c93a178872958f6685094ee3514e53ba653
 
 dstdir=$mkToolchainBase
 

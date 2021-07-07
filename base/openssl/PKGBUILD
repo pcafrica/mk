@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=openssl
-pkgver=1.1.1i
+pkgver=1.1.1k
 archive=OpenSSL_${pkgver//./_}.tar.gz
-sum=b1fcae20e23561f3ad02c61c80ba10d8790e3034
+sum=95a5b6a0f9e866b1b131d71ec13b7f2b83a93da1
 
 dstdir=$mkToolchainBase
 
@@ -39,8 +39,7 @@ package() {
   chmod 0755 "$dstdir"/libexec/ssl/make-ca
   sed -i "1s:/bin/bash:$(which bash):" "$dstdir"/libexec/ssl/make-ca
 
-  download http://anduin.linuxfromscratch.org/BLFS/other/certdata.txt
-  "$dstdir"/libexec/ssl/make-ca -f -C "$srcdir"/certdata.txt
+  "$dstdir"/libexec/ssl/make-ca -f -g
 
   ln -s "$dstdir"/etc/pki/tls/certs/ca-bundle.crt "$dstdir"/etc/ssl/certs/ca-bundle.crt
   ln -s "$dstdir"/etc/pki/tls/certs/ca-bundle.crt "$dstdir"/etc/ssl/certs/ca-certificates.crt
