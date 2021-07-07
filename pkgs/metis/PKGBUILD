@@ -1,12 +1,12 @@
 #!/bin/bash
 
 pkgname=metis
-pkgver=5
+pkgver=5.1.0
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
-metisver=5.1.0
+metisver=$pkgver
 metisarchive=metis-$metisver.tar.gz
-metisurl=http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/$metisarchive
+metisurl=http://glaros.dtc.umn.edu/gkhome/fetch/sw/$pkgname/$metisarchive
 metissum=4722c647024271540f2adcf83456ebdeb1b7d6a6
 
 parmetisver=4.0.3

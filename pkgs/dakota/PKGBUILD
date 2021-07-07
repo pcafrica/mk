@@ -1,7 +1,7 @@
 #!/bin/bash
 
 pkgname=dakota
-pkgver=6.13
+pkgver=6.14
 archive=$pkgname-$pkgver-release-public.src.tar.gz
 sum=70395cd2be7773f291558be0f3359d5b
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver

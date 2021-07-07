@@ -1,7 +1,7 @@
 #!/bin/bash
 
 pkgname=arpack
-pkgver=3.7.0
+pkgver=3.8.0
 archive=$pkgver.tar.gz
 sum=cb5a6e1f3c5ab231440bbe30f4a0808d76215e93
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver

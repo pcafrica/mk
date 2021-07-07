@@ -1,19 +1,19 @@
 #!/bin/bash
 
 pkgname=petsc
-pkgver=3.12.4
+pkgver=3.15.1
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 petscver=$pkgver
 petscarchive=$pkgname-$petscver.tar.gz
 petscsum=3d7fcc9d7bfda60308e0e7450792b0231aac5e2a
 
-slepcver=3.12.2
+slepcver=3.15.1
 slepcarchive=slepc-$slepcver.tar.gz
 slepcsum=fc8734d9ead1463fff526cd1f91abd1ee00ebae5
 
-petsc4pyver=3.12.0
-slepc4pyver=3.12.0
+petsc4pyver=3.15.0
+slepc4pyver=3.15.1
 
 package() {
   download https://ftp.mcs.anl.gov/pub/petsc/release-snapshots/$petscarchive

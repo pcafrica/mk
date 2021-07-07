@@ -1,14 +1,14 @@
 #!/bin/bash
 
 pkgname=scotch
-pkgver=6.0.9
-archive=${pkgname}_$pkgver.tar.gz
+pkgver=6.1.1
+archive=${pkgname}-v$pkgver.tar.gz
 sum=01bfd1a89d12d07eb8163d126431addacef152f5
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 mkParallelBuild=no
 
 build() {
-  download https://gforge.inria.fr/frs/download.php/file/38187/$archive
+  download https://gitlab.inria.fr/$pkgname/$pkgname/-/archive/v$pkgver/$archive
   check $archive $sum
   extract $archive
 

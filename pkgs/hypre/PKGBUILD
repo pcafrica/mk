@@ -1,7 +1,7 @@
 #!/bin/bash
 
 pkgname=hypre
-pkgver=2.18.2
+pkgver=2.22.0
 archive=v$pkgver.tar.gz
 sum=c62139bebc004f77f5f4232eda382f786f46d6fd
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver

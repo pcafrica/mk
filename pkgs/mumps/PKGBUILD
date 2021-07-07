@@ -1,7 +1,7 @@
 #!/bin/bash
 
 pkgname=mumps
-pkgver=5.2.1
+pkgver=5.4.0
 archive=MUMPS_$pkgver.tar.gz
 sum=7f0f17158f5d01d6ce50439d1ecd15ba5818bc0e
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver

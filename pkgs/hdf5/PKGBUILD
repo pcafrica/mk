@@ -1,7 +1,7 @@
 #!/bin/bash
 
 pkgname=hdf5
-pkgver=1.10.6
+pkgver=1.12.0
 _pkgver=${pkgver%.*}
 archive=$pkgname-$pkgver.tar.bz2
 sum=5e11d91abe071858b0d9a4f3a202c1e6a0d27290
@@ -11,7 +11,7 @@ szipver=2.1.1
 sziparchive=szip-$szipver.tar.gz
 szipsum=434931cfe47e9b0730ea85fa5e25477bafd9704a
 
-h5pyver=2.10.0
+h5pyver=3.3.0
 h5pyarchive=$h5pyver.tar.gz
 h5pysum=a1b903ec43b3688f9e46c3dfb194c3b7cd4d5cc8
 

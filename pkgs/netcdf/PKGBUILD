@@ -1,12 +1,12 @@
 #!/bin/bash
 
 pkgname=netcdf
-pkgver=4.7.3
+pkgver=4.8.0
 archive=v$pkgver.tar.gz
 sum=a78018c377c843cf7b941c2cdad0190920192179
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
-fortranver=4.5.2
+fortranver=4.5.3
 fortranarchive=v$fortranver.tar.gz
 fortransum=b0c176be97ae2edc5481bb9a358926d6f0fe931a
 
@@ -14,7 +14,7 @@ cxxver=4.3.1
 cxxarchive=v$cxxver.tar.gz
 cxxsum=0e3c4845b0638e8319b92488606a4c9759b63446
 
-pythonver=1.5.3rel
+pythonver=1.5.7
 pythonarchive=v$pythonver.tar.gz
 pythonsum=cdde5afa8ecce6976ac58389a3aec595c7b53d45
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 pkgname=pybind11
-pkgver=2.2.3
+pkgver=2.6.2
 archive=v$pkgver.tar.gz
 sum=55b637945bbf47d99d2c906bf0c13f49
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 pkgname=octave
-pkgver=5.2.0
+pkgver=6.2.0
 archive=$pkgname-$pkgver.tar.gz
 
 sum=bc9e4ceed93c7f7dcc692daeb9dccb182b2d5e9e

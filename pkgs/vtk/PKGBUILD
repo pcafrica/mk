@@ -1,7 +1,7 @@
 #!/bin/bash
 
 pkgname=vtk
-pkgver=9.0.0
+pkgver=9.0.3
 archive=VTK-$pkgver.tar.gz
 sum=fa61cd36491d89a17edab18522bdda49
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver

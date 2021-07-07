@@ -1,7 +1,7 @@
 #!/bin/bash
 
 pkgname=R
-pkgver=3.6.2
+pkgver=4.1.0
 archive=$pkgname-$pkgver.tar.gz
 sum=8eda2af51d63877fcc6674274b6801af605173c5
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver

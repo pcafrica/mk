@@ -1,10 +1,10 @@
 #!/bin/bash
 
 pkgname=superlu
-pkgver=5
+pkgver=5.2.2
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
-sluver=5.2.1
+sluver=$pkgver
 sluarchive=${pkgname}_${sluver}.tar.gz
 slusum=10ce07b87d002c86cce2f71b84cb144de3112fb4
 
@@ -12,7 +12,7 @@ slumtver=3.1
 slumtarchive=${pkgname}_mt_${slumtver}.tar.gz
 slumtsum=29cb847d17b1b2826f9558cbfa86397898171b3c
 
-sludistver=6.2.0
+sludistver=7.0.0
 sludistarchive=${pkgname}_dist_${sludistver}.tar.gz
 sludistsum=0ba4fbcca3dd0cdefaf7ca96bd0acfa17a8cd1f5
 
