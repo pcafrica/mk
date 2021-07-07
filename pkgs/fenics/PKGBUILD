@@ -189,7 +189,7 @@ help([[
 The Fenics is installed in "\$mkFenicsPrefix" directory, the dynamic libraries
 are located in "\$mkFenicsLib" directory and header files in "\$mkFenicsInc".
 
-url: http://fenicsproject.org
+url: https://fenicsproject.org
 ]])
 
 load("boost")

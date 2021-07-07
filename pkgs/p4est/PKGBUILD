@@ -7,7 +7,7 @@ sum=28cbaf51a335c8cc8e78bb38bbb99251ba7ebf80
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download http://p4est.github.io/release/$archive
+  download https://p4est.github.io/release/$archive
   check $archive $sum
   extract $archive
 
@@ -45,7 +45,7 @@ The p4est library is installed in "\$mkP4estPrefix" directory, the dynamic
 libraries are located in "\$mkP4estLib" directory and header files in
 "\$mkP4estInc".
 
-url: http://www.p4est.org
+url: https://www.p4est.org
 ]])
 
 setenv("mkP4estPrefix", "$dstdir")

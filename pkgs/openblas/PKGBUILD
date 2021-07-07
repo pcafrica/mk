@@ -47,7 +47,7 @@ includedir=\${prefix}/include
 Name: openblas
 Description: Optimized BLAS library based on GotoBLAS2
 Version: $pkgver
-URL: http://www.openblas.net/
+URL: https://www.openblas.net/
 
 Requires:
 Libs: -L\${libdir} -lopenblas
@@ -78,7 +78,7 @@ These command can be used to set the optimal value of the OPENBLAS_NUM_THREADS
 variable for your architecture:
   export OPENBLAS_NUM_THREADS=\$(openblas_numcores)
 
-url: http://www.openblas.net/
+url: https://www.openblas.net/
 ]])
 
 setenv("mkOpenblasPrefix", "$dstdir")

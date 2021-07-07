@@ -52,7 +52,7 @@ located in "\$mkEigenInc". Alternatively pkg-config can be used
   $ pkg-config --cflags eigen3
   -I$dstdir/include/eigen3
 
-url: http://eigen.tuxfamily.org/
+url: https://eigen.tuxfamily.org/
 ]])
 
 setenv("mkEigenPrefix", "$dstdir")

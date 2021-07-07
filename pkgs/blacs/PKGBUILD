@@ -5,10 +5,10 @@ pkgver=1.1
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download http://www.netlib.org/blacs/mpiblacs.tgz
+  download https://www.netlib.org/blacs/mpiblacs.tgz
   check mpiblacs.tgz b9503a2fddd4136a2b7ce3f5a9cd97dd5ec0d6b6
 
-  download http://www.netlib.org/blacs/mpiblacs-patch03.tgz
+  download https://www.netlib.org/blacs/mpiblacs-patch03.tgz
   check mpiblacs-patch03.tgz d3f136b07df2b208a11c96fa55e39030e4702b39
 
   extract mpiblacs.tgz
@@ -95,7 +95,7 @@ BLACS libraries are installed with the prefix "\$mkBlacsPrefix", the dynamic
 libraries are located in "\$mkBlacsLib" directory and the header files in
 "\$mkBlacsInc".
 
-url: http://www.netlib.org/blacs/
+url: https://www.netlib.org/blacs/
 ]])
 
 setenv("mkBlacsPrefix", "$dstdir")

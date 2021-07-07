@@ -8,7 +8,7 @@ dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 mkParallelBuild=no
 
 build() {
-  download http://gforge.inria.fr/frs/download.php/file/38187/$archive
+  download https://gforge.inria.fr/frs/download.php/file/38187/$archive
   check $archive $sum
   extract $archive
 
@@ -77,7 +77,7 @@ using such library are the following:
 for the parallel version of SCOTCH library (aka PT-SCOTCH) the linker flags are:
   LDFLAGS=L\$mkScotchLib -lptscotch -lscotch -lscotcherr
 
-url: http://www.labri.fr/perso/pelegrin/scotch/
+url: https://www.labri.fr/perso/pelegrin/scotch/
 ]])
 setenv("mkScotchPrefix", "$dstdir")
 setenv("mkScotchLib", "$dstdir/lib")

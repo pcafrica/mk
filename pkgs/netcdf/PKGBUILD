@@ -114,7 +114,7 @@ The NetCDF library is installed in "\$mkNetcdfPrefix" directory, the dynamic
 libraries are located in "\$mkNetcdfLib" directory and header files in
 "\$mkNetcdfInc".
 
-url: http://www.unidata.ucar.edu/software/netcdf/
+url: https://www.unidata.ucar.edu/software/netcdf/
 ]])
 
 load("hdf5")

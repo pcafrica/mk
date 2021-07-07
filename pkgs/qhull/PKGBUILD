@@ -7,7 +7,7 @@ sum=c7165fb7ec1af92bf448370c3a3b554766168f18
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download http://www.qhull.org/download/$archive
+  download https://www.qhull.org/download/$archive
   check $archive $sum
   extract $archive
 
@@ -56,7 +56,7 @@ Qhull library is installed with the prefix "\$mkQhullPrefix", the
 dynamic libraries are located in "\$mkQhullLib" directory and the header files
 in "\$mkQhullInc".
 
-url: http://www.qhull.org
+url: https://www.qhull.org
 ]])
 
 setenv("mkQhullPrefix", "$dstdir")

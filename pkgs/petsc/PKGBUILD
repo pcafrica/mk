@@ -16,8 +16,8 @@ petsc4pyver=3.12.0
 slepc4pyver=3.12.0
 
 package() {
-  download http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/$petscarchive
-  download http://slepc.upv.es/download/distrib/$slepcarchive
+  download https://ftp.mcs.anl.gov/pub/petsc/release-snapshots/$petscarchive
+  download https://slepc.upv.es/download/distrib/$slepcarchive
 
   check $petscarchive $petscsum
   check $slepcarchive $slepcsum

@@ -77,7 +77,7 @@ This package contains all the libraries that are part of Python-based ecosystem
 for scientific computing. It contains numpy, scipy, pandas, sympy, cython,
 mpi4py and ipython. It is enough to load the package for using it.
 
-url: http://www.scipy.org
+url: https://www.scipy.org
 ]])
 
 setenv("mkScipyPrefix", "$dstdir")

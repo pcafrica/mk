@@ -7,7 +7,7 @@ sum=f66525dccbf3163e229b5ec979b2d22c0f5d2cc3
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download http://www.ssisc.org/lis/dl/$archive
+  download https://www.ssisc.org/lis/dl/$archive
   check $archive $sum
   extract $archive
 
@@ -47,7 +47,7 @@ The Lis library is installed in "\$mkLisPrefix" directory, the dynamic
 libraries are located in "\$mkLisLib" directory and header files in
 "\$mkLisInc".
 
-url: http://www.ssisc.org/lis/
+url: https://www.ssisc.org/lis/
 ]])
 
 setenv("mkLisPrefix", "$dstdir")

@@ -7,7 +7,7 @@ sum=9dae1d4d49fe187583eec88e71770edb68e082b7
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download http://www.netlib.org/$pkgname/$archive
+  download https://www.netlib.org/$pkgname/$archive
   check $archive $sum
   extract $archive
 
@@ -52,7 +52,7 @@ dynamic library is located in "\$mkScalapackLib" directory. For the
 configuration flags the pkg-config command should be used:
   $ pkg-config --libs scalapack
 
-url: http://www.netlib.org/scalapack/
+url: https://www.netlib.org/scalapack/
 ]])
 
 load("openblas")

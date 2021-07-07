@@ -17,9 +17,9 @@ sludistarchive=${pkgname}_dist_${sludistver}.tar.gz
 sludistsum=0ba4fbcca3dd0cdefaf7ca96bd0acfa17a8cd1f5
 
 build() {
-  download http://crd-legacy.lbl.gov/~xiaoye/SuperLU/$sluarchive
-  download http://crd-legacy.lbl.gov/~xiaoye/SuperLU/$slumtarchive
-  download http://crd-legacy.lbl.gov/~xiaoye/SuperLU/$sludistarchive
+  download https://crd-legacy.lbl.gov/~xiaoye/SuperLU/$sluarchive
+  download https://crd-legacy.lbl.gov/~xiaoye/SuperLU/$slumtarchive
+  download https://crd-legacy.lbl.gov/~xiaoye/SuperLU/$sludistarchive
 
   check $sluarchive $slusum
   check $slumtarchive $slumtsum
@@ -141,7 +141,7 @@ distributed one). They are installed in "\$mkSuperluPrefix" directory, the
 dynamic libraries are located in "\$mkSuperluLib" directory and header files
 in "\$mkSuperluInc".
 
-url: http://crd-legacy.lbl.gov/~xiaoye/SuperLU/
+url: https://crd-legacy.lbl.gov/~xiaoye/SuperLU/
 ]])
 
 load("openblas")

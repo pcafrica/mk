@@ -7,7 +7,7 @@ sum=8aac833c943d8e90d51b697b27d4384d
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download http://www.fftw.org/$archive
+  download https://www.fftw.org/$archive
   check $archive $sum
   extract $archive
 
@@ -75,7 +75,7 @@ should be used:
   $ pkg-config --libs fftw3
   -L$dstdir/lib -lfftw3
 
-url: http://www.fftw.org/
+url: https://www.fftw.org/
 ]])
 
 setenv("mkFftwPrefix", "$dstdir")

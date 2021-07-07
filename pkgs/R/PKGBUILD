@@ -5,7 +5,7 @@ pkgver=3.6.2
 archive=$pkgname-$pkgver.tar.gz
 sum=8eda2af51d63877fcc6674274b6801af605173c5
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
-mirror=http://cran.mirror.garr.it/mirrors/CRAN
+mirror=https://cran.mirror.garr.it/mirrors/CRAN
 
 build() {
   download https://cran.r-project.org/src/base/R-3/$archive
