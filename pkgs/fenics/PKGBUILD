@@ -88,12 +88,13 @@ package() {
   popd
 
   # installing dolfin
-  mkdir build
   pushd dolfin-$pkgver
     message "Patching dolfin"
     [[ -r "$srcdir/dolfin-$pkgver.patch" ]] && \
       patch -p1 -i "$srcdir/dolfin-$pkgver.patch"
   popd
+
+  mkdir build
   pushd build
     message "Configuring dolfin"
     HDF5_DIR="$mkHdf5Prefix" \

@@ -11,6 +11,12 @@ build() {
   check $archive $sum
   extract $archive
 
+  pushd VTK-$pkgver
+    message "Patching VTK"
+    [[ -r $srcdir/$pkgname-$pkgver.patch ]] && \
+      patch -p1 -i $srcdir/$pkgname-$pkgver.patch
+  popd
+
   mkdir build
   pushd build
     cmake \

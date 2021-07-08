@@ -37,7 +37,6 @@ build() {
   mkdir build
   pushd build
     message "Configuring $pkgname"
-    # Kokkos is disabled due to incompatibilities with gcc 9.2.0.
     cmake -D CMAKE_INSTALL_PREFIX="$dstdir" \
           -D CMAKE_C_COMPILER=cc \
           -D CMAKE_CXX_COMPILER=c++ \
@@ -61,7 +60,7 @@ build() {
           -D Trilinos_ENABLE_Ifpack=ON \
           -D Trilinos_ENABLE_Ifpack2=OFF \
           -D Trilinos_ENABLE_Isorropia=ON \
-          -D Trilinos_ENABLE_Kokkos=OFF \
+          -D Trilinos_ENABLE_Kokkos=ON \
           -D Trilinos_ENABLE_ML=ON \
           -D Trilinos_ENABLE_MueLu=ON \
           -D Trilinos_ENABLE_NOX=ON \
@@ -75,7 +74,7 @@ build() {
           -D Trilinos_ENABLE_Teko=OFF \
           -D Trilinos_ENABLE_Teuchos=ON \
           -D Trilinos_ENABLE_Thyra=ON \
-          -D Trilinos_ENABLE_Tpetra=OFF \
+          -D Trilinos_ENABLE_Tpetra=ON \
           -D Trilinos_ENABLE_Zoltan=ON \
           -D TPL_ENABLE_AMD=ON \
             -D AMD_INCLUDE_DIRS="$mkSuitesparseInc" \
@@ -137,6 +136,8 @@ build() {
           -D TPL_ENABLE_TBB=ON \
             -D TBB_INCLUDE_DIRS="$mkTbbInc" \
             -D TBB_LIBRARY_DIRS="$mkTbbLib" \
+            -D TPL_TBB_INCLUDE_DIRS="$mkTbbInc" \
+            -D TPL_TBB_LIBRARY_DIRS="$mkTbbLib" \
           -D TPL_ENABLE_UMFPACK=ON \
             -D UMFPACK_INCLUDE_DIRS="$mkSuitesparseInc" \
             -D UMFPACK_LIBRARY_DIRS="$mkSuitesparseLib" \
@@ -144,29 +145,6 @@ build() {
           -D TPL_ENABLE_Zlib=ON \
             -D Zlib_INCLUDE_DIRS="$mkToolchainBase"/include \
           ../Trilinos-$pkgname-release-${pkgver//./-}
-          # FIXME KLU2 is not compatible with CGAL (definition of EMPTY macro)
-          # module load cgal
-          # -D TPL_ENABLE_CGAL=ON \
-          #   -D CGAL_INCLUDE_DIRS="$mkCgalInc" \
-          #   -D CGAL_LIBRARY_DIRS="$mkCgalLib" \
-          # FIXME segmentation fault
-          # -D TPL_ENABLE_BinUtils=ON \
-              #   -D BinUtils_LIBRARY_NAMES="bfd;iberty;z;dl" \
-          # FIXME Trilinos looks for static suitesparse library.
-          # -D TPL_ENABLE_Cholmod=ON \
-          #   -D Cholmod_INCLUDE_DIRS="$mkSuitesparseInc" \
-          #   -D Cholmod_LIBRARY_DIRS="$mkSuitesparseLib" \
-          # FIXME Trilinos use an old SuperLU version
-          # module load superlu
-          # -D TPL_ENABLE_SuperLU=ON \
-          #   -D SuperLU_INCLUDE_DIRS="$mkSuperluInc" \
-          #   -D SuperLU_LIBRARY_DIRS="$mkSuperluLib" \
-          # -D TPL_ENABLE_SuperLUDist=ON \
-          #   -D SuperLUDist_INCLUDE_DIRS="$mkSuperluInc" \
-          #   -D SuperLUDist_LIBRARY_DIRS="$mkSuperluLib" \
-          # -D TPL_ENABLE_SuperLUMT=ON \
-          #   -D SuperLUMT_INCLUDE_DIRS="$mkSuperluInc" \
-          #   -D SuperLUMT_LIBRARY_DIRS="$mkSuperluLib" \
     message "Compiling $pkgname"
     make VERBOSE=1
   popd

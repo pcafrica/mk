@@ -15,11 +15,13 @@ build() {
   module load adol-c
   module load arpack
   module load boost
+  module load gsl
   module load hdf5
   module load metis
   module load openblas
   module load p4est
   module load petsc
+  module load scalapack
   module load tbb
   module load trilinos
 
@@ -30,31 +32,34 @@ build() {
           -D CMAKE_SKIP_INSTALL_RPATH=ON \
           -D CMAKE_SKIP_RPATH=ON \
           -D CMAKE_BUILD_TYPE=DebugRelease \
+          -D CMAKE_CXX_EXTENSIONS=OFF \
           -D BUILD_SHARED_LIBS=ON \
           -D DEAL_II_COMPONENT_EXAMPLES=OFF \
-          -D TBB_DIR=$mkTbbPrefix \
           -D DEAL_II_WITH_MPI=ON \
-          -D DEAL_II_WITH_THREADS=ON \
           -D DEAL_II_WITH_ADOLC=ON -D ADOLC_DIR="$mkAdolcPrefix" \
           -D DEAL_II_WITH_ARPACK=ON -D ARPACK_DIR="$mkArpackPrefix" \
           -D DEAL_II_WITH_BOOST=ON -D BOOST_DIR="$mkBoostPrefix" \
+          -D DEAL_II_WITH_GMSH=OFF \
+          -D DEAL_II_WITH_GSL=ON -D GSL_DIR="$mkGslPrefix" \
           -D DEAL_II_WITH_HDF5=ON -D HDF5_DIR="$mkHdf5Prefix" \
           -D DEAL_II_WITH_LAPACK=ON \
-          -D LAPACK_LIBRARIES="$mkOpenblasLib/libopenblas.so" \
+            -D LAPACK_LIBRARIES="$mkOpenblasLib/libopenblas.so" \
+            -D SCALAPACK_DIR="$mkScalapackPrefix" \
           -D DEAL_II_WITH_METIS=ON -D METIS_DIR="$mkMetisPrefix" \
-          -D DEAL_II_WITH_P4EST=ON \
-          -D P4EST_DIR="$mkP4estPrefix" \
-          -D SC_DIR="$mkP4estPrefix" \
+          -D DEAL_II_WITH_P4EST=ON -D P4EST_DIR="$mkP4estPrefix" \
+            -D SC_DIR="$mkP4estPrefix" \
           -D DEAL_II_WITH_PETSC=ON -D PETSC_DIR="$mkPetscPrefix" \
           -D DEAL_II_WITH_OPENCASCADE=OFF \
           -D DEAL_II_WITH_SLEPC=ON -D SLEPC_DIR="$mkPetscPrefix" \
+          -D DEAL_II_WITH_TBB=ON -D TBB_DIR="$mkTbbPrefix" \
+            -D TBB_INCLUDE_DIR="$mkTbbInc" \
           -D DEAL_II_WITH_TRILINOS=ON -D TRILINOS_DIR="$mkTrilinosPrefix" \
           -D DEAL_II_WITH_UMFPACK=ON -D UMFPACK_DIR="$mkSuitesparsePrefix" \
-          -D DEAL_II_WITH_ZLIB=ON \
-          -D ZLIB_DIR="$mkToolchainBase" \
+          -D DEAL_II_WITH_ZLIB=ON -D ZLIB_DIR="$mkToolchainBase/bin" \
+            -D ZLIB_INCLUDE_DIR="$mkToolchainBase/include" \
           ../$pkgname-$pkgver
     message "Compiling $pkgname"
-    make VERBOSE=1
+    make
   popd
 }
 
@@ -79,11 +84,13 @@ url: https://dealii.org/
 load("adol-c")
 load("arpack")
 load("boost")
+load("gsl")
 load("hdf5")
 load("metis")
 load("openblas")
 load("p4est")
 load("petsc")
+load("scalapack")
 load("tbb")
 load("trilinos")
 
