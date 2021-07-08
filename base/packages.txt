@@ -134,6 +134,9 @@ dependencies:
   texinfo: ncurses, perl
     Texinfo is the official documentation format of the GNU project.
 
+  pcre:
+    Previous version of pcre2, required by Octave.
+
   pcre2: bzip2, ncurses, readline, zlib
     The PCRE2 library is a set of functions that implement regular expression
     pattern matching using the same syntax and semantics as Perl 5.

@@ -12,3 +12,61 @@
    CHECK_ERROR("VecScatterCreate");
    ierr = VecScatterBegin(scatter, _x, _y.vec(), INSERT_VALUES,
                           SCATTER_FORWARD);
+
+--- a/dolfin/geometry/IntersectionConstruction.cpp
++++ b/dolfin/geometry/IntersectionConstruction.cpp
+@@ -18,6 +18,7 @@
+ // First added:  2014-02-03
+ // Last changed: 2017-12-12
+ 
++#include <algorithm>
+ #include <iomanip>
+ #include <dolfin/mesh/MeshEntity.h>
+ #include "predicates.h"
+
+--- a/dolfin/mesh/MeshFunction.h
++++ b/dolfin/mesh/MeshFunction.h
+@@ -27,6 +27,7 @@
+ #include <map>
+ #include <vector>
+ 
++#include <algorithm>
+ #include <memory>
+ #include <unordered_set>
+ #include <dolfin/common/Hierarchical.h>
+
+--- a/dolfin/io/VTKFile.cpp
++++ b/dolfin/io/VTKFile.cpp
+@@ -20,7 +20,7 @@
+ #include <vector>
+ #include <iomanip>
+ #include <boost/cstdint.hpp>
+-#include <boost/detail/endian.hpp>
++#include <boost/predef/other/endian.h>
+
+ #include "pugixml.hpp"
+
+@@ -614,9 +614,9 @@
+   std::string endianness = "";
+   if (encode_string == "binary")
+   {
+-    #if defined BOOST_LITTLE_ENDIAN
++    #if defined BOOST_ENDIAN_LITTLE_BYTE
+     endianness = "byte_order=\"LittleEndian\"";
+-    #elif defined BOOST_BIG_ENDIAN
++    #elif defined BOOST_ENDIAN_BIG_BYTE
+     endianness = "byte_order=\"BigEndian\"";;
+     #else
+     dolfin_error("VTKFile.cpp",
+
+--- a/dolfin/io/VTKWriter.cpp
++++ b/dolfin/io/VTKWriter.cpp
+@@ -24,7 +24,7 @@
+ #include <sstream>
+ #include <vector>
+ #include <iomanip>
+-#include <boost/detail/endian.hpp>
++#include <boost/predef/other/endian.h>
+
+ #include <dolfin/fem/GenericDofMap.h>
+ #include <dolfin/fem/FiniteElement.h>

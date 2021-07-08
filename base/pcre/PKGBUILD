@@ -1,0 +1,30 @@
+#!/bin/bash
+
+pkgname=pcre
+pkgver=8.45
+archive=$pkgname-$pkgver.tar.gz
+sum=a19402ce56d770da1557cf331b109d33adb74062
+
+dstdir=$mkToolchainBase
+
+build() {
+  download https://ftp.pcre.org/pub/pcre/$archive
+  check $archive $sum
+  extract $archive
+
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --prefix="$dstdir" --disable-static \
+                --enable-unicode-properties \
+                --enable-jit --enable-pcre16 --enable-pcre32 \
+                --enable-pcregrep-libz \
+                --enable-pcretest-libreadline
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+
+package() {
+  make -C $pkgname-$pkgver install
+}

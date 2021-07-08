@@ -25,8 +25,8 @@ build() {
   pushd $pkgname-$pkgver
     message "Configuring $pkgname"
     ./configure --prefix="$dstdir" \
-                --enable-docs --disable-silent-rules \
-                --disable-java --without-opengl --without-qt --without-x \
+                --enable-docs --disable-silent-rules --disable-java \
+                --without-fltk --without-opengl --without-qt --without-x \
                 --with-blas="$mkOpenblasLib/libopenblas.so" \
                 --with-lapack="$mkOpenblasLib/libopenblas.so" \
                 --with-arpack-libdir="$mkArpackLib" \

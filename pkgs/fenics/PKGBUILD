@@ -4,18 +4,6 @@ pkgname=fenics
 pkgver=2019.1.0
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
-fiatarchive=fiat-$pkgver.tar.gz
-fiatsum=687fa1f175ec79c6af8a8391e0a5e17d238cecf8
-
-dijitsoarchive=dijitso-$pkgver.tar.gz
-dijitsosum=24b18765447e6b5cecfd0e0c0a8762bd842276e6
-
-uflarchive=ufl-$pkgver.tar.gz
-uflsum=a84d0e89bfe7497e7e9bb3ed492d66f59eb95a51
-
-ffcarchive=ffc-$pkgver.tar.gz
-ffcsum=5166eecafef8113942331decdfaa87120f76620b
-
 dolfinarchive=dolfin-$pkgver.tar.gz
 dolfinsum=4f78366458ff166ee84960e80b7eb77ae517f7f4
 
@@ -23,24 +11,12 @@ mshrarchive=mshr-$pkgver.tar.gz
 mshrsum=f8b03e68cc77a57c0e88ee5ca8d09cb9b637f791
 
 package() {
-  download https://bitbucket.org/fenics-project/fiat/downloads/$fiatarchive
-  download https://bitbucket.org/fenics-project/dijitso/downloads/$dijitsoarchive
-  download https://bitbucket.org/fenics-project/ufl/downloads/$uflarchive
-  download https://bitbucket.org/fenics-project/ffc/downloads/$ffcarchive
   download https://bitbucket.org/fenics-project/dolfin/downloads/$dolfinarchive
   download https://bitbucket.org/fenics-project/mshr/downloads/$mshrarchive
 
-  check $fiatarchive $fiatsum
-  check $dijitsoarchive $dijitsosum
-  check $uflarchive $uflsum
-  check $ffcarchive $ffcsum
   check $dolfinarchive $dolfinsum
   check $mshrarchive $mshrsum
 
-  extract $fiatarchive
-  extract $dijitsoarchive
-  extract $uflarchive
-  extract $ffcarchive
   extract $dolfinarchive
   extract $mshrarchive
 
@@ -57,36 +33,22 @@ package() {
   module load trilinos
 
   # required python packages
-  pip3 install ply --install-option="--prefix=$dstdir"
+  pip3 install --prefix=$dstdir ply
 
   # make python happy
-  export PATH="$dstdir/bin:$PATH"
-  export PYTHONPATH="$dstdir/lib/python3.9/site-packages:$PYTHONPATH"
+  export PATH="$dstdir"/bin:$PATH
+  export PYTHONPATH="$dstdir"/lib/python3.9/site-packages:$PYTHONPATH
 
   # installing FIAT
-  pushd fiat-$pkgver
-    message "Installing FIAT"
-    python3 setup.py install --prefix="$dstdir" --optimize=1
-  popd
-
-  # installing dijitso
-  pushd dijitso-$pkgver
-    message "Installing dijitso"
-    python3 setup.py install --prefix="$dstdir" --optimize=1
-  popd
-
-  # installing UFL
-  pushd ufl-$pkgver
-    message "Installing UFL"
-    python3 setup.py install --prefix="$dstdir" --optimize=1
-  popd
-
-  # installing FFC
-  pushd ffc-$pkgver
-    message "Installing FFC"
-    python3 setup.py install --prefix="$dstdir" --optimize=1
-  popd
-
+  message "Installing FIAT"
+  pip install --verbose --prefix=$dstdir fenics-fiat
+  message "Installing DIJITSO"
+  pip install --verbose --prefix=$dstdir fenics-dijitso
+  message "Installing UFL"
+  pip install --verbose --prefix=$dstdir fenics-ufl
+  message "Installing FFC"
+  pip install --verbose --prefix=$dstdir fenics-ffc
+  
   # installing dolfin
   pushd dolfin-$pkgver
     message "Patching dolfin"

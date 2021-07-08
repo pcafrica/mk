@@ -48,6 +48,7 @@ install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) xz
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) tar
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) texinfo
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pcre
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pcre2
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) grep
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) libffi

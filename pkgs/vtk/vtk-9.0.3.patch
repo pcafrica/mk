@@ -18,3 +18,24 @@
  #include <set>
  #include <vector>
  
+--- a/Filters/HyperTree/vtkHyperTreeGridThreshold.cxx	2021-07-02 15:31:21.000000000 +0000
++++ b/Filters/HyperTree/vtkHyperTreeGridThreshold.cxx	2021-07-08 09:09:08.897490861 +0000
+@@ -28,6 +28,7 @@
+ #include "vtkHyperTreeGridNonOrientedCursor.h"
+
+ #include <cmath>
++#include <limits>
+
+ vtkStandardNewMacro(vtkHyperTreeGridThreshold);
+
+
+--- a/Rendering/Core/vtkColorTransferFunction.cxx	2021-07-02 15:31:21.000000000 +0000
++++ b/Rendering/Core/vtkColorTransferFunction.cxx	2021-07-08 10:20:00.774888648 +0000
+@@ -21,6 +21,7 @@
+ #include <algorithm>
+ #include <cmath>
+ #include <iterator>
++#include <limits>
+ #include <set>
+ #include <vector>
+

@@ -12,7 +12,7 @@ build() {
   extract $archive
 
   pushd VTK-$pkgver
-    message "Patching VTK"
+    message "Patching $pkgname"
     [[ -r $srcdir/$pkgname-$pkgver.patch ]] && \
       patch -p1 -i $srcdir/$pkgname-$pkgver.patch
   popd

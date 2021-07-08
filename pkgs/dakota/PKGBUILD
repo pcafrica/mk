@@ -1,14 +1,14 @@
 #!/bin/bash
 
 pkgname=dakota
-pkgver=6.14
-archive=$pkgname-$pkgver-release-public.src.tar.gz
-sum=70395cd2be7773f291558be0f3359d5b
+pkgver=6.14.0
+archive=$pkgname-$pkgver-release-public-src-cli.tar.gz
+sum=d46e8b92c52c9cbc5ac1acd0afc95460
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download https://dakota.sandia.gov/sites/default/files/distributions/public/$archive 
-
+  download https://dakota.sandia.gov/sites/default/files/distributions/public/$archive
+  
   check $archive $sum
   extract $archive
 
@@ -19,15 +19,22 @@ build() {
   module load scipy
   module load trilinos
 
+  pushd $pkgname-$pkgver.src
+    message "Patching $pkgname"
+    [[ -r $srcdir/$pkgname-$pkgver.patch ]] && \
+      patch -p1 -i $srcdir/$pkgname-$pkgver.patch
+  popd
+
   mkdir build
   pushd build
     message "Configuring $pkgname"
+    FFLAGS="-std=legacy" \
     cmake -D CMAKE_INSTALL_PREFIX="$dstdir" \
           -D CMAKE_CXX_COMPILER=$(which mpic++) \
           -D CMAKE_CXX_FLAGS="-I$mkEigenInc -I$mkTrilinosInc" \
           -D DAKOTA_HAVE_MPI=ON \
+          -D DAKOTA_HAVE_GSL=ON \
           -D DAKOTA_PYTHON=ON \
-          -D PYTHON_NUMARRAY_INCLUDE_DIR="$mkScipyPrefix/lib/python3.9/site-packages/numpy/core/include/numpy/" \
           -D DL_LIBRARY="$mkToolchainPrefix/lib/libdl.so" \
           -D libm="$mkToolchainPrefix/lib/libm.so" \
           -D BOOST_ROOT="$mkBoostPrefix" \
@@ -36,10 +43,9 @@ build() {
           -D BLAS_LIBS="$mkOpenblasLib/libopenblas.so" \
           -D Trilinos_DIR="$mkTrilinosLib/cmake/Trilinos" \
           -D HAVE_QUESO=ON \
-          -D DAKOTA_HAVE_GSL=ON \
-          ../$pkgname-$pkgver.0.src
+          ../$pkgname-$pkgver.src
     message "Compiling $pkgname"
-    make VERBOSE=1
+    make
   popd
 }
 
