@@ -61,6 +61,7 @@ package() {
     message "Configuring dolfin"
     HDF5_DIR="$mkHdf5Prefix" \
     PETSC_DIR="$mkPetscPrefix" \
+    DOLFIN_ENABLE_PETSC4PY="ON" \
     SLEPC_DIR="$mkPetscPrefix" \
     cmake -D CMAKE_INSTALL_PREFIX="$dstdir" \
           -D CMAKE_SKIP_INSTALL_RPATH=ON \
@@ -70,7 +71,6 @@ package() {
           -D DOLFIN_ENABLE_BENCHMARKS=OFF \
           -D DOLFIN_ENABLE_CODE_COVERAGE=OFF \
           -D DOLFIN_ENABLE_DOCS=OFF \
-          -D DOLFIN_ENABLE_TESTING=OFF \
           -D BLAS_LIBRARIES="$mkOpenblasLib/libopenblas.so" \
           -D LAPACK_LIBRARIES="$mkOpenblasLib/libopenblas.so" \
           -D AMD_DIR="$mkSuitesparsePrefix" \
@@ -81,7 +81,6 @@ package() {
           -D SCOTCH_DIR="$mkScotchPrefix" \
           -D TRILINOS_DIR="$mkTrilinosPrefix" \
           -D UMFPACK_DIR="$mkSuitesparsePrefix" \
-          -D ZLIB_DIR="$mkToolchainBase" \
           -D ZLIB_INCLUDE_DIR="$mkToolchainBase/include" \
           ../dolfin-$pkgver
     message "Compiling dolfin"
