@@ -197,7 +197,7 @@ run() {
   glibcsum=c33953a648e5f6373211cc9f6d9b9647d862aa45
   
   # cleaning and creating the directories hierarchy
-  dstdir=$PREFIX/pkgs/toolchains/$pkgname/$pkgver
+  dstdir=$PREFIX/toolchains/$pkgname/$pkgver
   module=$PREFIX/modules/toolchains/$pkgname/$pkgver.lua
 
   rm -vrf $dstdir

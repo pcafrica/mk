@@ -209,7 +209,7 @@ fi
 if [[ $UPDATE = "yes" ]]; then
   rm -rf "$PREFIX"/{bin,lmod,sbin,share}
 fi
-install -vd -m 0755 $PREFIX/{bin,etc,lmod,modules,pkgs}
+install -vd -m 0755 $PREFIX/{bin,etc,lmod,modules,toolchains}
 
 # prepare the temporary directory
 # =============================================================================
