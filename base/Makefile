@@ -17,7 +17,6 @@ install:
 	@test -n "${mkToolchainBase}" && test -d "${mkToolchainBase}"
 	#@rm -rf "${mkToolchainBase}"/*
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) make
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) coreutils
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) diffutils
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) findutils
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) sed
