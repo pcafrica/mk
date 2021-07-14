@@ -19,6 +19,7 @@ build() {
 
   mkdir build
   pushd build
+    message "Configuring $pkgname"
     cmake \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_INSTALL_PREFIX=$dstdir \
@@ -36,6 +37,7 @@ build() {
         -DVTK_WRAP_JAVA:BOOL=OFF \
         -DVTK_WRAP_PYTHON:BOOL=OFF \
         ../VTK-$pkgver
+    message "Compiling $pkgname"
     make
   popd
 }
