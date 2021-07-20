@@ -24,7 +24,7 @@ build() {
 package() {
   make -C $pkgname-$pkgver install
 
-  sudo ln -s "$mkToolchainPrefix/lib/libm.so" "$dstdir"/lib
+  ln -s "$mkToolchainPrefix/lib/libm.so" "$dstdir"/lib
 
   strip "$dstdir"/bin
   strip "$dstdir"/lib
