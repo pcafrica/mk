@@ -1,9 +1,10 @@
 SHELL=/bin/bash
+mkFlags?=
 
 help:
 	@echo "Help:"
 	@echo "  clean    remove the downloaded files and eventualy the logs"
-	@echo "  install  install the gcc-glibc/9 toolchain"
+	@echo "  install  install the gcc-glibc/11 toolchain"
 
 install:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) --options="11"

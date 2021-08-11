@@ -12,7 +12,7 @@ clean:
 	@find . -name "*.log" -exec rm -v '{}' \;
 
 libs:
-	test -n "${mkToolchainBase}" && test -d "${mkToolchainBase}"
+	@test -n "${mkToolchainBase}" && test -d "${mkToolchainBase}"
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) boost
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) tbb
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) openblas
