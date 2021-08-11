@@ -43,9 +43,11 @@ libs:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pybind11
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gsl
 
-install: libs
+install_lifex: libs
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) dealii
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) vtk
+
+install: install_lifex
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) dakota
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) fenics
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) octave

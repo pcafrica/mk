@@ -19,11 +19,13 @@ ENV HOME /root
 ENV mkPrefix /u/sw
 
 ENV mkRoot /mk
-ENV mkOutputBasename ${mkRoot}/mk-2021.0
+ENV mkOutputBasename "${mkRoot}/mk-2021.0"
 
 ENV mkKeepBuildDir yes
 ENV mkFlags "--jobs=6 -v"
 
+ENV mkBashrc "${HOME}/.bashrc_mk"
+ENV mkBashrcSource "source ${mkBashrc}"
 
 # Install dependencies.
 ENV DEBIAN_FRONTEND=noninteractive
@@ -56,20 +58,22 @@ SHELL ["/bin/bash", "-c"]
 
 RUN printf "\n# mk.\n\
 source /u/sw/etc/profile\n\
-module load gcc-glibc\n" >> ${HOME}/.bashrc_mk
+module load gcc-glibc\n" >> ${mkBashrc}
 
 
 # 3. Base.
 WORKDIR ${mkRoot}/base
-RUN source ${HOME}/.bashrc_mk && make install mkFlags="${mkFlags}"
+RUN ${mkBashrcSource} && make install mkFlags="${mkFlags}"
 RUN tar czvf ${mkOutputBasename}-base.tar.gz ${mkPrefix}
 
 
 # 4. Packages.
 WORKDIR ${mkRoot}/pkgs
-RUN source ${HOME}/.bashrc_mk && make install mkFlags="${mkFlags}"
-RUN tar czvf ${mkOutputBasename}-full.tar.gz ${mkPrefix}
+RUN ${mkBashrcSource} && make install_lifex mkFlags="${mkFlags}"
+RUN tar czvf ${mkOutputBasename}-lifex.tar.gz ${mkPrefix}
 
+RUN ${mkBashrcSource} && make install mkFlags="${mkFlags}"
+RUN tar czvf ${mkOutputBasename}-full.tar.gz ${mkPrefix}
 
 # Set configuration variables.
 USER root
