@@ -5,7 +5,9 @@ help:
 	@echo "Help:"
 	@echo "  clean    remove the downloaded files and eventualy the logs"
 	@echo "  libs     install the libraries for the loaded toolchain"
-	@echo "  install  install the libraries and other packages for the loaded toolchain"
+	@echo "  lifex    install lifex dependencies for the loaded toolchain"
+	@echo "  extra    install extra packages for the loaded toolchain"
+	@echo "  install  install the libraries, lifex dependencies and extra packages for the loaded toolchain"
 
 clean:
 	@rm -vf */*.{tar.{bz2,gz,xz},zip,tgz}
@@ -43,14 +45,16 @@ libs:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pybind11
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gsl
 
-install_lifex: libs
+lifex:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) dealii
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) vtk
 
-install_full:
+extra:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) dakota
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) fenics
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) octave
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) R
 
-.PHONY: help clean libs install_lifex install_full
+install: libs lifex extra
+
+.PHONY: help clean libs lifex extra install
