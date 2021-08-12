@@ -4,10 +4,10 @@
 # Retrieve build files with:
 # docker run -it mk_build
 # docker container list
-# docker cp <container_id>:/mk/mk-2021.0-toolchain.tar.gz .
-# docker cp <container_id>:/mk/mk-2021.0-base.tar.gz .
-# docker cp <container_id>:/mk/mk-2021.0-lifex.tar.gz .
-# docker cp <container_id>:/mk/mk-2021.0-full.tar.gz .
+# docker cp <container_id>:/mk/mk-2021.1-toolchain.tar.gz .
+# docker cp <container_id>:/mk/mk-2021.1-base.tar.gz .
+# docker cp <container_id>:/mk/mk-2021.1-lifex.tar.gz .
+# docker cp <container_id>:/mk/mk-2021.1-full.tar.gz .
 
 
 FROM ubuntu:16.04
@@ -20,7 +20,7 @@ ENV HOME /root
 ENV mkPrefix /u/sw
 
 ENV mkRoot /mk
-ENV mkOutputBasename "${mkRoot}/mk-2021.0"
+ENV mkOutputBasename "${mkRoot}/mk-2021.1"
 
 ENV mkKeepBuildDir yes
 ENV mkFlags "--jobs=6 -v"
