@@ -47,10 +47,10 @@ install_lifex: libs
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) dealii
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) vtk
 
-install: install_lifex
+install_full:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) dakota
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) fenics
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) octave
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) R
 
-.PHONY: help clean libs install
+.PHONY: help clean libs install_lifex install_full

@@ -6,6 +6,7 @@
 # docker container list
 # docker cp <container_id>:/mk/mk-2021.0-toolchain.tar.gz .
 # docker cp <container_id>:/mk/mk-2021.0-base.tar.gz .
+# docker cp <container_id>:/mk/mk-2021.0-lifex.tar.gz .
 # docker cp <container_id>:/mk/mk-2021.0-full.tar.gz .
 
 
@@ -72,7 +73,7 @@ WORKDIR ${mkRoot}/pkgs
 RUN ${mkBashrcSource} && make install_lifex mkFlags="${mkFlags}"
 RUN tar czvf ${mkOutputBasename}-lifex.tar.gz ${mkPrefix}
 
-RUN ${mkBashrcSource} && make install mkFlags="${mkFlags}"
+RUN ${mkBashrcSource} && make install_full mkFlags="${mkFlags}"
 RUN tar czvf ${mkOutputBasename}-full.tar.gz ${mkPrefix}
 
 # Set configuration variables.
