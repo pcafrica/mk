@@ -23,6 +23,8 @@ package() {
   extract $archive
   extract $sziparchive
 
+  module load scipy
+
   # szip
   pushd szip-$szipver
     message "Configuring szip"
