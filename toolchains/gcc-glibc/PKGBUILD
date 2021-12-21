@@ -118,7 +118,7 @@ run() {
 
   isldir=isl-$islver
   islarchive=isl-$islver.tar.bz2
-  islurl=http://isl.gforge.inria.fr/$islarchive
+  islurl=https://prdownloads.sourceforge.net/libisl/$islarchive
 
   libelfver=0.8.13
   libelfdir=libelf-$libelfver
