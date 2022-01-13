@@ -59,16 +59,16 @@ package() {
     make install
   popd
 
-  # h5py
-  message "Compiling h5py"
-  pip install --verbose --prefix=$dstdir h5py==$h5pyver
-
-  # cleaning
+  # Cleaning.
   rm -rf "$dstdir"/share
   reset_rpath "$dstdir"/bin
   reset_rpath "$dstdir"/lib
   strip "$dstdir"/bin
   strip "$dstdir"/lib
+
+  # h5py.
+  message "Compiling h5py"
+  pip install --verbose --prefix=$dstdir h5py==$h5pyver
 
   if [[ "$mkTest" = "no" ]]; then
     install -vd $mkToolchainModules/$pkgname
