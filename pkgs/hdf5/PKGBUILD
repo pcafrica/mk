@@ -9,7 +9,7 @@ szipver=2.1.1
 sziparchive=szip-$szipver.tar.gz
 szipsum=434931cfe47e9b0730ea85fa5e25477bafd9704a
 
-h5pyver=3.3.0
+h5pyver=3.6.0
 
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
