@@ -90,6 +90,7 @@ setenv("mkDakotaInc", "$dstdir/include")
 
 prepend_path("PATH", "$dstdir/bin")
 prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+prepend_path("PYTHONPATH", "$dstdir/share/dakota/Python/")
 EOF
   fi
 }
