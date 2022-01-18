@@ -1,19 +1,19 @@
 # How to compile
 
 ## 1. Bootstrap
-- `bootstrap/bootstrap /u/sw/`
+- `bootstrap/bootstrap /u/sw`
 
 
 ## 2. Toolchain
 See `mkpkg` for a full list of optionally parsed environment variables
 (such as `mkKeepBuildDir` and `mkDebug`).
-- `export mkPrefix=/u/sw/`
+- `export mkPrefix=/u/sw`
 - `cd toolchains/gcc-glibc`
 - `/u/sw/sbin/mkpkg --options=11 --jobs=<N> [-v] .` or `make install mkFlags=<flags>`
 
 
 ## 3. Base
-- `source /u/sw/etc/bash.bashrc`
+- `source /u/sw/etc/profile`
 - `module load gcc-glibc/11`
 
 All base packages together:
@@ -26,7 +26,7 @@ One single base package:
 
 
 ## 4. Packages
-- `source /u/sw/etc/bash.bashrc`
+- `source /u/sw/etc/profile`
 - `module load gcc-glibc/11`
 
 All packages together:
