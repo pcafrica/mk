@@ -39,7 +39,6 @@ package() {
   module load scotch
   module load scipy
   module load suitesparse
-  # module load superlu
 
   # petsc
   pushd $pkgname-$petscver

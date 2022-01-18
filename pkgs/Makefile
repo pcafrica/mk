@@ -23,8 +23,6 @@ libs:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) arpack
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) fftw
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) glpk
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) qhull
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) qrupdate
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) metis
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) scotch
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) p4est
@@ -33,8 +31,6 @@ libs:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) superlu
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) hypre
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) eigen
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) lis
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) cgal
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) scipy
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) hdf5
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) netcdf
@@ -42,19 +38,25 @@ libs:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) petsc
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) trilinos
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) adol-c
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pybind11
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gsl
 
 lifex:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) dealii
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) vtk
 
-extra:
+pyfex:
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pybind11
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gsl
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) dakota
+
+extra:
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) lis
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) cgal
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) fenics
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) qhull
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) qrupdate
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) octave
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) R
 
-install: libs lifex extra
+install: libs lifex pyfex extra
 
-.PHONY: help clean libs lifex extra install
+.PHONY: help clean libs lifex pyfex extra install
