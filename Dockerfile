@@ -7,10 +7,11 @@
 # docker cp <container_id>:/mk/mk-2021.2-toolchain.tar.gz .
 # docker cp <container_id>:/mk/mk-2021.2-base.tar.gz .
 # docker cp <container_id>:/mk/mk-2021.2-lifex.tar.gz .
+# docker cp <container_id>:/mk/mk-2021.2-pyfex.tar.gz .
 # docker cp <container_id>:/mk/mk-2021.2-full.tar.gz .
 
 
-FROM ubuntu:16.04
+FROM debian:buster
 
 MAINTAINER pasqualeclaudio.africa@polimi.it
 
@@ -74,6 +75,9 @@ RUN ${mkBashrcSource} && make libs mkFlags="${mkFlags}"
 
 RUN ${mkBashrcSource} && make lifex mkFlags="${mkFlags}"
 RUN tar czvf ${mkOutputBasename}-lifex.tar.gz ${mkPrefix}
+
+RUN ${mkBashrcSource} && make pyfex mkFlags="${mkFlags}"
+RUN tar czvf ${mkOutputBasename}-pyfex.tar.gz ${mkPrefix}
 
 RUN ${mkBashrcSource} && make extra mkFlags="${mkFlags}"
 RUN tar czvf ${mkOutputBasename}-full.tar.gz ${mkPrefix}
