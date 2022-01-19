@@ -86,11 +86,11 @@ run() {
   bisonurl=https://ftp.gnu.org/gnu/bison/$bisonarchive
   bisonsum=bbd6362383a7276cd85ed3f19cb5416aeb98e5db
 
-  texinfover=6.5
+  texinfover=6.7
   texinfodir=texinfo-$texinfover
   texinfoarchive=texinfo-$texinfover.tar.xz
   texinfourl=https://ftp.gnu.org/gnu/texinfo/$texinfoarchive
-  texinfosum=72a06b48862911c638787cc3307871b990a59726
+  texinfosum=d84d46368e2694919c05a539cb8c616ac89bf4df
 
   binutilsver=2.36.1
   binutilsdir=binutils-$binutilsver
