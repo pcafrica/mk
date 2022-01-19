@@ -335,7 +335,7 @@ run() {
   export CFLAGS=`echo "$CFLAGS" | sed "s/-DNDEBUG //g"`
   export CXXFLAGS=`echo "$CXXFLAGS" | sed "s/-DNDEBUG //g"`
 
-  # compile the build dependecies
+  # compile the build dependencies
   message "Installing M4"
   pushd $m4dir
     ./configure --prefix="$tmpdir/tools"; make install
