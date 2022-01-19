@@ -89,15 +89,13 @@ prepend_path("PATH", "$dstdir/bin")
 prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
 prepend_path("PKG_CONFIG_PATH", "$dstdir/lib/pkgconfig")
 
-if (mode() == "load") then
-  local corename = capture("$dstdir/bin/openblas_corename")
-  local numcores = capture("$dstdir/bin/openblas_numcores")
+local corename = capture("$dstdir/bin/openblas_corename")
+local numcores = capture("$dstdir/bin/openblas_numcores")
 
-  setenv("mkOpenblasCorename", corename)
-  setenv("mkOpenblasNumcores", numcores)
+setenv("mkOpenblasCorename", corename)
+setenv("mkOpenblasNumcores", numcores)
 
-  setenv("OPENBLAS_NUM_THREADS", 1)
-end
+setenv("OPENBLAS_NUM_THREADS", 1)
 EOF
   fi
 }
