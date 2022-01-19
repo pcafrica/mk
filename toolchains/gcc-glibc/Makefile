@@ -7,7 +7,7 @@ help:
 	@echo "  install  install the gcc-glibc/11 toolchain"
 
 install:
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) --options="11"
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) --options="11 2.33"
 
 clean:
 	@rm -vf *.{tar.{bz2,gz,xz},zip,tgz}
