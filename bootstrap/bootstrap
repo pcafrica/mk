@@ -85,18 +85,12 @@ usage() {
   echo "Usage:"
   echo "  bootstrap [options] <prefix>"
   echo "  bootstrap -h | --help"
-  echo "  bootstrap -v | --version"
   echo ""
   echo "Options:"
   echo "  -h | --help     Show this help message"
-  echo "  -v | --version  Show version"
   echo "  --update        Update the system instead of to install a new one."
   echo "                  The configuration files are keeped untouched."
   echo ""
-}
-
-version() {
-  echo "bootstrap script for mk (version $mk_version)"
 }
 
 # optional flags (default values)
@@ -126,7 +120,6 @@ fi
 while true; do
   case "$1" in
     -h|--help)    usage; exit 0;;
-    -v|--version) version; exit 0;;
     --update)     UPDATE=yes;;
     -*)           error "Invalid option '$1'"; exit 1;;
     *)            break;;
