@@ -569,7 +569,7 @@ strip_() {
   for file in $@; do
     local filetype=$(get_filetype "$file")
 
-    # we need to manage the case when strip command strips itself.
+    # We need to manage the case when strip command strips itself.
     if [[ $filetype = "executable" && "$(basename "$file")" = "strip" ]]; then
       cp "$file" "$file.new"
       chmod 0755 "$file.new"
@@ -582,10 +582,21 @@ strip_() {
                     chmod 0755 "$file"
                     command strip -v --strip-unneeded "$file"
                     ;;
-        library)    log "Stripping '$(readlink -f $file)'"
-                    chmod 0755 "$file"
-                    command strip -v --strip-debug "$file"
-                    ;;
+        library)
+            # We need to manage the case when strip command strips ld-*.so,
+            # otherwise we get a "Text file busy" error.
+            if [[ "$(basename "$file")" = "ld-"*"so" ]]; then
+                cp "$file" "$file.new"
+                chmod 0755 "$file.new"
+                command strip -v --strip-debug "$file.new"
+                rm "$file"
+                mv "$file.new" "$file"
+            else
+                log "Stripping '$(readlink -f $file)'"
+                chmod 0755 "$file"
+                command strip -v --strip-debug "$file"
+            fi
+            ;;
         none)       ;;
         *) error "Internal error"; exit 1
       esac
