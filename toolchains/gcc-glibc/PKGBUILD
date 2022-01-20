@@ -17,11 +17,8 @@
 #     This option disables the building of a multilib capabilities (only 64bit)
 
 run() {
-  options=($1)
-
   pkgname=gcc-glibc
-  pkgver=${options[0]}
-  glibcver=${options[1]}
+  pkgver=$1
 
   # getting the versions
   case $pkgver in
@@ -194,22 +191,11 @@ run() {
   linuxarchive=linux-$linuxver.tar.xz
   linuxurl=$linuxurl/$linuxarchive
 
+  glibcver=2.28
   glibcdir=glibc-$glibcver
   glibcarchive=glibc-$glibcver.tar.xz
   glibcurl=https://ftp.gnu.org/gnu/glibc/$glibcarchive
-
-  case $glibcver in
-    2.28)
-      glibcsum=ccb5dc9e51a9884df8488f86982439d47b283b2a
-      ;;
-    2.33)
-      glibcsum=c33953a648e5f6373211cc9f6d9b9647d862aa45
-      ;;
-    *)
-      error "Unsupported version of glibc '$glibcver'"
-      exit 1
-      ;;
-  esac
+  glibcsum=ccb5dc9e51a9884df8488f86982439d47b283b2a
 
   # cleaning and creating the directories hierarchy
   dstdir=$PREFIX/toolchains/$pkgname/$pkgver

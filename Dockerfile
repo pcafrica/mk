@@ -2,13 +2,14 @@
 # docker build -t mk_build . --squash
 #
 # Retrieve build files with:
-# docker run -it mk_build
-# docker container list
-# docker cp <container_id>:/mk/mk-2021.2-toolchain.tar.gz .
-# docker cp <container_id>:/mk/mk-2021.2-base.tar.gz .
-# docker cp <container_id>:/mk/mk-2021.2-lifex.tar.gz .
-# docker cp <container_id>:/mk/mk-2021.2-pyfex.tar.gz .
-# docker cp <container_id>:/mk/mk-2021.2-full.tar.gz .
+#   docker run -it mk_build
+# then open a new terminal:
+#   docker container list
+#   docker cp <container_id>:/mk/mk-2022.0-toolchain.tar.gz .
+#   docker cp <container_id>:/mk/mk-2022.0-base.tar.gz .
+#   docker cp <container_id>:/mk/mk-2022.0-lifex.tar.gz .
+#   docker cp <container_id>:/mk/mk-2022.0-pyfex.tar.gz .
+#   docker cp <container_id>:/mk/mk-2022.0-full.tar.gz .
 
 
 FROM debian:buster
@@ -21,7 +22,7 @@ ENV HOME /root
 ENV mkPrefix /u/sw
 
 ENV mkRoot /mk
-ENV mkOutputBasename "${mkRoot}/mk-2021.2"
+ENV mkOutputBasename "${mkRoot}/mk-2022.0"
 
 ENV mkKeepBuildDir yes
 ENV mkFlags "--jobs=6 -v"
