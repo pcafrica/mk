@@ -295,6 +295,7 @@ run() {
     [[ -r $srcdir/gcc-${gccver}_glibc-$glibcver.patch ]] && \
       patch -p1 -i $srcdir/gcc-${gccver}_glibc-$glibcver.patch
   popd
+
   make -C $linuxdir mrproper
   [[ -d $gmpdir ]] && ln -vs ../$gmpdir $gccdir/gmp
   [[ -d $mpfrdir ]] && ln -vs ../$mpfrdir $gccdir/mpfr
@@ -321,7 +322,7 @@ run() {
               >> $gccdir/gcc/config/rs6000/linux64.h
             ;;
   esac
-  # glibc-2.27 must be fixed to be compiled in alpine linux
+  # glibc-2.27 must be patched in order to be compiled in alpine linux
   # https://sourceware.org/bugzilla/show_bug.cgi?id=21604
   if [[ -e /etc/alpine-release ]]; then
     pushd $glibcdir
@@ -586,7 +587,6 @@ run() {
                          --disable-libstdcxx-pch \
                          --enable-bootstrap \
                          --enable-languages=c,c++,fortran
-    # LIBRARY_PATH=$prefix/lib
     #   The path of the libraries used during the bootstrap for the link step.
     LIBRARY_PATH=$prefix/lib make
     make install
