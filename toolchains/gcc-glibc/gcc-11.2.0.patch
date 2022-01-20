@@ -1,0 +1,32 @@
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -13863,7 +13863,8 @@
+ 	  --target=${target_alias} \
+ 	  --with-build-libsubdir=$(HOST_SUBDIR) \
+ 	  $(STAGE2_CONFIGURE_FLAGS) \
+-	  --disable-shared @extra_mpfr_configure_flags@
++	  --disable-shared @extra_mpfr_configure_flags@ \
++	  --enable-lto=no
+ @endif mpfr-bootstrap
+ 
+ .PHONY: configure-stage3-mpfr maybe-configure-stage3-mpfr
+@@ -13897,7 +13898,8 @@
+ 	  --target=${target_alias} \
+ 	  --with-build-libsubdir=$(HOST_SUBDIR) \
+ 	  $(STAGE3_CONFIGURE_FLAGS) \
+-	  --disable-shared @extra_mpfr_configure_flags@
++	  --disable-shared @extra_mpfr_configure_flags@ \
++	  --enable-lto=no
+ @endif mpfr-bootstrap
+ 
+ .PHONY: configure-stage4-mpfr maybe-configure-stage4-mpfr
+@@ -13931,7 +13933,8 @@
+ 	  --target=${target_alias} \
+ 	  --with-build-libsubdir=$(HOST_SUBDIR) \
+ 	  $(STAGE4_CONFIGURE_FLAGS) \
+-	  --disable-shared @extra_mpfr_configure_flags@
++	  --disable-shared @extra_mpfr_configure_flags@ \
++	  --enable-lto=no
+ @endif mpfr-bootstrap
+ 
+ .PHONY: configure-stageprofile-mpfr maybe-configure-stageprofile-mpfr
