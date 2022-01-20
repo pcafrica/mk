@@ -62,8 +62,8 @@ run() {
       islsum=ed28663a94320ba368a60afedbad8005af8beaf3
       ;;
     11)
-      gccver=11.1.0
-      gccsum=9db7917f4ce337026335430814de0a5e991ec6c1
+      gccver=11.2.0
+      gccsum=f902ccacecf8949978d6261e9f1d034cff73ffdb
       islver=0.24
       islsum=ae5fbb33bcb442121fbbf482a93f6b3c84d489ee
       ;;
@@ -288,6 +288,7 @@ run() {
     # (6.4.0) https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81712
     # (6.4.0) https://github.com/voidlinux/void-packages/issues/7284
     # (9.2.0) https://bugs.gentoo.org/708346
+    # (11.2.0) https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=666162#25
     [[ -r $srcdir/gcc-$gccver.patch ]] && \
       patch -p1 -i $srcdir/gcc-$gccver.patch
 
