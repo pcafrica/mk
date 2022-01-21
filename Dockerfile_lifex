@@ -1,0 +1,56 @@
+# Build with:
+# docker build --build-arg MK="mk-2022.0-lifex.tar.gz" -t registry.gitlab.com/lifex/lifex/mk -f Dockerfile_lifex . --squash
+# docker tag registry.gitlab.com/lifex/lifex/mk registry.gitlab.com/lifex/lifex/mk:2022.0
+# Then push with:
+# docker login registry.gitlab.com
+# docker push registry.gitlab.com/lifex/lifex/mk:latest
+# docker push registry.gitlab.com/lifex/lifex/mk:2022.0
+
+
+FROM ubuntu:latest
+
+MAINTAINER pasqualeclaudio.africa@polimi.it
+
+
+# Define variables.
+ARG MK
+
+ENV HOME /root
+
+
+# Install dependencies.
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update -y && \
+    apt-get upgrade -y && \
+    apt-get install -y wget curl openssh-client zip unzip \
+      lcov clang-format cppcheck doxygen graphviz jabref
+
+
+# Copy modules file.
+COPY ${MK} /
+
+
+# Un-tar modules.
+RUN tar xvzf ${MK} -C / && \
+    rm ${MK}
+
+
+# Enable modules by default.
+RUN printf "\n# mk.\n\
+source /u/sw/etc/profile\n\
+module load gcc-glibc dealii vtk\n" >> ${HOME}/.bashrc
+
+
+# Install python-gitlab.
+RUN /bin/bash -c \
+    "source /u/sw/etc/profile && module load gcc-glibc && \
+     python -m pip install --upgrade pip && \
+     pip install python-gitlab"
+
+# Initialize JabRef.
+RUN jabref -n -b
+
+
+# Set configuration variables.
+USER root
+WORKDIR ${HOME}
