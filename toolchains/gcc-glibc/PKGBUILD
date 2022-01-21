@@ -92,11 +92,11 @@ run() {
   texinfourl=https://ftp.gnu.org/gnu/texinfo/$texinfoarchive
   texinfosum=ce3776715e655400485381b8ae94e34c5632e729
 
-  binutilsver=2.37
+  binutilsver=2.32
   binutilsdir=binutils-$binutilsver
   binutilsarchive=binutils-$binutilsver.tar.bz2
   binutilsurl=https://ftp.gnu.org/gnu/binutils/$binutilsarchive
-  binutilssum=4ea805f2e158903bfc1b07228f4ef26c0dbaf770
+  binutilssum=ee5ae264f29c0c89fbaa817ee629675acd815d26
 
   gmpver=6.2.1
   gmpdir=gmp-$gmpver
@@ -191,11 +191,11 @@ run() {
   linuxarchive=linux-$linuxver.tar.xz
   linuxurl=$linuxurl/$linuxarchive
 
-  glibcver=2.34
+  glibcver=2.28
   glibcdir=glibc-$glibcver
   glibcarchive=glibc-$glibcver.tar.xz
   glibcurl=https://ftp.gnu.org/gnu/glibc/$glibcarchive
-  glibcsum=7c3b8890a6346793b6334cc5f2fea5d437d307b8
+  glibcsum=ccb5dc9e51a9884df8488f86982439d47b283b2a
 
   # cleaning and creating the directories hierarchy
   dstdir=$PREFIX/toolchains/$pkgname/$pkgver
