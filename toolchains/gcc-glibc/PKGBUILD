@@ -191,11 +191,11 @@ run() {
   linuxarchive=linux-$linuxver.tar.xz
   linuxurl=$linuxurl/$linuxarchive
 
-  glibcver=2.28
+  glibcver=2.34
   glibcdir=glibc-$glibcver
   glibcarchive=glibc-$glibcver.tar.xz
   glibcurl=https://ftp.gnu.org/gnu/glibc/$glibcarchive
-  glibcsum=ccb5dc9e51a9884df8488f86982439d47b283b2a
+  glibcsum=7c3b8890a6346793b6334cc5f2fea5d437d307b8
 
   # cleaning and creating the directories hierarchy
   dstdir=$PREFIX/toolchains/$pkgname/$pkgver

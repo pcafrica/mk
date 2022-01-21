@@ -584,11 +584,11 @@ strip_() {
                     ;;
         library)
             # We need to manage the cases when strip command strips
-            # ld*.so or libc*.so/libdl*.so, otherwise we get a "Text file busy"
-            # or "Bus error" error, respectively.
-            if [[ "$(basename "$file")" == "ld"*".so" ||
-                  "$(basename "$file")" == "libc"*".so" ||
-                  "$(basename "$file")" == "libdl"*".so" ]]; then
+            # ld*.so* or libc.*.so*/libdl*.so*, otherwise we get a
+            # "Text file busy" or "Bus error" error, respectively.
+            if [[ "$(basename "$file")" == "ld"*".so"* ||
+                  "$(basename "$file")" == "libc"*".so"* ||
+                  "$(basename "$file")" == "libdl"*".so"* ]]; then
                 cp "$file" "$file.new"
                 chmod 0755 "$file.new"
                 command strip -v --strip-debug "$file.new"
