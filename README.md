@@ -1,6 +1,6 @@
 # How to use
 1. Download [latest release](https://github.com/elauksap/mk/releases).
-2. Extract the downloaded archive with:
+2. Extract the archive just downloaded with:
 ```bash
 sudo tar xzvf mk-version.tar.gz -C /
 ```
