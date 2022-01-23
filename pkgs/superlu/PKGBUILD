@@ -1,25 +1,27 @@
 #!/bin/bash
 
 pkgname=superlu
-pkgver=5.2.2
+pkgver=5.3.0
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 sluver=$pkgver
-sluarchive=${pkgname}_${sluver}.tar.gz
-slusum=531a6379f2c3fcd90154df3ef512c958b86d7f29
+sluarchive=${pkgname}-${sluver}.tar.gz
+slusum=64b1b0d33a7676665d7f43ce187298702b33b016
 
 slumtver=3.1
 slumtarchive=${pkgname}_mt_${slumtver}.tar.gz
 slumtsum=29cb847d17b1b2826f9558cbfa86397898171b3c
 
-sludistver=7.0.0
-sludistarchive=${pkgname}_dist_${sludistver}.tar.gz
-sludistsum=5161fb0fdc54833fecbb0f7d03ed90a9e021c7c8
+sludistver=7.2.0
+sludistarchive=v${sludistver}.tar.gz
+sludistsum=e1622ef5733a036e6020b29806c0bfee014a0593
+
+mkParallelBuild=no
 
 build() {
-  download https://crd-legacy.lbl.gov/~xiaoye/SuperLU/$sluarchive
-  download https://crd-legacy.lbl.gov/~xiaoye/SuperLU/$slumtarchive
-  download https://crd-legacy.lbl.gov/~xiaoye/SuperLU/$sludistarchive
+  download https://portal.nersc.gov/project/sparse/${pkgname}/$sluarchive
+  download https://portal.nersc.gov/project/sparse/${pkgname}/$slumtarchive
+  download https://github.com/xiaoyeli/${pkgname}_dist/archive/refs/tags/$sludistarchive
 
   check $sluarchive $slusum
   check $slumtarchive $slumtsum
@@ -82,8 +84,8 @@ EOF
     make superlulib
   popd
 
-  mkdir -p SuperLU_DIST_$sludistver/build
-  pushd SuperLU_DIST_$sludistver/build
+  mkdir -p superlu_dist-$sludistver/build
+  pushd superlu_dist-$sludistver/build
     message "Compiling ${pkgname}-dist"
     cmake \
       -DCMAKE_C_COMPILER=mpicc -DCMAKE_CXX_COMPILER=mpic++ \
@@ -101,12 +103,12 @@ package() {
   # header files
   install -m0644 superlu-$sluver/SRC/*.h "$dstdir"/include
   install -m0644 SuperLU_MT_$slumtver/SRC/*.h "$dstdir"/include
-  install -m0644 SuperLU_DIST_$sludistver/SRC/*.h "$dstdir"/include
+  install -m0644 superlu_dist-$sludistver/SRC/*.h "$dstdir"/include
 
   # libraries
   install -m0644 superlu-$sluver/lib/libsuperlu.a "$dstdir"/lib
   install -m0644 SuperLU_MT_$slumtver/lib/libsuperlu_mt.a "$dstdir"/lib
-  install -m0644 SuperLU_DIST_$sludistver/build/SRC/libsuperlu_dist.a "$dstdir"/lib
+  install -m0644 superlu_dist-$sludistver/build/SRC/libsuperlu_dist.a "$dstdir"/lib
 
   # static to shared
   pushd "$dstdir"/lib
