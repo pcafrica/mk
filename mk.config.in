@@ -4,7 +4,7 @@ PREFIX=%PREFIX%
 
 # The vendor component of the triple (second component)
 VENDOR=mk
-PKGVERSION=mk
+PKGVERSION=${VENDOR}-2022.0
 BUGURL=https://github.com/elauksap/mk/issues
 
 # Compiler flags

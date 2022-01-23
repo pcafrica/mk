@@ -18,61 +18,13 @@
 
 run() {
   pkgname=gcc-glibc
-  pkgver=$1
+  pkgver=11.2.0
 
-  # getting the versions
-  case $pkgver in
-    5)
-      gccver=5.5.0
-      gccsum=0d985aaf6d63598916933a690cb902d47d385bea
-      islver=0.14.1
-      islsum=b653327b20e807d1df3a7e2f546ea924f1e030c0
-      ;;
-    6)
-      gccver=6.4.0
-      gccsum=f237974b2d3af0f60936ce6a2f35b912a91e0239
-      islver=0.18
-      islsum=bbffc5a2b05e4f0c97e882f96c448504491dc4ed
-      ;;
-    7)
-      gccver=7.3.0
-      gccsum=9689b9cae7b2886fdaa08449a26701f095c04e48
-      islver=0.18
-      islsum=bbffc5a2b05e4f0c97e882f96c448504491dc4ed
-      ;;
-    8)
-      gccver=8.1.0
-      gccsum=b34031ba9ff3e248b2c62de0825e49a1e0e01998
-      islver=0.19
-      islsum=dba7264419ba995a0f6b4fde135993677f7c85fd
-      ;;
-    9)
-      gccver=9.2.0
-      gccsum=306d27c3465fa36862c206738d06d65fff5c3645
-      islver=0.19
-      islsum=dba7264419ba995a0f6b4fde135993677f7c85fd
-      ;;
-    10)
-      gccver=10.2.0
-      gccsum=8de0aecd3a52bb92b43082df8a9256356d1f03be
-      islver=0.23
-      islsum=ed28663a94320ba368a60afedbad8005af8beaf3
-      ;;
-    11)
-      gccver=11.2.0
-      gccsum=f902ccacecf8949978d6261e9f1d034cff73ffdb
-      islver=0.24
-      islsum=ae5fbb33bcb442121fbbf482a93f6b3c84d489ee
-      ;;
-    *)
-      if [[ -z "$pkgver" ]]; then
-        error "Specify a valid version (5|6|7|8|9|10|11) for gcc"
-      else
-        error "Unsupported version '$pkgver'"
-      fi
-      exit 1
-      ;;
-  esac
+  gccver=$pkgver
+  gccdir=gcc-$gccver
+  gccarchive=gcc-$gccver.tar.xz
+  gccurl=https://ftp.gnu.org/gnu/gcc/gcc-$gccver/$gccarchive
+  gccsum=f902ccacecf8949978d6261e9f1d034cff73ffdb
 
   m4ver=1.4.19
   m4dir=m4-$m4ver
@@ -92,11 +44,11 @@ run() {
   texinfourl=https://ftp.gnu.org/gnu/texinfo/$texinfoarchive
   texinfosum=ce3776715e655400485381b8ae94e34c5632e729
 
-  binutilsver=2.32
+  binutilsver=2.37
   binutilsdir=binutils-$binutilsver
   binutilsarchive=binutils-$binutilsver.tar.bz2
   binutilsurl=https://ftp.gnu.org/gnu/binutils/$binutilsarchive
-  binutilssum=ee5ae264f29c0c89fbaa817ee629675acd815d26
+  binutilssum=4ea805f2e158903bfc1b07228f4ef26c0dbaf770
 
   gmpver=6.2.1
   gmpdir=gmp-$gmpver
@@ -116,9 +68,11 @@ run() {
   mpcurl=https://ftp.gnu.org/gnu/mpc/$mpcarchive
   mpcsum=2a4919abf445c6eda4e120cd669b8733ce337227
 
+  islver=0.24
   isldir=isl-$islver
   islarchive=isl-$islver.tar.bz2
   islurl=https://prdownloads.sourceforge.net/libisl/$islarchive
+  islsum=ae5fbb33bcb442121fbbf482a93f6b3c84d489ee
 
   libelfver=0.8.13
   libelfdir=libelf-$libelfver
@@ -126,76 +80,19 @@ run() {
   libelfurl=https://fossies.org/linux/misc/old/$libelfarchive
   libelfsum=c1d6ac5f182d19dd685c4dfd74eedbfe3992425d
 
-  gccdir=gcc-$gccver
-  gccarchive=gcc-$gccver.tar.xz
-  gccurl=https://ftp.gnu.org/gnu/gcc/gcc-$gccver/$gccarchive
-
-  # linuxver=$(uname -r)
-  linuxver=3.10.0
-  case $linuxver in
-    2.6.32*)
-      warning "Too old linux version, it is no longer supported (last update June 2021)."
-      linux=2.6.32
-      linuxver=2.6.32.71
-      linuxurl=https://www.kernel.org/pub/linux/kernel/v2.6/longterm/v2.6.32
-      linuxsum=bbce5984437bb5efa3a3e3aae368d3bc8bcbbbbe
-      ;;
-    3.10.* | 3.11.*)
-      linux=3.10
-      linuxver=3.10.105
-      linuxurl=https://www.kernel.org/pub/linux/kernel/v3.x
-      linuxsum=de6e10e6c141c74b212d8042720decfe5ca40b9b
-      ;;
-    3.12.* | 3.13.*)
-      linux=3.12
-      linuxver=3.12.73
-      linuxurl=https://www.kernel.org/pub/linux/kernel/v3.x
-      linuxsum=5cbaf84a4de6e9d42ce902767a10c14f49167fa2
-      ;;
-    3.16.*)
-      linux=3.16
-      linuxver=3.16.43
-      linuxurl=https://www.kernel.org/pub/linux/kernel/v3.x
-      linuxsum=bb21f8f3ef26f5b49b83e517d7519e510927c658
-      ;;
-    4.1.*)
-      linux=4.1
-      linuxver=4.1.39
-      linuxurl=https://www.kernel.org/pub/linux/kernel/v4.x
-      linuxsum=26874692c37dcc14b6de990523009a1f5638afb3
-      ;;
-    4.4.* | 4.8.*)
-      linux=4.4
-      linuxver=4.4.64
-      linuxurl=https://www.kernel.org/pub/linux/kernel/v4.x
-      linuxsum=4554451ee0b50e55674795f5d760fdbc72df7bf3
-      ;;
-    4.9.*)
-      linux=4.9
-      linuxver=4.9.25
-      linuxurl=https://www.kernel.org/pub/linux/kernel/v4.x
-      linuxsum=af03c7630a24c2350e211142bd7d795558ddcc02
-      ;;
-    4.1*)
-      linux=4.19
-      linuxver=4.19.196
-      linuxurl=https://www.kernel.org/pub/linux/kernel/v4.x
-      linuxsum=6d7edad673d55c50c83f3b375c22d6c5b289b8d5
-      ;;
-    *)
-      error "Unsupported version of kernel '$linuxver'"
-      exit 1
-      ;;
-  esac
+  linux=4.19
+  linuxver=4.19.225
+  linuxurl=https://www.kernel.org/pub/linux/kernel/v4.x
+  linuxsum=dbeb0406b36e4aa516f15f4acca4bf097395f8d4
   linuxdir=linux-$linuxver
   linuxarchive=linux-$linuxver.tar.xz
   linuxurl=$linuxurl/$linuxarchive
 
-  glibcver=2.28
+  glibcver=2.33
   glibcdir=glibc-$glibcver
   glibcarchive=glibc-$glibcver.tar.xz
   glibcurl=https://ftp.gnu.org/gnu/glibc/$glibcarchive
-  glibcsum=ccb5dc9e51a9884df8488f86982439d47b283b2a
+  glibcsum=c33953a648e5f6373211cc9f6d9b9647d862aa45
 
   # cleaning and creating the directories hierarchy
   dstdir=$PREFIX/toolchains/$pkgname/$pkgver
