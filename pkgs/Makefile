@@ -6,6 +6,7 @@ help:
 	@echo "  clean    remove the downloaded files and eventualy the logs"
 	@echo "  libs     install the libraries for the loaded toolchain"
 	@echo "  lifex    install lifex dependencies for the loaded toolchain"
+	@echo "  pyfex    install pyfex dependencies for the loaded toolchain"
 	@echo "  extra    install extra packages for the loaded toolchain"
 	@echo "  install  install the libraries, lifex dependencies and extra packages for the loaded toolchain"
 
@@ -38,6 +39,7 @@ libs:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) petsc
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) trilinos
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) adol-c
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gsl
 
 lifex:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) dealii
@@ -45,7 +47,6 @@ lifex:
 
 pyfex:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pybind11
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gsl
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) dakota
 
 extra:
