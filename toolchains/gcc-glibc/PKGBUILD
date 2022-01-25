@@ -80,13 +80,12 @@ run() {
   libelfurl=https://fossies.org/linux/misc/old/$libelfarchive
   libelfsum=c1d6ac5f182d19dd685c4dfd74eedbfe3992425d
 
-  linux=4.19
-  linuxver=4.19.225
-  linuxurl=https://www.kernel.org/pub/linux/kernel/v4.x
-  linuxsum=dbeb0406b36e4aa516f15f4acca4bf097395f8d4
+  linux=3.10
+  linuxver=3.10.108
   linuxdir=linux-$linuxver
   linuxarchive=linux-$linuxver.tar.xz
-  linuxurl=$linuxurl/$linuxarchive
+  linuxurl=https://www.kernel.org/pub/linux/kernel/v3.x/$linuxarchive
+  linuxsum=c12c284c63d9c9ef2713a8c11bd9413f6c7e061b
 
   glibcver=2.33
   glibcdir=glibc-$glibcver
