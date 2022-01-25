@@ -579,18 +579,10 @@ EOF
   strip $prefix
   compress_doc $prefix/share/{man,info}
 
-  case $pkgver in
-    5) for lib in asan cc1 cilkrts gfortran gomp-plugin-host_nonshm lsan tsan ubsan; do
-         reset_rpath "$prefix"/lib/lib$lib.so.?.?.?
-       done
-       reset_rpath "$prefix"/lib/gcc/$TARGET/$gccver/plugin/libcc1plugin.so.?.?.?
-       ;;
-    *) for lib in asan cc1 cilkrts gfortran lsan tsan ubsan; do
-         reset_rpath "$prefix"/lib/lib$lib.so.?.?.?
-       done
-       reset_rpath "$prefix"/lib/gcc/$TARGET/$gccver/plugin/libcc1plugin.so
-       ;;
-  esac
+  for lib in asan cc1 cilkrts gfortran lsan tsan ubsan; do
+      reset_rpath "$prefix"/lib/lib$lib.so.?.?.?
+  done
+  reset_rpath "$prefix"/lib/gcc/$TARGET/$gccver/plugin/libcc1plugin.so
 
   # Install locale
   mkdir -p "$prefix"/lib/locale
