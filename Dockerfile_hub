@@ -1,0 +1,47 @@
+# Build with:
+# docker build --build-arg MK="mk-2022.0-full.tar.gz" -t elauksap91/mk -f Dockerfile_hub . --squash
+# docker tag elauksap91/mk elauksap91/mk:2022.0
+# Then push with:
+# docker login
+# docker push elauksap91/mk:latest
+# docker push elauksap91/mk:2022.0
+
+
+FROM ubuntu:latest
+
+MAINTAINER pasqualeclaudio.africa@polimi.it
+
+
+# Define variables.
+ARG MK
+
+ENV HOME /root
+
+
+# Install dependencies.
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update -y && \
+    apt-get upgrade -y && \
+    apt-get install -y wget curl openssh-client zip unzip \
+      clang-format cppcheck doxygen graphviz
+
+
+# Copy modules file.
+COPY ${MK} /
+
+
+# Un-tar modules.
+RUN tar xvzf ${MK} -C / && \
+    rm ${MK}
+
+
+# Enable modules by default.
+RUN printf "\n# mk.\n\
+source /u/sw/etc/profile\n\
+module load gcc-glibc\n\
+module load eigen tbb" >> ${HOME}/.bashrc
+
+
+# Set configuration variables.
+USER root
+WORKDIR ${HOME}
