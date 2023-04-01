@@ -1,5 +1,5 @@
 # How to use
-1. Download [latest release](https://github.com/elauksap/mk/releases).
+1. Download [latest release](https://github.com/pcafrica/mk/releases).
 2. Extract the archive just downloaded with:
 ```bash
 sudo tar xzvf mk-version.tar.gz -C /
@@ -19,4 +19,4 @@ Use `module avail` or `module spider` to check the available packages.
 ## Docker
 A `Docker` image built upon [`Ubuntu`](https://hub.docker.com/_/ubuntu)
 (`x86-64` architecture) with `mk` installed is available
-[here](https://hub.docker.com/r/elauksap/mk).
+[here](https://hub.docker.com/r/pcafrica/mk).

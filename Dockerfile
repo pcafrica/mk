@@ -40,7 +40,7 @@ RUN apt-get update -y && \
 
 
 # Clone repo.
-RUN git clone https://github.com/elauksap/mk.git ${mkRoot}
+RUN git clone https://github.com/pcafrica/mk.git ${mkRoot}
 
 
 # 1. Bootstrap.
