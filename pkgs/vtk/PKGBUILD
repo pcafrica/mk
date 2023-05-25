@@ -7,7 +7,7 @@ sum=1abe6e2d7988193cf7d64c4d84287956
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download https://www.vtk.org/files/release/9.0/$archive
+  download https://www.vtk.org/files/release/${pkgver%.*}/$archive
   check $archive $sum
   extract $archive
 
@@ -63,7 +63,7 @@ url: https://www.vtk.org
 
 setenv("mkVtkPrefix", "$dstdir")
 setenv("mkVtkLib", "$dstdir/lib")
-setenv("mkVtkInc", "$dstdir/include/vtk-8.2")
+setenv("mkVtkInc", "$dstdir/include/$pkgname-${pkgver%.*}")
 
 prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
 EOF
