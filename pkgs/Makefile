@@ -35,11 +35,13 @@ libs:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) scipy
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) hdf5
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) netcdf
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pnetcdf
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) matio
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) petsc
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) trilinos
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) adol-c
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) gsl
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) arborx
 
 lifex:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) dealii

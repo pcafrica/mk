@@ -1,0 +1,59 @@
+#!/bin/bash
+
+pkgname=arborx
+pkgver=1.5
+archive=v$pkgver.tar.gz
+sum=54b2b85a096e1ef8897716f902d21ffc
+
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download https://github.com/$pkgname/ArborX/archive/refs/tags/$archive
+  check $archive $sum
+  extract $archive
+
+  module load trilinos
+
+  mkdir build
+  pushd build
+    message "Configuring $pkgname"
+    cmake \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=$dstdir \
+        -DARBORX_ENABLE_MPI=ON \
+        -DKokkos_DIR=$mkTrilinosDir \
+        ../ArborX-$pkgver
+    message "Compiling $pkgname"
+    make
+  popd
+}
+
+package() {
+  make -C build install
+
+  strip "$dstdir"/lib
+  reset_rpath "$dstdir"/lib
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("Performance-portable geometric search library")
+help([[
+ArborX libraries are installed with the prefix "\$mkArborxPrefix",
+the dynamic libraries are located in "\$mkArborxLib"and header files
+in "\$mkArborxInc".
+
+url: https://github.com/arborx/ArborX
+]])
+
+load("trilinos")
+
+setenv("mkArborxPrefix", "$dstdir")
+setenv("mkArborxLib", "$dstdir/lib")
+setenv("mkArborxInc", "$dstdir/include")
+
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+EOF
+  fi
+}
