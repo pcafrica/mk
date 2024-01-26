@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=trilinos
-pkgver=13.0.1
+pkgver=15.0.0
 archive=$pkgname-release-${pkgver//./-}.tar.gz
-sum=bf3f645e9140bd7d55a1143779cf5c25a583c087
+sum=75c93beda2984e70543dfcea236f8ce62ef4d8dd
 
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
@@ -23,6 +23,7 @@ build() {
   module load mumps
   module load netcdf
   module load openblas
+  module load pnetcdf
   module load scalapack
   module load scipy
   module load scotch
@@ -121,7 +122,7 @@ build() {
             -D MUMPS_LIBRARY_NAMES="smumps;dmumps;cmumps;zmumps;mumps_common;pord;ptscotcherr" \
           -D TPL_ENABLE_Netcdf=ON \
             -D Netcdf_INCLUDE_DIRS="$mkNetcdfInc" \
-            -D Netcdf_LIBRARY_DIRS="$mkNetcdfLib" \
+            -D Netcdf_LIBRARY_DIRS="$mkNetcdfLib;$mkPnetcdfLib" \
           -D TPL_ENABLE_ParMETIS=ON \
             -D ParMETIS_INCLUDE_DIRS="$mkMetisInc" \
             -D ParMETIS_LIBRARY_DIRS="$mkMetisLib" \
@@ -130,6 +131,7 @@ build() {
             -D Pthread_LIBRARY_DIRS="$mkToolchainPrefix/lib" \
           -D TPL_ENABLE_SCALAPACK=ON \
             -D SCALAPACK_LIBRARY_DIRS="$mkScalapackLib" \
+            -D TPL_SCALAPACK_LIBRARIES="$mkBlacsLib/libblacsF77init.so" \
           -D TPL_ENABLE_Scotch=ON \
             -D Scotch_INCLUDE_DIRS="$mkScotchInc" \
             -D Scotch_LIBRARY_DIRS="$mkScotchLib" \
@@ -182,6 +184,7 @@ load("metis")
 load("mumps")
 load("netcdf")
 load("openblas")
+load("pnetcdf")
 load("scalapack")
 load("scipy")
 load("scotch")

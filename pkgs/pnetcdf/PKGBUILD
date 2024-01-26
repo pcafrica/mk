@@ -1,0 +1,66 @@
+#!/bin/bash
+
+pkgname=pnetcdf
+pkgver=1.12.3
+archive=$pkgname-$pkgver.tar.gz
+sum=097041f8f102c7c55d703750b576ae48460aa3a3
+
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+package() {
+  download https://parallel-netcdf.github.io/Release/$archive
+  check $archive $sum
+  extract $archive
+
+  module load netcdf
+
+  # netcfd c
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure --prefix="$dstdir" \
+                --enable-shared \
+                --disable-static
+    message "Compiling $pkgname"
+    make
+    message "Installing $pkgname"
+    make install
+  popd
+
+  export PATH="$dstdir/bin:$PATH"
+  export LD_LIBRARY_PATH="$dstdir/lib:$LD_LIBRARY_PATH"
+
+  strip "$dstdir"/bin
+  strip "$dstdir"/lib
+
+  reset_rpath "$dstdir"/bin
+  reset_rpath "$dstdir"/lib
+
+  compress_doc "$dstdir"/share/man
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("A Parallel I/O Library for NetCDF File Access")
+help([[
+The PnetCDF library is installed in "\$mkPnetcdfPrefix" directory, the dynamic
+libraries are located in "\$mkPnetcdfLib" directory and header files in
+"\$mkPnetcdfInc".
+
+url: https://parallel-netcdf.github.io/
+]])
+
+load("netcdf")
+
+setenv("mkPnetcdfPrefix", "$dstdir")
+setenv("mkPnetcdfLib", "$dstdir/lib")
+setenv("mkPnetcdfInc", "$dstdir/include")
+
+prepend_path("PATH", "$dstdir/bin")
+prepend_path("MANPATH", "$dstdir/share/man")
+prepend_path("PYTHONPATH", "$dstdir/lib/python3.9/site-packages")
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+prepend_path("PKG_CONFIG_PATH", "$dstdir/lib/pkgconfig")
+EOF
+  fi
+}
