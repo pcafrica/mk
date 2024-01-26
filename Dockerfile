@@ -8,7 +8,6 @@
 #   docker cp <container_id>:/mk/mk-2022.0-toolchain.tar.gz .
 #   docker cp <container_id>:/mk/mk-2022.0-base.tar.gz .
 #   docker cp <container_id>:/mk/mk-2022.0-lifex.tar.gz .
-#   docker cp <container_id>:/mk/mk-2022.0-pyfex.tar.gz .
 #   docker cp <container_id>:/mk/mk-2022.0-full.tar.gz .
 
 
@@ -76,9 +75,6 @@ RUN ${mkBashrcSource} && make libs mkFlags="${mkFlags}"
 
 RUN ${mkBashrcSource} && make lifex mkFlags="${mkFlags}"
 RUN tar czvf ${mkOutputBasename}-lifex.tar.gz ${mkPrefix}
-
-RUN ${mkBashrcSource} && make pyfex mkFlags="${mkFlags}"
-RUN tar czvf ${mkOutputBasename}-pyfex.tar.gz ${mkPrefix}
 
 RUN ${mkBashrcSource} && make extra mkFlags="${mkFlags}"
 RUN tar czvf ${mkOutputBasename}-full.tar.gz ${mkPrefix}

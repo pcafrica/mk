@@ -6,7 +6,6 @@ help:
 	@echo "  clean    remove the downloaded files and eventualy the logs"
 	@echo "  libs     install the libraries for the loaded toolchain"
 	@echo "  lifex    install lifex dependencies for the loaded toolchain"
-	@echo "  pyfex    install pyfex dependencies for the loaded toolchain"
 	@echo "  extra    install extra packages for the loaded toolchain"
 	@echo "  install  install the libraries, lifex dependencies and extra packages for the loaded toolchain"
 
@@ -33,6 +32,7 @@ libs:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) hypre
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) eigen
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) scipy
+	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pybind11
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) hdf5
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) netcdf
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pnetcdf
@@ -47,10 +47,6 @@ lifex:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) dealii
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) vtk
 
-pyfex:
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) pybind11
-	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) dakota
-
 extra:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) lis
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) cgal
@@ -60,6 +56,6 @@ extra:
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) octave
 	@"${mkPrefix}"/sbin/mkpkg $(mkFlags) R
 
-install: libs lifex pyfex extra
+install: libs lifex extra
 
-.PHONY: help clean libs lifex pyfex extra install
+.PHONY: help clean libs lifex extra install
