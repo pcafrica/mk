@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=dealii
-pkgver=9.3.1
+pkgver=9.5.1
 archive=$pkgname-$pkgver.tar.gz
-sum=d7aeb5aa397d2299fd9ffc8e82ba0408eeb9d8fc
+sum=a94989a9e4c3b8599aceacf71d7156621c1d7426
 
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver$suffix
 
@@ -13,6 +13,7 @@ build() {
   extract $archive
 
   module load adol-c
+  module load arborx
   module load arpack
   module load boost
   module load gsl
@@ -37,6 +38,7 @@ build() {
           -D DEAL_II_COMPONENT_EXAMPLES=OFF \
           -D DEAL_II_WITH_MPI=ON \
           -D DEAL_II_WITH_ADOLC=ON -D ADOLC_DIR="$mkAdolcPrefix" \
+          -D DEAL_II_WITH_ARBORX=ON -D ARBORX_DIR="$mkArborxPrefix" \
           -D DEAL_II_WITH_ARPACK=ON -D ARPACK_DIR="$mkArpackPrefix" \
           -D DEAL_II_WITH_BOOST=ON -D BOOST_DIR="$mkBoostPrefix" \
           -D DEAL_II_WITH_GMSH=OFF \
@@ -82,6 +84,7 @@ url: https://dealii.org/
 ]])
 
 load("adol-c")
+load("arborx")
 load("arpack")
 load("boost")
 load("gsl")
