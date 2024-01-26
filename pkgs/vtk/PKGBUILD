@@ -4,6 +4,7 @@ pkgname=vtk
 pkgver=9.0.3
 archive=VTK-$pkgver.tar.gz
 sum=1abe6e2d7988193cf7d64c4d84287956
+
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
