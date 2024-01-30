@@ -43,7 +43,7 @@ build() {
   popd
 
   # subversion
-  download https://www.apache.org/dist/subversion/$archive
+  download https://archive.apache.org/dist/subversion/$archive
   check $archive $sum
   extract $archive
 
