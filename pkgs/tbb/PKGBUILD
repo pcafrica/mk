@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=tbb
-pkgver=2021.3.0
+pkgver=2021.4.0
 archive=v$pkgver.tar.gz
-sum=a5d8a6b66da348473b7dbe3d43d7eaaf
+sum=fa317f16003e31e33a57ae7d888403e4
 
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
