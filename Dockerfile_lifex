@@ -1,10 +1,10 @@
 # Build with:
-# docker build --build-arg MK="mk-2022.0-lifex.tar.gz" -t registry.gitlab.com/lifex/lifex/mk -f Dockerfile_lifex . --squash
-# docker tag registry.gitlab.com/lifex/lifex/mk registry.gitlab.com/lifex/lifex/mk:2022.0
+# docker build --build-arg MK="mk-2024.0-lifex.tar.gz" -t registry.gitlab.com/lifex/lifex/mk -f Dockerfile_lifex . --squash
+# docker tag registry.gitlab.com/lifex/lifex/mk registry.gitlab.com/lifex/lifex/mk:2024.0
 # Then push with:
 # docker login registry.gitlab.com
 # docker push registry.gitlab.com/lifex/lifex/mk:latest
-# docker push registry.gitlab.com/lifex/lifex/mk:2022.0
+# docker push registry.gitlab.com/lifex/lifex/mk:2024.0
 
 
 FROM ubuntu:latest
