@@ -67,6 +67,7 @@ build() {
 
 package() {
   make -C build install
+  mkdir -p $dstdir/include/deal.II/bundled
 
   reset_rpath "$dstdir/lib"
 
