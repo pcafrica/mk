@@ -1,5 +1,5 @@
 # Build with:
-# docker build -t mk_build . --squash
+# docker build -t mk_build .
 #
 # Retrieve build files with:
 #   docker run -it mk_build

@@ -1,5 +1,5 @@
 # Build with:
-# docker build --build-arg MK="mk-2024.0-lifex.tar.gz" -t registry.gitlab.com/lifex/lifex/mk -f Dockerfile_lifex . --squash
+# docker build --build-arg MK="mk-2024.0-lifex.tar.gz" -t registry.gitlab.com/lifex/lifex/mk -f Dockerfile_lifex .
 # docker tag registry.gitlab.com/lifex/lifex/mk registry.gitlab.com/lifex/lifex/mk:2024.0
 # Then push with:
 # docker login registry.gitlab.com
@@ -7,15 +7,13 @@
 # docker push registry.gitlab.com/lifex/lifex/mk:2024.0
 
 
-FROM ubuntu:latest
+FROM ubuntu:latest AS mk_builder
 
 MAINTAINER pasqualeclaudio.africa@polimi.it
 
 
 # Define variables.
 ARG MK
-
-ENV HOME /root
 
 
 # Install dependencies.
@@ -34,13 +32,6 @@ COPY ${MK} /
 RUN tar xvzf ${MK} -C / && \
     rm ${MK}
 
-
-# Enable modules by default.
-RUN printf "\n# mk.\n\
-source /u/sw/etc/profile\n\
-module load gcc-glibc dealii vtk\n" >> ${HOME}/.bashrc
-
-
 # Install python-gitlab.
 RUN /bin/bash -c \
     "source /u/sw/etc/profile && module load gcc-glibc && \
@@ -50,6 +41,16 @@ RUN /bin/bash -c \
 # Initialize JabRef.
 RUN jabref -n -b
 
+
+FROM scratch AS mk
+COPY --from=mk_builder / /
+
+ENV HOME /root
+
+# Enable modules by default.
+RUN printf "\n# mk.\n\
+source /u/sw/etc/profile\n\
+module load gcc-glibc dealii vtk\n" >> ${HOME}/.bashrc
 
 # Set configuration variables.
 USER root

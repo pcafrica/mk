@@ -1,5 +1,5 @@
 # Build with:
-# docker build --build-arg MK="mk-2024.0-full.tar.gz" -t pcafrica/mk -f Dockerfile_hub . --squash
+# docker build --build-arg MK="mk-2024.0-full.tar.gz" -t pcafrica/mk -f Dockerfile_hub .
 # docker tag pcafrica/mk pcafrica/mk:2024.0
 # Then push with:
 # docker login
@@ -7,16 +7,13 @@
 # docker push pcafrica/mk:2024.0
 
 
-FROM ubuntu:latest
+FROM ubuntu:latest AS mk_builder
 
 MAINTAINER pasqualeclaudio.africa@polimi.it
 
 
 # Define variables.
 ARG MK
-
-ENV HOME /root
-
 
 # Install dependencies.
 ENV DEBIAN_FRONTEND=noninteractive
@@ -29,11 +26,15 @@ RUN apt-get update -y && \
 # Copy modules file.
 COPY ${MK} /
 
-
 # Un-tar modules.
 RUN tar xvzf ${MK} -C / && \
     rm ${MK}
 
+
+FROM scratch AS mk
+COPY --from=mk_builder / /
+
+ENV HOME /root
 
 # Enable modules by default.
 RUN printf "\n# mk.\n\
@@ -41,6 +42,10 @@ source /u/sw/etc/profile\n\
 module load gcc-glibc\n\
 module load eigen tbb" >> ${HOME}/.bashrc
 
+# Setup for MPI.
+ENV OMPI_MCA_btl_vader_single_copy_mechanism=none
+ENV OMPI_ALLOW_RUN_AS_ROOT=1
+ENV OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
 
 # Set configuration variables.
 USER root
