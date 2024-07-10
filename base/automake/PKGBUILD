@@ -2,9 +2,9 @@
 
 pkgname=automake
 _pkgver=1.16
-pkgver=$_pkgver.3
-archive=$pkgname-$pkgver.tar.gz
-sum=b36e3877d961c1344351cc97b35b683a4dfadc0c
+pkgver=$_pkgver.5
+archive=$pkgname-$pkgver.tar.xz
+sum=32fb36e73568271ff506b60c55a6170b67681375
 
 dstdir=$mkToolchainBase
 
@@ -22,12 +22,18 @@ build() {
 }
 
 package() {
+  message "running package() in ${PWD}"	
   make -C $pkgname-$pkgver install
   rm -f "$dstdir"/bin/aclocal; ln -sf aclocal-$_pkgver "$dstdir"/bin/aclocal
   rm -f "$dstdir"/bin/automake; ln -sf automake-$_pkgver "$dstdir"/bin/automake
-  if [[ -d "$dstdir"/share/aclocal ]]; then
+  if [[ -d "$dstdir"/share/aclocal && ! -h "$dstdir"/share/aclocal ]]; then
     mv -v "$dstdir"/share/aclocal/* "$dstdir"/share/aclocal-$_pkgver/
     rmdir "$dstdir"/share/aclocal
+  elif [[ -h "$dstdir"/share/aclocal && ! "$dstdir"/share/aclocal -ef "$dstdir"/share/aclocal-$_pkgver ]]; then
+    mv -v "$dstdir"/share/aclocal/* "$dstdir"/share/aclocal-$_pkgver/
+    unlink "$dstdir"/share/aclocal	  
+  elif [[ -h "$dstdir"/share/aclocal && "$dstdir"/share/aclocal -ef "$dstdir"/share/aclocal-$_pkgver ]]; then
+    unlink "$dstdir"/share/aclocal
   fi
   ln -svf aclocal-$_pkgver "$dstdir"/share/aclocal
 }

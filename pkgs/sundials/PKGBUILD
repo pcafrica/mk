@@ -34,10 +34,12 @@ build() {
 }
 
 package() {
-  make -C build install
+  make -j$pkgJobs -C build install
 
+  strip "$dstdir"/bin
   strip "$dstdir"/lib
 
+  reset_rpath "$dstdir"/bin
   reset_rpath "$dstdir"/lib
 
   if [[ "$mkTest" = "no" ]]; then
@@ -61,6 +63,7 @@ setenv("mkSundialsPrefix", "$dstdir")
 setenv("mkSundialsBin", "$dstdir/bin")
 setenv("mkSundialsLib", "$dstdir/lib")
 setenv("mkSundialsInc", "$dstdir/include")
+
 prepend_path("PATH", "$dstdir/bin")
 prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
 EOF

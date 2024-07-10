@@ -16,13 +16,14 @@ build() {
     autoreconf -i
     ./configure --prefix="$dstdir" --with-boost=no
     message "Compiling $pkgname"
-    make
+    make -j$pkgJobs
   popd
 }
 
 package() {
-  make -C $pkgname-$pkgver install
+  make -j$pkgJobs -C $pkgname-$pkgver install
 
+  ln -s "$dstdir/lib64" "$dstdir/lib"
   strip "$dstdir/lib"
   reset_rpath "$dstdir/lib"
 

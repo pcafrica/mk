@@ -7,7 +7,7 @@ sum=29179db0d746f422bb0ceca2cbda4de107a2c651
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download ftp://ftp.gnu.org/gnu/$pkgname/$archive
+  download http://ftp.gnu.org/gnu/$pkgname/$archive
   check $archive $sum
   extract $archive
 
@@ -17,14 +17,14 @@ build() {
                 --enable-shared \
                 --disable-static
     message "Compiling $pkgname"
-    make
+    make -j$pkgJobs
   popd
 }
 
 package() {
-  make -C $pkgname-$pkgver install
+  make -j$pkgJobs -C $pkgname-$pkgver install
 
-  ln -s "$mkToolchainPrefix/lib/libm.so" "$dstdir"/lib
+  ln -sf "$mkToolchainPrefix/lib/libm.so" "$dstdir"/lib
 
   strip "$dstdir"/bin
   strip "$dstdir"/lib

@@ -2,12 +2,12 @@
 
 pkgname=qhull
 pkgver=2020.2
-archive=$pkgname-2020-src-8.0.2.tgz
-sum=2dbc240919560ac008a92363984754a70677b353
+archive=$pkgver.tar.gz
+sum=739346b5d6b3fe3675243b156c7ffe55f60cc3c9
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
-  download https://www.qhull.org/download/$archive
+  download https://github.com/$pkgname/$pkgname/archive/refs/tags/$pkgver.tar.gz
   check $archive $sum
   extract $archive
 

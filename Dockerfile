@@ -59,7 +59,7 @@ RUN tar czvf ${mkOutputBasename}-toolchain.tar.gz ${mkPrefix}
 SHELL ["/bin/bash", "-c"]
 
 RUN printf "\n# mk.\n\
-source /u/sw/etc/profile\n\
+source ${mkPrefix}/etc/profile\n\
 module load gcc-glibc\n" >> ${mkBashrc}
 
 

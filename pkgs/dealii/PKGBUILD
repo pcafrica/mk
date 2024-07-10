@@ -45,9 +45,14 @@ build() {
           -D DEAL_II_WITH_GMSH=OFF \
           -D DEAL_II_WITH_GSL=ON -D GSL_DIR="$mkGslPrefix" \
           -D DEAL_II_WITH_HDF5=ON -D HDF5_DIR="$mkHdf5Prefix" \
+            -D HDF5_C_LIBRARY_dl="$mkToolchainPrefix/lib/libdl.so" \
+            -D HDF5_C_LIBRARY_m="$mkToolchainPrefix/lib/libm.so" \
+            -D HDF5_C_LIBRARY_z="$mkToolchainBase/lib/libz.so" \
+            -D HDF5_LIBRARY_DEBUG="$mkHdf5Lib/libhdf5.so" \
+            -D HDF5_LIBRARY_RELEASE="$mkHdf5Lib/libhdf5.so" \
           -D DEAL_II_WITH_LAPACK=ON \
             -D LAPACK_LIBRARIES="$mkOpenblasLib/libopenblas.so" \
-            -D SCALAPACK_DIR="$mkScalapackPrefix" \
+          -D SCALAPACK_DIR="$mkScalapackPrefix" \
           -D DEAL_II_WITH_METIS=ON -D METIS_DIR="$mkMetisPrefix" \
           -D DEAL_II_WITH_P4EST=ON -D P4EST_DIR="$mkP4estPrefix" \
             -D SC_DIR="$mkP4estPrefix" \
@@ -61,9 +66,11 @@ build() {
           -D DEAL_II_WITH_UMFPACK=ON -D UMFPACK_DIR="$mkSuitesparsePrefix" \
           -D DEAL_II_WITH_ZLIB=ON -D ZLIB_DIR="$mkToolchainBase/bin" \
             -D ZLIB_INCLUDE_DIR="$mkToolchainBase/include" \
+            -D ZLIB_LIBRARY_DEBUG="$mkToolchainBase/lib/libz.so" \
+            -D ZLIB_LIBRARY_RELEASE="$mkToolchainBase/lib/libz.so" \
           ../$pkgname-$pkgver
     message "Compiling $pkgname"
-    make
+    make 
   popd
 }
 

@@ -25,7 +25,6 @@ build() {
   module load openblas
   module load pnetcdf
   module load scalapack
-  module load scipy
   module load scotch
   module load suitesparse
   module load tbb
@@ -39,122 +38,128 @@ build() {
   pushd build
     message "Configuring $pkgname"
     cmake -D CMAKE_INSTALL_PREFIX="$dstdir" \
-          -D CMAKE_C_COMPILER=cc \
-          -D CMAKE_CXX_COMPILER=c++ \
-          -D CMAKE_CXX_COMPILER=c++ \
-          -D CMAKE_Fortran_COMPILER=f95 \
-          -D MPI_BASE_DIR="$mkToolchainBase" \
-          -D CMAKE_SKIP_INSTALL_RPATH=ON \
-          -D CMAKE_SKIP_RPATH=ON \
-          -D BUILD_SHARED_LIBS=ON \
-          -D Trilinos_ENABLE_ALL_PACKAGES=OFF \
-          -D Trilinos_ENABLE_ALL_OPTIONAL_PACKAGES=OFF \
-          -D Trilinos_ENABLE_TESTS=OFF \
-          -D Trilinos_ENABLE_EXAMPLES=OFF \
-          -D Trilinos_ENABLE_Amesos=ON \
-          -D Trilinos_ENABLE_Amesos2=OFF \
-          -D Trilinos_ENABLE_Anasazi=ON \
-          -D Trilinos_ENABLE_AztecOO=ON \
-          -D Trilinos_ENABLE_Belos=ON \
-          -D Trilinos_ENABLE_Epetra=ON \
-          -D Trilinos_ENABLE_EpetraExt=ON \
-          -D Trilinos_ENABLE_Ifpack=ON \
-          -D Trilinos_ENABLE_Ifpack2=OFF \
-          -D Trilinos_ENABLE_Isorropia=ON \
-          -D Trilinos_ENABLE_Kokkos=ON \
-          -D Trilinos_ENABLE_ML=ON \
-          -D Trilinos_ENABLE_MueLu=ON \
-          -D Trilinos_ENABLE_NOX=ON \
-          -D Trilinos_ENABLE_ROL=ON \
-          -D Trilinos_ENABLE_Rythmos=ON \
-          -D Trilinos_ENABLE_Sacado=ON \
-            -D Sacado_NEW_FAD_DESIGN_IS_DEFAULT=OFF \
-          -D Trilinos_ENABLE_ShyLU=OFF \
-          -D Trilinos_ENABLE_Stokhos=OFF \
-          -D Trilinos_ENABLE_Stratimikos=ON \
-          -D Trilinos_ENABLE_Teko=OFF \
-          -D Trilinos_ENABLE_Teuchos=ON \
-          -D Trilinos_ENABLE_Thyra=ON \
-          -D Trilinos_ENABLE_Tpetra=ON \
-          -D Trilinos_ENABLE_Zoltan=ON \
-          -D TPL_ENABLE_AMD=ON \
-            -D AMD_INCLUDE_DIRS="$mkSuitesparseInc" \
-            -D AMD_LIBRARY_DIRS="$mkSuitesparseLib" \
-          -D TPL_ENABLE_BLAS=ON \
-            -D BLAS_INCLUDE_DIRS="$mkOpenblasInc" \
-            -D BLAS_LIBRARY_DIRS="$mkOpenblasLib" \
-            -D BLAS_LIBRARY_NAMES=openblas \
-          -D TPL_ENABLE_BLACS=ON \
-            -D BLACS_INCLUDE_DIRS="$mkBlacsInc" \
-            -D BLACS_LIBRARY_DIRS="$mkBlacsLib" \
-          -D TPL_ENABLE_Boost=ON \
-            -D Boost_INCLUDE_DIRS="$mkBoostInc" \
-          -D TPL_ENABLE_BoostLib=ON \
-            -D BoostLib_INCLUDE_DIRS="$mkBoostInc" \
-            -D BoostLib_LIBRARY_DIRS="$mkBoostLib" \
-          -D TPL_ENABLE_Eigen=ON \
-            -D Eigen_INCLUDE_DIRS="$mkEigenInc" \
-          -D TPL_ENABLE_GLPK=ON \
-            -D GLPK_INCLUDE_DIRS="$mkGlpkInc" \
-            -D GLPK_LIBRARY_DIRS="$mkGlpkLib" \
-          -D TPL_ENABLE_HDF5=ON \
-            -D HDF5_INCLUDE_DIRS="$mkHdf5Inc" \
-            -D HDF5_LIBRARY_DIRS="$mkHdf5Lib" \
-          -D TPL_ENABLE_HWLOC=ON \
-            -D HWLOC_INCLUDE_DIRS="$mkToolchainBase"/include \
-          -D TPL_ENABLE_HYPRE=ON \
-            -D HYPRE_INCLUDE_DIRS="$mkHypreInc" \
-            -D HYPRE_LIBRARY_DIRS="$mkHypreLib" \
-          -D TPL_ENABLE_LAPACK=ON \
-            -D LAPACK_INCLUDE_DIRS="$mkOpenblasInc" \
-            -D LAPACK_LIBRARY_DIRS="$mkOpenblasLib" \
-            -D LAPACK_LIBRARY_NAMES=openblas \
-          -D TPL_ENABLE_Matio=ON \
-            -D Matio_INCLUDE_DIRS="$mkMatioInc" \
-            -D Matio_LIBRARY_DIRS="$mkMatioLib" \
-          -D TPL_ENABLE_METIS=ON \
-            -D METIS_INCLUDE_DIRS="$mkMetisInc" \
-            -D METIS_LIBRARY_DIRS="$mkMetisLib" \
-          -D TPL_ENABLE_MPI=ON \
-          -D TPL_ENABLE_MUMPS=ON \
-            -D MUMPS_INCLUDE_DIRS="$mkMumpsInc" \
-            -D MUMPS_LIBRARY_DIRS="$mkMumpsLib;$mkScotchLib" \
-            -D MUMPS_LIBRARY_NAMES="smumps;dmumps;cmumps;zmumps;mumps_common;pord;ptscotcherr" \
-          -D TPL_ENABLE_Netcdf=ON \
-            -D Netcdf_INCLUDE_DIRS="$mkNetcdfInc" \
-            -D Netcdf_LIBRARY_DIRS="$mkNetcdfLib;$mkPnetcdfLib" \
-          -D TPL_ENABLE_ParMETIS=ON \
-            -D ParMETIS_INCLUDE_DIRS="$mkMetisInc" \
-            -D ParMETIS_LIBRARY_DIRS="$mkMetisLib" \
-          -D TPL_ENABLE_Pthread=ON \
-            -D Pthread_INCLUDE_DIRS="$mkToolchainPrefix"/include \
-            -D Pthread_LIBRARY_DIRS="$mkToolchainPrefix/lib" \
-          -D TPL_ENABLE_SCALAPACK=ON \
-            -D SCALAPACK_LIBRARY_DIRS="$mkScalapackLib" \
-            -D TPL_SCALAPACK_LIBRARIES="$mkBlacsLib/libblacsF77init.so" \
-          -D TPL_ENABLE_Scotch=ON \
-            -D Scotch_INCLUDE_DIRS="$mkScotchInc" \
-            -D Scotch_LIBRARY_DIRS="$mkScotchLib" \
-          -D TPL_ENABLE_TBB=ON \
-            -D TBB_INCLUDE_DIRS="$mkTbbInc" \
-            -D TBB_LIBRARY_DIRS="$mkTbbLib" \
-            -D TPL_TBB_INCLUDE_DIRS="$mkTbbInc" \
-            -D TPL_TBB_LIBRARY_DIRS="$mkTbbLib" \
-          -D TPL_ENABLE_UMFPACK=ON \
-            -D UMFPACK_INCLUDE_DIRS="$mkSuitesparseInc" \
-            -D UMFPACK_LIBRARY_DIRS="$mkSuitesparseLib" \
-          -D TPL_ENABLE_X11=OFF \
-          -D TPL_ENABLE_Zlib=ON \
-            -D Zlib_INCLUDE_DIRS="$mkToolchainBase"/include \
-          ../Trilinos-$pkgname-release-${pkgver//./-}
+	  -Wno-dev \
+	  -D Trilinos_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR="$dstdir" \
+	  -D CMAKE_C_COMPILER=cc \
+	  -D CMAKE_CXX_COMPILER=c++ \
+	  -D CMAKE_Fortran_COMPILER=f95 \
+	  -D MPI_BASE_DIR="$mkToolchainBase" \
+	  -D CMAKE_SKIP_INSTALL_RPATH=ON \
+	  -D CMAKE_SKIP_RPATH=ON \
+	  -D BUILD_SHARED_LIBS=ON \
+	  -D Trilinos_ENABLE_ALL_PACKAGES=OFF \
+	  -D Trilinos_ENABLE_ALL_OPTIONAL_PACKAGES=OFF \
+	  -D Trilinos_ENABLE_TESTS=OFF \
+	  -D Trilinos_ENABLE_EXAMPLES=OFF \
+	  -D Trilinos_ENABLE_Amesos=ON \
+	  -D Trilinos_ENABLE_Amesos2=OFF \
+	  -D Trilinos_ENABLE_Anasazi=ON \
+	  -D Trilinos_ENABLE_AztecOO=ON \
+	  -D Trilinos_ENABLE_Belos=ON \
+	  -D Trilinos_ENABLE_Epetra=ON \
+	  -D Trilinos_ENABLE_EpetraExt=ON \
+	  -D Trilinos_ENABLE_Ifpack=ON \
+	  -D Trilinos_ENABLE_Ifpack2=OFF \
+	  -D Trilinos_ENABLE_Isorropia=ON \
+	  -D Trilinos_ENABLE_Kokkos=ON \
+	  -D Trilinos_ENABLE_ML=ON \
+	  -D Trilinos_ENABLE_MueLu=ON \
+	  -D Trilinos_ENABLE_NOX=ON \
+	  -D Trilinos_ENABLE_ROL=ON \
+	  -D Trilinos_ENABLE_Sacado=ON \
+	  -D Sacado_NEW_FAD_DESIGN_IS_DEFAULT=OFF \
+	  -D Trilinos_ENABLE_ShyLU=OFF \
+	  -D Trilinos_ENABLE_Stokhos=OFF \
+	  -D Trilinos_ENABLE_Stratimikos=ON \
+	  -D Trilinos_ENABLE_Teko=OFF \
+	  -D Trilinos_ENABLE_Teuchos=ON \
+	  -D Trilinos_ENABLE_Thyra=ON \
+	  -D Trilinos_ENABLE_Tpetra=ON \
+	  -D Trilinos_ENABLE_Zoltan=ON \
+	  -D TPL_ENABLE_AMD=ON \
+	  -D AMD_INCLUDE_DIRS="$mkSuitesparseInc" \
+	  -D AMD_LIBRARY_DIRS="$mkSuitesparseLib" \
+	  -D TPL_ENABLE_BLAS=ON \
+	  -D BLAS_INCLUDE_DIRS="$mkOpenblasInc" \
+	  -D BLAS_LIBRARY_DIRS="$mkOpenblasLib" \
+	  -D BLAS_LIBRARY_NAMES=openblas \
+	  -D TPL_ENABLE_BLACS=ON \
+	  -D BLACS_INCLUDE_DIRS="$mkBlacsInc" \
+	  -D BLACS_LIBRARY_DIRS="$mkBlacsLib" \
+	  -D TPL_ENABLE_Boost=ON \
+	  -D Boost_INCLUDE_DIRS="$mkBoostInc" \
+	  -D TPL_ENABLE_BoostLib=ON \
+	  -D BoostLib_INCLUDE_DIRS="$mkBoostInc" \
+	  -D BoostLib_LIBRARY_DIRS="$mkBoostLib" \
+	  -D TPL_ENABLE_Eigen=ON \
+	  -D Eigen_INCLUDE_DIRS="$mkEigenInc" \
+	  -D TPL_ENABLE_GLPK=ON \
+	  -D GLPK_INCLUDE_DIRS="$mkGlpkInc" \
+	  -D GLPK_LIBRARY_DIRS="$mkGlpkLib" \
+	  -D TPL_ENABLE_HDF5=ON \
+	  -D HDF5_INCLUDE_DIRS="$mkHdf5Inc" \
+	  -D TPL_HDF5_LIBRARIES="$mkHdf5Lib/libhdf5.so" \
+	  -D HDF5_LIBRARY_NAMES=hdf5 \
+	  -D TPL_ENABLE_HWLOC=ON \
+	  -D HWLOC_INCLUDE_DIRS="$mkToolchainBase"/include \
+	  -D HWLOC_LIBRARY_DIRS="$mkToolchainBase"/lib \
+	  -D TPL_ENABLE_HYPRE=ON \
+	  -D HYPRE_INCLUDE_DIRS="$mkHypreInc" \
+	  -D HYPRE_LIBRARY_DIRS="$mkHypreLib" \
+	  -D TPL_ENABLE_LAPACK=ON \
+	  -D LAPACK_INCLUDE_DIRS="$mkOpenblasInc" \
+	  -D LAPACK_LIBRARY_DIRS="$mkOpenblasLib" \
+	  -D LAPACK_LIBRARY_NAMES=openblas \
+	  -D TPL_ENABLE_Matio=ON \
+	  -D Matio_INCLUDE_DIRS="$mkMatioInc" \
+	  -D Matio_LIBRARY_DIRS="$mkMatioLib" \
+	  -D TPL_ENABLE_METIS=ON \
+	  -D METIS_INCLUDE_DIRS="$mkMetisInc" \
+	  -D METIS_LIBRARY_DIRS="$mkMetisLib" \
+	  -D TPL_ENABLE_MPI=ON \
+	  -D TPL_ENABLE_MUMPS=ON \
+	  -D MUMPS_INCLUDE_DIRS="$mkMumpsInc" \
+	  -D MUMPS_LIBRARY_DIRS="$mkMumpsLib;$mkScotchLib" \
+	  -D MUMPS_LIBRARY_NAMES="smumps;dmumps;cmumps;zmumps;mumps_common;pord;ptscotcherr" \
+	  -D TPL_ENABLE_Netcdf=ON \
+	  -D Netcdf_INCLUDE_DIRS="$mkNetcdfInc" \
+	  -D Netcdf_LIBRARY_DIRS="$mkNetcdfLib;$mkPnetcdfLib" \
+	  -D TPL_ENABLE_ParMETIS=ON \
+	  -D ParMETIS_INCLUDE_DIRS="$mkMetisInc" \
+	  -D ParMETIS_LIBRARY_DIRS="$mkMetisLib" \
+	  -D TPL_ENABLE_Pthread=ON \
+	  -D Pthread_INCLUDE_DIRS="$mkToolchainPrefix"/include \
+	  -D Pthread_LIBRARY_DIRS="$mkToolchainPrefix/lib" \
+	  -D TPL_ENABLE_SCALAPACK=ON \
+	  -D SCALAPACK_LIBRARY_DIRS="$mkScalapackLib" \
+	  -D TPL_SCALAPACK_LIBRARIES="$mkBlacsLib/libblacsF77init.so" \
+	  -D TPL_ENABLE_Scotch=ON \
+	  -D Scotch_INCLUDE_DIRS="$mkScotchInc" \
+	  -D Scotch_LIBRARY_DIRS="$mkScotchLib" \
+	  -D TPL_ENABLE_TBB=ON \
+	  -D TBB_INCLUDE_DIRS="$mkTbbInc" \
+	  -D TBB_LIBRARY_DIRS="$mkTbbLib" \
+	  -D TPL_TBB_INCLUDE_DIRS="$mkTbbInc" \
+	  -D TPL_TBB_LIBRARY_DIRS="$mkTbbLib" \
+	  -D TPL_ENABLE_UMFPACK=ON \
+	  -D UMFPACK_INCLUDE_DIRS="$mkSuitesparseInc" \
+	  -D UMFPACK_LIBRARY_DIRS="$mkSuitesparseLib" \
+	  -D TPL_ENABLE_X11=OFF \
+	  -D DLlib_LIBRARY_DIRS=$mkToolchainPrefix/lib \
+	  -D DLlib_INCLUDE_DIRS=$mkToolchainPrefix/include \
+	  -D TPL_ENABLE_Zlib=ON \
+	  -D Zlib_INCLUDE_DIRS="$mkToolchainBase"/include \
+	  -D TPL_Zlib_LIBRARIES="$mkToolchainBase/lib/libz.so" \
+	  -D TPL_HWLOC_LIBRARIES="$mkToolchainBase/lib/libhwloc.so" \
+	  ../Trilinos-$pkgname-release-${pkgver//./-}
     message "Compiling $pkgname"
-    make VERBOSE=1
+    make -j$pkgJobs VERBOSE=1
   popd
 }
 
 package() {
-  make -C build install
-
+  make -j$pkgJobs -C build install
+  ln -s "$dstdir/lib64" "$dstdir/lib"
   strip "$dstdir/bin"
   strip "$dstdir/lib"
   reset_rpath "$dstdir/bin"
@@ -186,13 +191,12 @@ load("netcdf")
 load("openblas")
 load("pnetcdf")
 load("scalapack")
-load("scipy")
 load("scotch")
 load("suitesparse")
 load("tbb")
 
 setenv("mkTrilinosPrefix", "$dstdir")
-setenv("mkTrilinosLib", "$dstdir/lib")
+setenv("mkTrilinosLib", "$dstdir/lib64")
 setenv("mkTrilinosInc", "$dstdir/include")
 
 prepend_path("PATH", "$dstdir/bin")

@@ -25,12 +25,12 @@ build() {
                 --with-blas="$mkOpenblasLib/libopenblas.so" \
                 --with-lapack="$mkOpenblasLib/libopenblas.so"
     message "Compiling $pkgname"
-    make
+    make -j$pkgJobs
   popd
 }
 
 package() {
-  make -C $pkgname-$pkgver install
+  make -j$pkgJobs -C $pkgname-$pkgver install
 
   # install packages
   message "Installing packages"

@@ -5,6 +5,7 @@ pkgver=2.6.2
 archive=v$pkgver.tar.gz
 sum=d7f7962e4e8cc014b734d591d8041a64d56250c3
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+pyver=3.12
 
 build() {
   download https://github.com/stevengj/$pkgname/archive/$archive
@@ -18,12 +19,12 @@ build() {
     message "Configuring $pkgname"
     cmake -DCMAKE_INSTALL_PREFIX=$dstdir ../$pkgname-$pkgver
     message "Compiling $pkgname"
-    make
+    make -j$pkgJobs
   popd
 }
 
 package() {
-  make -C build install
+  make -j$pkgJobs -C build install
 
   strip "$dstdir/bin"
   strip "$dstdir/lib"
@@ -48,7 +49,7 @@ setenv("mkNloptInc", "$dstdir/include")
 setenv("mkNloptLib", "$dstdir/lib")
 
 prepend_path("PATH", "$dstdir/bin")
-prepend_path("PYTHONPATH", "$dstdir/lib/python3.9/site-packages/")
+--prepend_path("PYTHONPATH", "$dstdir/lib/python${pyver}/site-packages/")
 EOF
   fi
 }

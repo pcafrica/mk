@@ -22,12 +22,12 @@ build() {
                 --with-zlib \
                 --with-hdf5="$mkHdf5Prefix"
     message "Compiling $pkgname"
-    make
+    make -j$pkgJobs
   popd
 }
 
 package() {
-  make -C $pkgname-$pkgver install
+  make -j$pkgJobs -C $pkgname-$pkgver install
 
   strip "$dstdir/bin"
   strip "$dstdir/lib"

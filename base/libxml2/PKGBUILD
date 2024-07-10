@@ -1,23 +1,24 @@
 #!/bin/bash
 
 pkgname=libxml2
-pkgver=2.9.12
-archive=$pkgname-$pkgver.tar.gz
-sum=339fe5bb2a7d0c13f068c26d8f7cd194c13f9a2a
+pkgver=2.12
+pkgpatchlev=6
+archive=$pkgname-$pkgver.$pkgpatchlev.tar.xz
+sum=78f051918795f2885168cb4becde4e2c9f94c78c
 
 dstdir=$mkToolchainBase
 
 build() {
-  download http://xmlsoft.org/sources/$archive
+  download https://download.gnome.org/sources/libxml2/$pkgver/$archive
   check $archive $sum
   extract $archive
 
-  pushd $pkgname-$pkgver
+  pushd $pkgname-$pkgver.$pkgpatchlev
     # (2.9.10 with Python 3.9) https://bugzilla.redhat.com/show_bug.cgi?id=1808343
     sed -i "s|TRUE|true|g" encoding.c
-    if [[ -e "$srcdir"/$pkgname-$pkgver.patch ]]; then
+    if [[ -e "$srcdir"/$pkgname-$pkgver.$pkgpatchlev.patch ]]; then
       message "Applying patch to $pkgname"
-      patch -p1 -i "$srcdir"/$pkgname-$pkgver.patch
+      patch -p1 -i "$srcdir"/$pkgname-$pkgver.$pkgpatchlev.patch
     fi
 
     message "Configuring $pkgname"
@@ -29,8 +30,8 @@ build() {
 }
 
 package() {
-  make -C $pkgname-$pkgver install
-  pushd $pkgname-$pkgver/python
+  make -C $pkgname-$pkgver.$pkgpatchlev install
+  pushd $pkgname-$pkgver.$pkgpatchlev/python
     sed -i "s|\"/usr/include\",$||g" setup.py
     sed -i "s|\"/usr/local/include\",$||g" setup.py
     sed -i "s|\"/opt/include\",$||g" setup.py

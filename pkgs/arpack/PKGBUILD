@@ -26,12 +26,12 @@ build() {
                 --with-blas="$mkOpenblasLib"/libopenblas.so \
                 --with-lapack="$mkOpenblasLib"/libopenblas.so
     message "Compiling $pkgname"
-    make
+    make -j$pkgJobs
   popd
 }
 
 package() {
-  make -C $pkgname-ng-$pkgver install
+  make -j$pkgJobs -C $pkgname-ng-$pkgver install
   strip "$dstdir"/lib
 
   if [[ "$mkTest" = "no" ]]; then

@@ -1,0 +1,99 @@
+#!/bin/bash
+
+pkgname=nanoshaper
+pkgver=Nanoshaper_devel_TBB
+archive=$pkgname-$pkgver.tar.bz2
+
+sum=52ea7707411d2521de098de84f14c06f1406fd5a
+
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+
+  download https://gitlab.iit.it/SDecherchi/$pkgname/-/archive/$pkgver/$pkgname-$pkgver.tar.bz2
+
+  check $archive $sum
+  extract $archive
+
+  module load boost
+  module load tbb
+  module unload cgal
+
+  cgalver=5.6.1
+  download https://github.com/CGAL/cgal/releases/download/v$cgalver/CGAL-$cgalver.tar.xz
+  check CGAL-$cgalver.tar.xz 30101d845dbf47d5a05a8af60a2005e888350aef
+  extract CGAL-$cgalver.tar.xz
+
+  # patch CGAL to work with nanoshaper
+  message "patching CGAL-$cgalver"
+  pushd CGAL-$cgalver
+   [[ -r $srcdir/wp2.diff ]] && patch -p0 -i $srcdir/wp2.diff
+   [[ -r $srcdir/wp3.diff ]] && patch -p0 -i $srcdir/wp3.diff
+  popd
+
+  message "configure and build CGAL-$cgalver"
+  pushd CGAL-$cgalver
+    command mkdir build
+    pushd build
+      cmake .. -DCMAKE_INSTALL_PREFIX=$dstdir -DWITH_examples=false -DWITH_CGAL_ImageIO=false -DCMAKE_BUILD_TYPE=Release
+      make -j$pkgJobs install
+      ln -s "$dstdir"/lib64 "$dstdir"/lib
+    popd
+  popd
+
+  message "configure and build"
+  pushd $pkgname-$pkgver
+    command cp CMakeLists_so.txt CMakeLists.txt
+    ##command [[ -r $srcdir/patchnanoshaper.diff ]] && patch -p0 -i $srcdir/patchnanoshaper.diff
+    pushd build_lib
+      cmake .. -DTBB_DIR=$mkTbbLib/cmake/TBB  \
+	       -DCGAL_DIR=$dstdir/lib/cmake/CGAL \
+	       -DBoost_INCLUDE_DIR=$mkBoostInc \
+	       -DGMPXX_INCLUDE_DIR=$mkToolchainBase/include \
+	       -DMPFR_LIBRARIES_DIR=$mkToolchainBase/lib \
+	       -DMPFR_INCLUDE_DIR=$mkToolchainBase/include \
+	       -DCMAKE_BUILD_TYPE=Release
+
+      make -j$pkgJobs
+    popd
+  popd
+}
+
+
+package() {
+
+
+  install --mode=755 $pkgname-$pkgver/build_lib/*.so $dstdir/lib/
+  install --mode=644 $pkgname-$pkgver/src/nanoshaper.h $pkgname-$pkgver/src/raytracer_datatype.h $dstdir/include
+
+  rm -rf "$dstdir"/share/{appdata,applications,icons}
+
+  strip "$dstdir/bin"
+  strip "$dstdir/lib"
+  reset_rpath "$dstdir"/bin
+  reset_rpath "$dstdir"/lib
+
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("A cumbersome yet effective library for molecular srface representation")
+help([[
+Nanoshaper is installed in "\$mkNanoshaperPrefix" directory.
+
+url: https://www.apple.com
+]])
+
+load("tbb")
+load("boost")
+
+setenv("mkNanoshaperPrefix", "$dstdir")
+setenv("mkNanoshaperLib", "$dstdir/lib")
+setenv("mkNanoshaperInc", "$dstdir/include")
+
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+
+EOF
+  fi
+}

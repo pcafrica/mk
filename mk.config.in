@@ -10,7 +10,7 @@ BUGURL=https://github.com/pcafrica/mk/issues
 # Compiler flags
 # Compiler flags for the native cpu architecture can be retrieved with the
 # command gcc -march=native -Q --help=target (look for march).
-CFLAGS="-O2 -DNDEBUG -pipe -mtune=generic"
+CFLAGS="-O2 -DNDEBUG -pipe -mtune=native"
 CXXFLAGS=$CFLAGS
 FCFLAGS=$CFLAGS
 

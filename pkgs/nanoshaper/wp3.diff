@@ -1,0 +1,33 @@
+--- include/CGAL/Weighted_point_3.h~	2023-07-26 17:31:00
++++ include/CGAL/Weighted_point_3.h	2024-01-17 19:09:02
+@@ -82,10 +82,16 @@
+     : Rep(typename R::Construct_weighted_point_3()(Return_base_tag(), p, w))
+   {}
+
++  //AVNEW
++  Weighted_point_3(const Point_3& p, const Weight& w, const int i)
++    : Rep(typename R::Construct_weighted_point_3()(Return_base_tag(), p, w))
++  {_index=i;}
++
+   Weighted_point_3(const FT& x, const FT& y, const FT& z)
+     : Rep(typename R::Construct_weighted_point_3()(Return_base_tag(), x, y, z))
+   {}
+
++
+   decltype(auto)
+   point() const
+   {
+@@ -191,6 +197,13 @@
+     return Weighted_point_3(t.transform(point()),weight());
+   }
+
++  //AVNEW
++  const int& index() const
++  {
++    return _index;
++  }
++private:
++  int _index;
+ };
+
+ template <class R>

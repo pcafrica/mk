@@ -80,12 +80,12 @@ run() {
   libelfurl=https://fossies.org/linux/misc/old/$libelfarchive
   libelfsum=c1d6ac5f182d19dd685c4dfd74eedbfe3992425d
 
-  linux=3.10
-  linuxver=3.10.108
+  linux=5.14
+  linuxver=5.14.21
   linuxdir=linux-$linuxver
   linuxarchive=linux-$linuxver.tar.xz
-  linuxurl=https://www.kernel.org/pub/linux/kernel/v3.x/$linuxarchive
-  linuxsum=c12c284c63d9c9ef2713a8c11bd9413f6c7e061b
+  linuxurl=https://www.kernel.org/pub/linux/kernel/v5.x/$linuxarchive
+  linuxsum=1aafc08fed37f01788b70b3f7bb20f0e53f0834f
 
   glibcver=2.33
   glibcdir=glibc-$glibcver
@@ -165,6 +165,7 @@ run() {
     [[ -r $srcdir/binutils-$binutilsver.patch ]] && \
       patch -p1 -i $srcdir/binutils-$binutilsver.patch
   popd
+
   pushd $gccdir
     # (5.4) https://www.mail-archive.com/gcc-patches@gcc.gnu.org/msg159613.html
     # (6.4.0) https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81712
@@ -204,14 +205,16 @@ run() {
               >> $gccdir/gcc/config/rs6000/linux64.h
             ;;
   esac
+
   # glibc-2.27 must be patched in order to be compiled in alpine linux
+  # ** NOTE ** Disabling as 2.27 is old and no longer used
   # https://sourceware.org/bugzilla/show_bug.cgi?id=21604
-  if [[ -e /etc/alpine-release ]]; then
-    pushd $glibcdir
-      [[ -r $srcdir/glibc-$glibcver-alpine.patch ]] && \
-        patch -p1 -i $srcdir/glibc-$glibcver-alpine.patch
-    popd
-  fi
+  # if [[ -e /etc/alpine-release ]]; then
+  #  pushd $glibcdir
+  #    [[ -r $srcdir/glibc-$glibcver-alpine.patch ]] && \
+  #      patch -p1 -i $srcdir/glibc-$glibcver-alpine.patch
+  #  popd
+  # fi
 
   # fix CFLAGS and CXXFLAGS environment variables
   # `-DNDEBUG` disables the assertions, but it generates some warnings in GCC
@@ -224,14 +227,14 @@ run() {
   pushd $m4dir
     ./configure --prefix="$tmpdir/tools"; make install
   popd
-
-  message "Installing Bison"
-  pushd $bisondir
+  
+  message "Installing Texinfo"
+  pushd $texinfodir
     ./configure --prefix="$tmpdir/tools"; make install
   popd
 
-  message "Installing Texinfo"
-  pushd $texinfodir
+  message "Installing Bison"
+  pushd $bisondir
     ./configure --prefix="$tmpdir/tools"; make install
   popd
 
@@ -477,8 +480,18 @@ run() {
   rm -rf $gccdir
   rm -rf $libelfdir $isldir $mpcdir $mpfrdir $gmpdir $binutilsdir
 
-  rm "$prefix"/bin/ld; ln -s ld.gold "$prefix"/bin/ld
 
+  # ** NOTE ** gold has been disbled so linking
+  # ld to ld.gold makes no sense!
+  # ld.gold has been deprcated at least in fedora
+  # <https://docs.fedoraproject.org/en-US/fedora/f31/release-notes/developers/Development_Tools/#gold-shift>
+  #
+  # rm "$prefix"/bin/ld;
+  # ln -s ld.gold "$prefix"/bin/ld
+
+  rm -rf "$prefix"/bin/ld.gold; 
+  ln -s ld "$prefix"/bin/ld.gold
+  
   # finishing the installation
   rm "$prefix"/bin/$TARGET-gcc; ln -s $TARGET-gcc-$gccver "$prefix"/bin/$TARGET-gcc
   ln -s $TARGET-gcc $prefix/bin/$TARGET-cc

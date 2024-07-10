@@ -1,0 +1,50 @@
+#!/bin/bash
+
+pkgname=rapidjson
+pkgver=1.1.0
+archive=v$pkgver.tar.gz
+sum=a3e0d043ad3c2d7638ffefa3beb30a77c71c869f
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download https://github.com/Tencent/$pkgname/archive/refs/tags/v$pkgver.tar.gz
+  check $archive $sum
+  extract $archive
+
+  module load openblas
+  module load suitesparse
+  pushd $pkgname-$pkgver
+  mkdir build
+  pushd build 
+  message "Configuring $pkgname"
+        cmake -D CMAKE_INSTALL_PREFIX="$dstdir" \
+	      -D RAPIDJSON_BUILD_EXAMPLES=OFF \
+	      -D RAPIDJSON_BUILD_DOC=OFF \
+	      -D CMAKE_SKIP_RPATH=ON \
+	      ..
+	message "Compiling $pkgname"
+	make -j$pkgJobs
+     popd
+    popd
+}
+
+package() {
+  make -j$pkgJobs -C $pkgname-$pkgver/build install
+
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("RapidJSON")
+help([[
+A fast JSON parser/generator for C++ with both SAX/DOM style API
+url: https://github.com/Tencent/rapidjson
+]])
+
+setenv("mkRapidjsonPrefix", "$dstdir")
+setenv("mkRapidjsonInc", "$dstdir/include")
+
+EOF
+  fi
+}

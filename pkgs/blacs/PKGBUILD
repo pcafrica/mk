@@ -48,7 +48,7 @@ ARCHFLAGS = r
 RANLIB    = ranlib
 EOF
     message "Compiling $pkgname"
-    make mpi
+    make -j$pkgJobs mpi
   popd
 }
 

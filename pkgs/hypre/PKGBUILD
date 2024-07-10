@@ -25,12 +25,12 @@ build() {
                 --with-superlu=yes \
                   --with-superlu-lib=$mkOpenblasLib/libsuperlu.so \
     message "Compiling $pkgname"
-    make
+    make -j$pkgJobs
   popd
 }
 
 package() {
-  make -C $pkgname-$pkgver/src install
+  make -j$pkgJobs -C $pkgname-$pkgver/src install
 
   strip "$dstdir"/lib
   reset_rpath "$dstdir"/lib

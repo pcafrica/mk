@@ -29,9 +29,6 @@ build() {
 }
 
 package() {
-  module load openblas
-  module load metis
-  module load tbb
 
   install -d "$dstdir"/{include,lib}
 
@@ -42,6 +39,7 @@ package() {
   TBB="-L$mkTbbLib -ltbb" \
   make -C SuiteSparse-$pkgver install INSTALL="$dstdir"
 
+  ln -s "$dstdir"/lib64/* "$dstdir"/lib 
   strip "$dstdir"/lib
   reset_rpath "$dstdir"/lib
   rm -rf "$dstdir"/share

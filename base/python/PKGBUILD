@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=python
-pkgver=3.9.6
+pkgver=3.12.2
 archive=Python-$pkgver.tar.xz
-sum=05826c93a178872958f6685094ee3514e53ba653
+sum=040eac171c17062253042f7faafea830b03bf07b
 
 dstdir=$mkToolchainBase
 
@@ -20,19 +20,23 @@ build() {
     # ensure to use system libraries
     rm -rf Modules/{expat,zlib,_ctypes/{darwin,libffi}*}
     # fixing the system paths
-    sed -i "s:/usr/include:$mkToolchainBase/include:g" setup.py
-    sed -i "s:/usr/lib:$mkToolchainBase/lib:g" setup.py
+    if [[ -r setup.py ]]; then
+      sed -i "s:/usr/include:$mkToolchainBase/include:g" setup.py
+      sed -i "s:/usr/lib:$mkToolchainBase/lib:g" setup.py
+    fi
     message "Configuring $pkgname"
     # --with-dbmliborder=bdb:gdbm
     #   Use this switch if you want to build Python DBM Module against Berkeley
     #   DB instead of GDBM
     # --enable-optimizations
     #   A release build with all optimizations active
+    message "TARGET is ${TARGET}"
     ./configure --build=$TARGET --prefix="$dstdir" --enable-shared \
                 --with-openssl=$mkToolchainBase --enable-ipv6 \
-                --with-system-expat --with-system-ffi --without-ensurepip \
+                --with-system-expat --without-ensurepip \
                 --with-dbmliborder=bdb:gdbm:ndbm \
-                --enable-optimizations
+                --enable-optimizations LIBFFI_CFLAGS="-I${mkToolchainBase}/include" \
+		LIBFFI_CFLAGS="-L${mkToolchainBase}/lib -lffi"
     message "Compiling $pkgname"
     make
   popd
@@ -41,6 +45,7 @@ build() {
 package() {
   make -C Python-$pkgver install
   ln -svf python3 "$dstdir"/bin/python
+  ln -svf python3-config "$dstdir"/bin/python-config
 
   # linker cache is not updated
   export LD_LIBRARY_PATH="$dstdir"/lib

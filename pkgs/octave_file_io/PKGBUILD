@@ -1,0 +1,58 @@
+#!/bin/bash
+
+pkgname=octave_file_io
+pkgver=1.0.91
+archive=v$pkgver.tar.gz
+sum=4ea173f1982d412542bdd9ce264b41a270cd7d72
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download https://github.com/carlodefalco/octave_file_io/archive/refs/tags/$archive
+  check $archive $sum
+  extract $archive
+  module load octave
+  
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./autogen.sh
+    ./configure --prefix="$dstdir" \
+                --with-octave-home=$mkOctavePrefix/bin \
+		CC=mpicc CXX=mpicxx
+    message "Compiling $pkgname"
+    make -j$pkgJobs
+  popd
+}
+
+package() {
+  make -j$pkgJobs -C $pkgname-$pkgver install
+
+  strip "$dstdir"/bin
+  strip "$dstdir"/lib
+
+  reset_rpath "$dstdir"/bin
+  reset_rpath "$dstdir"/lib
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("A wrapper class around liboctave to load and save data in formats octave can understand ")
+help([[
+The octave_file_io library is installed in "\$mkLisPrefix" directory, the dynamic
+libraries are located in "\$mkLisLib" directory and header files in
+"\$mkLisInc".
+
+url: https://github.com/carlodefalco/octave_file_io
+]])
+
+load("octave")  
+
+setenv("mkOctave_file_ioPrefix", "$dstdir")
+setenv("mkOctave_file_ioLib", "$dstdir/lib")
+setenv("mkOctave_file_ioInc", "$dstdir/include")
+
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
+
+EOF
+  fi
+}

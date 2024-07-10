@@ -29,7 +29,8 @@ build() {
                 -Dman1dir="$dstdir/share/man/man1" -Dman1ext=1perl \
                 -Dman3dir="$dstdir/share/man/man3" -Dman3ext=3perl \
                 -Dlocincpth="${mkToolchainPrefix}/include ${mkToolchainBase}/include" \
-                -Dloclibpth="${mkToolchainPrefix}/lib ${mkToolchainBase}/lib"
+                -Dloclibpth="${mkToolchainPrefix}/lib ${mkToolchainBase}/lib" \
+		-Dlibswanted="pthread db gdbm dl ld m"
 
     message "Compiling $pkgname"
     make

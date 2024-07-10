@@ -41,12 +41,12 @@ build() {
           -D SHARED=ON \
           ..
     message "Compiling $pkgname"
-    make
+    make -j$pkgJobs
   popd
 }
 
 package() {
-  make -C parmetis-$parmetisver/build install
+  make -j$pkgJobs -C parmetis-$parmetisver/build install
 
   # cleaning
   strip $dstdir/bin

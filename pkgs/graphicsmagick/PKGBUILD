@@ -1,0 +1,56 @@
+#!/bin/bash
+
+pkgname=GraphicsMagick
+pkgver=1.3.43
+archive=$pkgname-$pkgver.tar.xz
+
+sum=21ecdbffb15239458aa288321d726f41b795cec9
+
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download https://sourceforge.net/projects/graphicsmagick/files/graphicsmagick/1.3.43/GraphicsMagick-1.3.43.tar.xz/download $archive
+  check $archive $sum
+  extract $archive
+
+  module load libtiff
+  module load libpng
+  
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure \
+	--prefix=$dstdir --enable-shared --disable-static
+    message "Compiling $pkgname"
+    make -j$pkgJobs
+  popd
+}
+
+package() {
+  make -j$pkgJobs -C  $pkgname-$pkgver install
+
+  #rm -rf "$dstdir"/share/{appdata,applications,icons}
+
+  strip "$dstdir/bin"
+  strip "$dstdir/lib"
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("GraphicsMagick Image Processing System")
+help([[
+GraphicsMagick is the swiss army knife of image processing. Comprised of 284K physical lines (according to David A. Wheeler's SLOCCount) of source code in the base package, it provides a robust and efficient collection of tools and libraries which support reading, writing, and manipulating an image in over 92 major formats including important formats like DPX, GIF, JPEG, JPEG-2000, JXL, PNG, PDF, PNM, TIFF, and WebP.
+
+url: http://www.graphicsmagick.org/
+]])
+
+load ("libtiff")
+load ("libpng")
+
+setenv("mkGraphicsmagickPrefix", "$dstdir")
+setenv("mkGraphicsmagickLib", "$dstdir/lib")
+setenv("mkGraphicsmagickInc", "$dstdir/include")
+prepend_path("PATH", "$dstdir/bin")
+EOF
+  fi
+}

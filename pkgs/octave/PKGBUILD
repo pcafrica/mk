@@ -1,10 +1,10 @@
 #!/bin/bash
 
 pkgname=octave
-pkgver=6.2.0
+pkgver=9.1.0
 archive=$pkgname-$pkgver.tar.gz
 
-sum=e357629c9249f1dfeb807618c3b6a08b3dba9b4a
+sum=2478c4ad0a7ee3650ec86d3f1be684aba8f11f5e
 
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
@@ -21,47 +21,64 @@ build() {
   module load qhull
   module load qrupdate
   module load suitesparse
-
+  module load sundials
+  module load rapidjson
+  module load GraphicsMagick
+  
   pushd $pkgname-$pkgver
     message "Configuring $pkgname"
-    ./configure --prefix="$dstdir" \
-                --enable-docs --disable-silent-rules --disable-java \
-                --without-fltk --without-opengl --without-qt --without-x \
-                --with-blas="$mkOpenblasLib/libopenblas.so" \
-                --with-lapack="$mkOpenblasLib/libopenblas.so" \
-                --with-arpack-libdir="$mkArpackLib" \
-                --with-fftw3-includedir="$mkFftwInc" \
-                --with-fftw3-libdir="$mkFftwLib" \
-                --with-fftw3f-includedir="$mkFftwInc" \
-                --with-fftw3f-libdir="$mkFftwLib" \
-                --with-glpk-includedir="$mkGlpkInc" \
-                --with-glpk-libdir="$mkGlpkLib" \
-                --with-hdf5-includedir="$mkHdf5Inc" \
-                --with-hdf5-libdir="$mkHdf5Lib" \
-                --with-qhull-includedir="$mkQhullInc" \
-                --with-qhull-libdir="$mkQhullLib" \
-                --with-qrupdate-libdir="$mkQrupdateLib" \
-                --with-amd-includedir="$mkSuitesparseInc" \
-                --with-amd-libdir="$mkSuitesparseLib" \
-                --with-camd-includedir="$mkSuitesparseInc" \
-                --with-camd-libdir="$mkSuitesparseLib" \
-                --with-colamd-includedir="$mkSuitesparseInc" \
-                --with-colamd-libdir="$mkSuitesparseLib" \
-                --with-ccolamd-includedir="$mkSuitesparseInc" \
-                --with-ccolamd-libdir="$mkSuitesparseLib" \
-                --with-cholmod-includedir="$mkSuitesparseInc" \
-                --with-cholmod-libdir="$mkSuitesparseLib" \
-                --with-cxsparse-includedir="$mkSuitesparseInc" \
-                --with-cxsparse-libdir="$mkSuitesparseLib" \
-                --with-umfpack-includedir="$mkSuitesparseInc" \
-                --with-umfpack-libdir="$mkSuitesparseLib"
+    ./configure \
+	--prefix=$dstdir \
+        --enable-docs --disable-silent-rules --disable-java \
+        --without-fltk --without-opengl --without-qt --without-x \
+        --with-blas="$mkOpenblasLib/libopenblas.so" \
+        --with-lapack="$mkOpenblasLib/libopenblas.so" \
+        --with-arpack-libdir="$mkArpackLib" \
+        --with-fftw3-includedir="$mkFftwInc" \
+        --with-fftw3-libdir="$mkFftwLib" \
+        --with-fftw3f-includedir="$mkFftwInc" \
+        --with-fftw3f-libdir="$mkFftwLib" \
+        --with-glpk-includedir="$mkGlpkInc" \
+        --with-glpk-libdir="$mkGlpkLib" \
+        --with-hdf5-includedir="$mkHdf5Inc" \
+        --with-hdf5-libdir="$mkHdf5Lib" \
+        --with-qhull_r-includedir="$mkQhullInc" \
+        --with-qhull_r-libdir="$mkQhullLib" \
+        --with-qrupdate-libdir="$mkQrupdateLib" \
+        --with-amd-includedir="$mkSuitesparseInc" \
+        --with-amd-libdir="$mkSuitesparseLib" \
+        --with-spqr-includedir="$mkSuitesparseInc" \
+        --with-spqr-libdir="$mkSuitesparseLib" \
+        --with-camd-includedir="$mkSuitesparseInc" \
+        --with-camd-libdir="$mkSuitesparseLib" \
+        --with-colamd-includedir="$mkSuitesparseInc" \
+        --with-colamd-libdir="$mkSuitesparseLib" \
+        --with-ccolamd-includedir="$mkSuitesparseInc" \
+        --with-ccolamd-libdir="$mkSuitesparseLib" \
+        --with-cholmod-includedir="$mkSuitesparseInc" \
+        --with-cholmod-libdir="$mkSuitesparseLib" \
+        --with-cxsparse-includedir="$mkSuitesparseInc" \
+        --with-cxsparse-libdir="$mkSuitesparseLib" \
+        --with-umfpack-includedir="$mkSuitesparseInc" \
+        --with-umfpack-libdir="$mkSuitesparseLib" \
+	--with-klu-includedir="$mkSuitesparseInc" \
+	--with-klu-libdir="$mkSuitesparseLib" \
+	--with-sundials_nvecserial-includedir="$mkSundialsInc" \
+	--with-sundials_nvecserial-libdir="$mkSundialsLib" \
+	--with-sundials_ida-includedir="$mkSundialsInc" \
+	--with-sundials_ida-libdir="$mkSundialsLib" \
+	--with-sundials_core-includedir="$mkSundialsInc/sundials" \
+	--with-sundials_core-libdir="$mkSundialsLib" \
+	--with-sundials_sunlinsolklu-includedir="$mkSundialsInc" \
+        --with-sundials_sunlinsolklu-libdir="$mkSundialsLib" \
+	CPPFLAGS="-I$mkRapidjsonInc"    
     message "Compiling $pkgname"
-    make
+    make -j$pkgJobs
   popd
 }
 
 package() {
-  make -C $pkgname-$pkgver install
+  make -j$pkgJobs -C  $pkgname-$pkgver install
 
   rm -rf "$dstdir"/share/{appdata,applications,icons}
 
@@ -90,10 +107,16 @@ load("openblas")
 load("qhull")
 load("qrupdate")
 load("suitesparse")
+load("sundials")
+load("rapidjson")
+load("GraphicsMagick")
 
 setenv("mkOctavePrefix", "$dstdir")
 
 prepend_path("PATH", "$dstdir/bin")
+
+prepend_path("LD_LIBRARY_PATH", "$dstdir/lib/$pkgname/$pkgver")
+
 EOF
   fi
 }

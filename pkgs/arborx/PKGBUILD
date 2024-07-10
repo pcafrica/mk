@@ -24,12 +24,12 @@ build() {
         -DKokkos_DIR=$mkTrilinosDir \
         ../ArborX-$pkgver
     message "Compiling $pkgname"
-    make
+    make -j$pkgJobs
   popd
 }
 
 package() {
-  make -C build install
+  make -j$pkgJobs -C build install
 
   strip "$dstdir"/lib
   reset_rpath "$dstdir"/lib

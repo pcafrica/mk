@@ -1,0 +1,53 @@
+#!/bin/bash
+
+pkgname=tiff
+pkgver=4.6.0t
+archive=$pkgname-$pkgver.tar.xz
+
+sum=48db1a74f3f556ea83d8cf84f02d9c2c1ef3b9a8
+
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download http://www.libtiff.org/downloads/$archive
+  check $archive $sum
+  extract $archive
+
+  module load openblas
+  module load rapidjson
+  
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure \
+	--prefix=$dstdir --enable-shared --disable-static
+    message "Compiling $pkgname"
+    make -j$pkgJobs
+  popd
+}
+
+package() {
+  make -j$pkgJobs -C  $pkgname-$pkgver install
+
+  rm -rf "$dstdir"/share/doc
+
+  strip "$dstdir/bin"
+  strip "$dstdir/lib"
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/lib$pkgname
+    cat > $mkToolchainModules/lib$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("TIFF Library and Utilities")
+help([[The LibTIFF software provides support for the Tag Image File Format (TIFF), a widely used format for storing image data.
+
+url: http://www.libtiff.org/
+]])
+
+prepend_path("PKG_CONFIG_PATH", "$dstdir/lib/pkgconfig")
+setenv("mkLibtiffPrefix", "$dstdir")
+setenv("mkLibtiffLib", "$dstdir/lib")
+setenv("mkLibtiffInc", "$dstdir/include")
+prepend_path("PATH", "$dstdir/bin")
+EOF
+  fi
+}

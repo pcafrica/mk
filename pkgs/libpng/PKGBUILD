@@ -1,0 +1,53 @@
+#!/bin/bash
+
+pkgname=libpng
+pkgver=1.6.43
+archive=$pkgname-$pkgver.tar.xz
+
+sum=ad9f087b73acf01e2c252920810b005ee69d3e0e
+
+dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+
+build() {
+  download https://sourceforge.net/projects/$pkgname/files/${pkgname}16/$pkgver/$archive/download  -O $archive
+  check $archive $sum
+  extract $archive
+
+  module load openblas
+  module load rapidjson
+  
+  pushd $pkgname-$pkgver
+    message "Configuring $pkgname"
+    ./configure \
+	--prefix=$dstdir --enable-shared --disable-static
+    message "Compiling $pkgname"
+    make -j$pkgJobs
+  popd
+}
+
+package() {
+  make -j$pkgJobs -C  $pkgname-$pkgver install
+
+  rm -rf "$dstdir"/share/doc
+
+  strip "$dstdir/bin"
+  strip "$dstdir/lib"
+
+  if [[ "$mkTest" = "no" ]]; then
+    install -vd $mkToolchainModules/$pkgname
+    cat > $mkToolchainModules/$pkgname/$pkgver.lua << EOF
+-- -*- lua -*-
+whatis("PNG Library")
+help([[libpng is the official PNG reference library. It supports almost all PNG features, is extensible, and has been extensively tested for over 28 years. The home site for development versions (i.e., may be buggy or subject to change or include experimental features) is https://libpng.sourceforge.io/, and the place to go for questions about the library is the png-mng-implement mailing list. 
+
+url: http://www.libpng.org/pub/png/libpng.html
+]])
+
+prepend_path("PKG_CONFIG_PATH", "$dstdir/lib/pkgconfig")
+setenv("mkLibpngPrefix", "$dstdir")
+setenv("mkLibpngLib", "$dstdir/lib")
+setenv("mkLibpngInc", "$dstdir/include")
+prepend_path("PATH", "$dstdir/bin")
+EOF
+  fi
+}

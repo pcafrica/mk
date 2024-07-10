@@ -1,25 +1,26 @@
 #!/bin/bash
 
 pkgname=cmake
-pkgver=3.28.1
+pkgver=3.29.0
 archive=$pkgname-$pkgver.tar.gz
-sum=7e75b96ea2ca80cc70af6223e094495da3efc03c
+sum=eb0782641723651a19d337bb4301bc493e5efb33
 
 dstdir=$mkToolchainBase
 
 build() {
-  download https://www.cmake.org/files/v${pkgver%.*}/$archive
+  download https://github.com/Kitware/CMake/releases/download/v$pkgver/$pkgname-$pkgver.tar.gz
   check $archive $sum
   extract $archive
 
   pushd $pkgname-$pkgver
     message "Configuring $pkgname"
+    export VERBOSE=1
+    export LC_ALL=C
     ./configure --prefix="$dstdir" --parallel=$pkgJobs \
-                --mandir=/share/man --docdir=/share/doc/cmake \
-                --no-system-libs --no-qt-gui \
-                --sphinx-man
+                --mandir=share/man --docdir=share/doc/cmake \
+                --no-system-libs --no-qt-gui
     message "Compiling $pkgname"
-    make
+    LC_ALL=C make V=1 -j1
   popd
 }
 

@@ -1,0 +1,30 @@
+--- include/CGAL/Weighted_point_2.h.orig	2024-05-14 15:00:51.110319143 +0000
++++ include/CGAL/Weighted_point_2.h	2024-05-14 15:09:27.911329389 +0000
+@@ -80,6 +80,11 @@
+     : Rep(typename R::Construct_weighted_point_2()(Return_base_tag(), p, w))
+   {}
+
++  // NS PATCH
++  Weighted_point_2(const Point_2& p, const Weight& w, const int i)
++    : Rep(typename R::Construct_weighted_point_2()(Return_base_tag(), p, w))
++  { _index=1; }
++
+   Weighted_point_2(const FT& x, const FT& y)
+     : Rep(typename R::Construct_weighted_point_2()(Return_base_tag(), x, y))
+   {}
+@@ -175,6 +180,15 @@
+     return Weighted_point_2(t.transform(point()),weight());
+   }
+
++  // NS PATCH
++  const int& index() const
++  {
++    return _index;
++  }
++
++private:
++  int _index;
++
+ };
+
+ template <class R>

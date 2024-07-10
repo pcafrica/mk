@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=p4est
-pkgver=2.3.2
+pkgver=2.8.6
 archive=$pkgname-$pkgver.tar.gz
-sum=b41c8ef29ca88be0ae73116dca8afed2743fb2ef
+sum=089cc13e0596bf221bbb508318c58c12fa7b9d6f
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {
@@ -15,6 +15,7 @@ build() {
     message "Configuring $pkgname"
     CC=$(which mpicc) \
     CXX=$(which mpic++) \
+    LIBS="-lz -lm" \
     ./configure --prefix="$dstdir" \
                 --enable-mpi \
                 --enable-shared \

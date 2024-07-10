@@ -24,24 +24,24 @@ build() {
     message "Configuring single precision $pkgname"
     ./configure $conflags $sseflags --enable-single
     message "Compiling single precision $pkgname"
-    make
-    make install DESTDIR=$prefix
+    make -j$pkgJobs
+    make -j$pkgJobs install DESTDIR=$prefix
 
-    make clean
+    make -j$pkgJobs clean
 
     message "Configuring double precision $pkgname"
     ./configure $conflags $sseflags
     message "Compiling double precision $pkgname"
-    make
-    make install DESTDIR=$prefix
+    make -j$pkgJobs
+    make -j$pkgJobs install DESTDIR=$prefix
 
-    make clean
+    make -j$pkgJobs clean
 
     message "Configuring long-double precision $pkgname"
     ./configure $conflags --enable-long-double
     message "Compiling long-double precision $pkgname"
-    make
-    make install DESTDIR=$prefix
+    make -j$pkgJobs
+    make -j$pkgJobs install DESTDIR=$prefix
   popd
 }
 

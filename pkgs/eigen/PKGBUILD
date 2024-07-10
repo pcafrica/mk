@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=eigen
-pkgver=3.3.9
+pkgver=3.4.0
 archive=$pkgname-$pkgver.tar.bz2
-sum=516322dc3d98f7f6d20f11050da43084f68e6c71
+sum=3e8a1aa6ac5c7fafce69688242590fd365c1d3c5
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
 build() {

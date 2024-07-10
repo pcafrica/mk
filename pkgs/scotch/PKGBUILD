@@ -1,9 +1,9 @@
 #!/bin/bash
 
 pkgname=scotch
-pkgver=6.1.1
+pkgver=7.0.4
 archive=${pkgname}-v$pkgver.tar.gz
-sum=27f5d3c069bef5d9e0b74edd4703deea0190cecd
+sum=5fdbbd69a546f25311ed51b488713b9f2993b46e
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 mkParallelBuild=no
 
@@ -23,30 +23,28 @@ build() {
     CFLAGS="$CFLAGS -DSCOTCH_CHECK_AUTO -DCOMMON_RANDOM_FIXED_SEED -DCOMMON_TIMING_OLD -DSCOTCH_RENAME"
     CFLAGS="$CFLAGS -DCOMMON_FILE_COMPRESS_BZ2 -DCOMMON_FILE_COMPRESS_GZ"
     cat > Makefile.inc << EOF
-EXE=
-LIB=.so
-OBJ=.o
+EXE             =
+LIB             = .so
+OBJ             = .o
 
-CAT=cat
-CP=cp
-MV=mv
-LN=ln
-MKDIR=mkdir
-
-AR=gcc
-ARFLAGS=-shared -o
-RANLIB=echo
-
-CCS=cc
-CCP=mpicc
-CCD=mpicc
-
-CFLAGS=${CFLAGS}
-CLIBFLAGS=-shared -fPIC
-LDFLAGS=-lm -lz -lpthread -lbz2
-
-LEX=flex -Pscotchyy -olex.yy.c
-YACC=bison -pscotchyy -y -b y
+MAKE            = make
+AR              = gcc
+ARFLAGS         = -shared -o
+CAT             = cat
+CCS             = gcc
+CCP             = mpicc
+CCD             = gcc
+CFLAGS          = -O3 -fPIC -DCOMMON_FILE_COMPRESS_GZ -DCOMMON_PTHREAD -DCOMMON_PTHREAD_AFFINITY_LINUX -DCOMMON_RANDOM_FIXED_SEED \
+-DSCOTCH_MPI_ASYNC_COLL -DSCOTCH_PTHREAD -DSCOTCH_PTHREAD_MPI -DSCOTCH_RENAME -Drestrict=__restrict -DIDXSIZE64
+CLIBFLAGS       = -shared -fPIC
+LDFLAGS         = -lz -lm -lrt -pthread -Xlinker --no-as-needed
+CP              = cp
+FLEX            = flex
+LN              = ln
+MKDIR           = mkdir -p
+MV              = mv
+RANLIB          = echo
+BISON           = bison
 EOF
     message "Compiling $pkgname"
     make scotch ptscotch VERBOSE=ON

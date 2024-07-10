@@ -13,9 +13,7 @@ cxxver=4.3.1
 cxxarchive=v$cxxver.tar.gz
 cxxsum=0e3c4845b0638e8319b92488606a4c9759b63446
 
-pythonver=1.6.5rel
-pythonarchive=v$pythonver.tar.gz
-pythonsum=05c8858d74cf1e83a7684ab9d5a87eb8ca420cfd
+pyver=3.12
 
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
 
@@ -23,17 +21,14 @@ package() {
   download https://github.com/Unidata/netcdf-c/archive/$archive
   download https://github.com/Unidata/netcdf-fortran/archive/$fortranarchive
   download https://github.com/Unidata/netcdf-cxx4/archive/$cxxarchive
-  download https://github.com/Unidata/netcdf4-python/archive/$pythonarchive
   
   check $archive $sum
   check $fortranarchive $fortransum
   check $cxxarchive $cxxsum
-  check $pythonarchive $pythonsum
 
   extract $archive
   extract $fortranarchive
   extract $cxxarchive
-  extract $pythonarchive
 
   module load hdf5
 
@@ -48,9 +43,9 @@ package() {
                 --enable-netcdf-4 \
                 --enable-dap-netcdf
     message "Compiling $pkgname-c"
-    make
+    make -j$pkgJobs
     message "Installing $pkgname-c"
-    make install
+    make -j$pkgJobs install
   popd
 
   export PATH="$dstdir/bin:$PATH"
@@ -66,13 +61,12 @@ package() {
                 --enable-shared \
                 --disable-static
     message "Compiling $pkgname-fortran"
-    make
+    make -j$pkgJobs
     message "Installing $pkgname-fortran"
-    make install
+    make -j$pkgJobs install
   popd
 
   # netcdf cxx
-  module load scipy
   pushd $pkgname-cxx4-$cxxver
     message "Configuring $pkgname-cxx"
     CPPFLAGS="-I$dstdir/include -I$mkHdf5Inc $CPPFLAGS" \
@@ -81,20 +75,9 @@ package() {
                 --enable-shared \
                 --disable-static
     message "Compiling $pkgname-cxx"
-    make
+    make -j$pkgJobs
     message "Installing $pkgname-cxx"
-    make install
-  popd
-
-  # netcdf python
-  pushd $pkgname${pkgver%%.*}-python-$pythonver
-    message "Installing $pkgname-python"
-    USE_NCCONFIG=1 HDF5_DIR="$mkHdf5Prefix" \
-      python setup.py build
-    install -d -m0755 "$dstdir/lib/python3.9/site-packages"
-    PYTHONPATH="$dstdir/lib/python3.9/site-packages:$PYTHONPATH" \
-    USE_NCCONFIG=1 HDF5_DIR="$mkHdf5Prefix" \
-      python setup.py install --prefix="$dstdir"
+    make -j$pkgJobs install
   popd
 
   strip "$dstdir"/bin
@@ -119,7 +102,6 @@ url: https://www.unidata.ucar.edu/software/netcdf/
 ]])
 
 load("hdf5")
-load("scipy")
 
 setenv("mkNetcdfPrefix", "$dstdir")
 setenv("mkNetcdfLib", "$dstdir/lib")
@@ -127,7 +109,6 @@ setenv("mkNetcdfInc", "$dstdir/include")
 
 prepend_path("PATH", "$dstdir/bin")
 prepend_path("MANPATH", "$dstdir/share/man")
-prepend_path("PYTHONPATH", "$dstdir/lib/python3.9/site-packages")
 prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
 prepend_path("PKG_CONFIG_PATH", "$dstdir/lib/pkgconfig")
 EOF

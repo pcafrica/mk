@@ -6,6 +6,7 @@ archive=$pkgname-$pkgver.tar.gz
 sum=097041f8f102c7c55d703750b576ae48460aa3a3
 
 dstdir=$mkToolchainPkgs/$pkgname/$pkgver
+pyver=3.12
 
 package() {
   download https://parallel-netcdf.github.io/Release/$archive
@@ -17,7 +18,8 @@ package() {
   # netcfd c
   pushd $pkgname-$pkgver
     message "Configuring $pkgname"
-    ./configure --prefix="$dstdir" \
+    ./configure MPICC=mpicc MPICXX=mpicxx MPIF90=mpif90 MPIF77=mpif77 \
+		--prefix="$dstdir" \
                 --enable-shared \
                 --disable-static
     message "Compiling $pkgname"
@@ -58,7 +60,7 @@ setenv("mkPnetcdfInc", "$dstdir/include")
 
 prepend_path("PATH", "$dstdir/bin")
 prepend_path("MANPATH", "$dstdir/share/man")
-prepend_path("PYTHONPATH", "$dstdir/lib/python3.9/site-packages")
+--prepend_path("PYTHONPATH", "$dstdir/lib/python${pyver}/site-packages")
 prepend_path("LD_LIBRARY_PATH", "$dstdir/lib")
 prepend_path("PKG_CONFIG_PATH", "$dstdir/lib/pkgconfig")
 EOF

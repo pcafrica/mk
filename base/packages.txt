@@ -248,7 +248,7 @@ dependencies:
     Portable Hardware Locality is a portable abstraction of hierarchical
     architectures.
 
-  openmpi: hwloc, libnl, libtool, valgrind
+  openmpi: hwloc, libnl, libtool, valgrind, sphinx
     The Open MPI Project is an open source Message Passing Interface
     implementation that is developed and maintained by a consortium of
     academic, research, and industry partners.

@@ -20,3 +20,8 @@ Use `module avail` or `module spider` to check the available packages.
 A `Docker` image built upon [`Ubuntu`](https://hub.docker.com/_/ubuntu)
 (`x86-64` architecture) with `mk` installed is available
 [here](https://hub.docker.com/r/pcafrica/mk).
+
+### TODO
+
+Docker has deprecated and removed the `--squash` option.
+We should use [multi-stage builds](https://docs.docker.com/build/building/multi-stage/) instead.

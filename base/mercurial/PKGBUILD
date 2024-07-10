@@ -6,5 +6,5 @@ pkgver=5.8
 dstdir=$mkToolchainBase
 
 package() {
-  pip install -I --prefix="$dstdir" "$pkgname==$pkgver"
+  pip install -I --prefix="$dstdir" "$pkgname"
 }
